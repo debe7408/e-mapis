@@ -1,3 +1,3 @@
 # E-MAPIS
 
-**This is a main page for E-MAPIS application**
+**This is the main page for E-MAPIS application**
