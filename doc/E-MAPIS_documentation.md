@@ -32,26 +32,26 @@ The main tool for this app will be a relational database, in particular PostgreS
 
 ### 1.4 Non-functional requirements <a name="subparagraph4"></a>
 
--**SECURITY**
+- **SECURITY**
 
-The app will be using HTTPS requests to ensure data encryption.
+The app will be using HTTPS requests to ensure data encryption. No sensitive data will be transmitted.
 
--**CAPACITY**
+- **CAPACITY**
 
-For the time being, E-MAPIS will not store a big amount of data. Implementing Vilnius map in the database will take up from 3-10 GB of memory. On the other hand, the application will be collecting GIS data, fuel consumption, and other details from the user, so storage may be in shortage.
+For the time being, E-MAPIS will not store a big amount of data. Implementing Vilnius map in the database will take up from 3-10 GB of memory. On the other hand, the application will be collecting GIS data, fuel consumption, and other details from the user, so storage may be in shortage, in which case it will be increased. In the future, depending on the increasing volume demand, storage will be increased to meet such demands.
 
--**COMPATIBILITY**
+- **COMPATIBILITY**
 
-The application will be usable only on Android devices, with the option to also implement it to iOS in the future. The minimal and recommended requirements will be determined but are considered to be low.
+The application will be usable only on Android devices with new Andorid version, with the option to also implement it to iOS in the future. The minimal and recommended hardware requirements will be determined but are considered to be low. Any Android device with latest Android version from the last 5-10 years should be able to run the application.
 
--**USABILITY**
+- **USABILITY** 
 
-Every person that is capable of making calls with their smartphone, will immediately understand how to interact with E-MAPIS. The user interface will be simple and uncomplicated.
+Every person that is capable of using a smartphone device, will immediately understand how to interact with E-MAPIS. The user interface will be simple and uncomplicated.
 
--**SCALABILITY**
+- **SCALABILITY**
 
-The application is not considered to be run under high workloads.
+While the application is not considered to be run under high workloads, to ensure that the system can handle projected increase in user traffic, data volumes etc., various tests will be done to determine the application's limits and its causes. Since the application is mostly based on databases, testing parameters will be testing the size of the database in relation to the number of users, sent queries and so on.
 
--**PERFORMANCE**
+- **PERFORMANCE**
 
-The application itself is considered to be a lightweight application which means it will function briskly.
+The application itself is considered to be a lightweight, which means it will function briskly. Responding to user's actions should not take more than a few seconds. The time it takes to load the map will depend mostly on the internet connection.
