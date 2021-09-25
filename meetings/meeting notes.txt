@@ -1,0 +1,44 @@
+[2020-09-06 19:30-21:30] via Discord
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Group contract, project vision, questions for the supervisor.
+Decided on/done: The group contract and project vision were written and fully finished. Written down some questions for the supervisor.
+
+[2020-09-07 21:45 - 24:00] via Discord
+Attendants: Julius, Emilis, Deividas.
+Topic(s): PostGIS, JIRA, group contract and vision submission.
+Decided on/done: We have decided to use PostGIS as our gis extension for PostgreSQL, set-up JIRA as our project tracking software,
+submitted our group contract and project vision.
+
+[2020-09-09 14:00-15:10] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Setting up our GitLab repository, individual study/work.
+Decided on/done: Successfully set-up our project repository and added the lecturers to it. Agreed to go through a SQL and Databases course on udemy.com.
+
+[2020-09-14 20:00-21:30] via Discord
+Attendants: Julius, Emilis, Deividas. 
+Topic(s): Discussing our progress in database learning, sharing knowledge.
+Decided on/done: Each member of the group should finish at least 60% of the course by the 23rd of September.
+
+[2020-09-16 12:00-13:45] IRL
+Attendants: Julius, Emilis, Deividas. 
+Topic(s): Setting up our database server, looking for an open-source map of Vilnius.
+Decided on/done: We have set-up a VM and installed PostgreSQL and PostGIS to it. We have looked into some open-source maps and for now, settled with openstreetmap.org.
+
+[2020-09-20 19:30-21:00] via Discord
+Attendants: Julius, Emilis, Deividas. 
+Topic(s): Writing documentation for PSI and discussing our expectations for the project, arranging a meeting with our supervisor.
+Decided on/done: We have written the documentation where we stated our purpose of the system, funcional and non-functional requirements,
+given a high-level overview of the system. After discussing our expectations for the project, we noticed that we still face some confusion,
+because of that we have sent an email to our supervisor to organize a meeting.
+
+[2020-09-24 17:30-18:00] IRL
+Attendants: Julius, Emilis, Deividas, Agnė.
+Topic(s): Meeting with our supervisor Agnė Brilingaitė. Agnė provided us with guidance for our project.
+Decided on/done: We have decided on what information our Android app will collect and present to the user, what steps to take to start realising
+our project.
+
+[2020-09-24 18:00-19:00] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Setting up a 'task sprint' for the week, setting a more long-term goal and discussing technologies we will use to communicate with our datebase server.
+Decided on/done: We have looked into http requests (using POSTMAN), agreed to create a zero-feature app for our project in the next few days, 
+decided what to look into/learn individually. The main task for the week will be to create connections to our database and upload some stock data to work/learn with.
