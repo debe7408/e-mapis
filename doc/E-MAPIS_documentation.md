@@ -23,7 +23,8 @@ The table below (see Flowchart 1) explains the architecture that would be used t
 
 ### 1.3 Complete functional requirements (reasoning/value behind the requirement) <a name="subparagraph3"></a>
 
-The main tool for this app will be a relational database, in particular PostgreSQL. After a fair amount of research, we found a suitable PostgreSQL geographic information system extension PostGIS. It adds support for geographic objects allowing location queries to be run in SQL. To test if the data was correctly inserted, we will use the QGIS tool. For weather, traffic, and elevation information we will use public APIs.
+The main tool for this app will be a relational database, in particular PostgreSQL with a suitable PostgreSQL geographic information system extension PostGIS. It adds support for geographic objects allowing location queries to be run in SQL. To test if the data was correctly inserted, we will use the QGIS tool. Since the weather and traffic highly impact road trips, public APIs containing this type of information will be used. Elevation will also be taken into account because it impacts energy consumption.
+
 
 ![Flowchart 2. Effective route-finding algorithm](/assets/Flowchart2.png)
 
@@ -54,4 +55,4 @@ While the application is not considered to be run under high workloads, to ensur
 
 - **PERFORMANCE**
 
-The application itself is considered to be a lightweight, which means it will function briskly. Responding to user's actions should not take more than a few seconds. The time it takes to load the map will depend mostly on the internet connection.
+The application itself is considered to be a lightweight applications. Responding to user's actions should not take more than a few seconds. The time it takes to load the map will depend mostly on the internet connection.

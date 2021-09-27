@@ -42,3 +42,9 @@ Attendants: Julius, Emilis, Deividas.
 Topic(s): Setting up a 'task sprint' for the week, setting a more long-term goal and discussing technologies we will use to communicate with our datebase server.
 Decided on/done: We have looked into http requests (using POSTMAN), agreed to create a zero-feature app for our project in the next few days, 
 decided what to look into/learn individually. The main task for the week will be to create connections to our database and upload some stock data to work/learn with.
+
+[2020-09-27 20:00-21:30] via Discord
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Documentation, presentation and database connection.
+Decided on/done: Updated documentation for PSI, started working on PBL presentation and created a connection between our local PgAdmins
+and the database server.
