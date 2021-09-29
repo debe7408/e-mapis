@@ -1,4 +1,4 @@
-package com.vu.tutorialapp;
+package com.vu.emapis;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MainscreenActivity extends AppCompatActivity {
+public class MainScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
