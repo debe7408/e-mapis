@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">E-MAPIS</string>
+    <string name="edit_username">Enter username</string>
+    <string name="button_login">Login</string>
+    <string name="edit_password">Enter password</string>
+</resources>
