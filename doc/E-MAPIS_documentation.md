@@ -1,18 +1,18 @@
 # Table of contents
 - [Table of contents](#table-of-contents)
-  - [1. Requirement’s specification <a name="requirements_specification"></a>](#1-requirements-specification-)
-    - [1.1 Purpose of the system <a name="subparagraph1"></a>](#11-purpose-of-the-system-)
-    - [1.2 A high-level overview of the system <a name="subparagraph2"></a>](#12-a-high-level-overview-of-the-system-)
-    - [1.3 Complete functional requirements (reasoning/value behind the requirement) <a name="subparagraph3"></a>](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement-)
-    - [1.4 Non-functional requirements <a name="subparagraph4"></a>](#14-non-functional-requirements-)
+  - [1. Requirement’s specification](#1-requirements-specification)
+    - [1.1 Purpose of the system](#11-purpose-of-the-system)
+    - [1.2 A high-level overview of the system](#12-a-high-level-overview-of-the-system)
+    - [1.3 Complete functional requirements (reasoning/value behind the requirement)](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement)
+    - [1.4 Non-functional requirements](#14-non-functional-requirements)
 
-## 1. Requirement’s specification <a name="requirements_specification"></a>
+## 1. Requirement’s specification
 
-### 1.1 Purpose of the system <a name="subparagraph1"></a>
+### 1.1 Purpose of the system
 
 E-MAPIS will be a data collection application for vehicles, that will give its users useful information to plan a stress-free road trip and make their daily commute a lot better, as well as, collect various anonymous data. The application will be able to collect location data and provide the user with functionality to input various trip and vehicle parameters ( such as energy or gas consumption for the trip, vehicle type and details, etc.) In addition, the application will take traffic and weather conditions into consideration to calculate the most efficient route to a destination.
 
-### 1.2 A high-level overview of the system <a name="subparagraph2"></a>
+### 1.2 A high-level overview of the system
 
 E-MAPIS will consist of 2 main parts. First, a server with GIS data, data about the vehicle, various algorithms for fastest route searching, weather, elevation, and traffic condition APIs. The second part will consist of the user application, which will be responsible for sending/receiving requests, processing data, collecting data from the user’s device, and a GUI.
 The table below (see Flowchart 1) explains the architecture that would be used to develop the system. The architecture flowchart provides an overview of the system, simply identifying the main components that would be developed for the application.
@@ -22,7 +22,7 @@ The table below (see Flowchart 1) explains the architecture that would be used t
 *Flowchart 1. An example of a high-level*
 
 
-### 1.3 Complete functional requirements (reasoning/value behind the requirement) <a name="subparagraph3"></a>
+### 1.3 Complete functional requirements (reasoning/value behind the requirement)
 
 The main tool for this app will be a relational database, in particular PostgreSQL with a suitable PostgreSQL geographic information system extension PostGIS. It adds support for geographic objects allowing location queries to be run in SQL. To test if the data was correctly inserted, we will use the QGIS tool. Since the weather and traffic highly impact road trips, public APIs containing this type of information will be used. Elevation will also be taken into account because it impacts energy consumption.
 
@@ -32,7 +32,7 @@ The main tool for this app will be a relational database, in particular PostgreS
 *Flowchart 2. Effective route-finding algorithm*
 
 
-### 1.4 Non-functional requirements <a name="subparagraph4"></a>
+### 1.4 Non-functional requirements
 
 - **SECURITY**
 
