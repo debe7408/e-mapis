@@ -1,10 +1,9 @@
 # Table of contents
-- [Table of contents](#table-of-contents)
-  - [1. Requirement’s specification](#1-requirements-specification)
-    - [1.1 Purpose of the system](#11-purpose-of-the-system)
-    - [1.2 A high-level overview of the system](#12-a-high-level-overview-of-the-system)
-    - [1.3 Complete functional requirements (reasoning/value behind the requirement)](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement)
-    - [1.4 Non-functional requirements](#14-non-functional-requirements)
+- [1. Requirement’s specification](#1-requirements-specification)
+  - [1.1 Purpose of the system](#11-purpose-of-the-system)
+  - [1.2 A high-level overview of the system](#12-a-high-level-overview-of-the-system)
+  - [1.3 Complete functional requirements (reasoning/value behind the requirement)](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement)
+  - [1.4 Non-functional requirements](#14-non-functional-requirements)
 
 ## 1. Requirement’s specification
 
