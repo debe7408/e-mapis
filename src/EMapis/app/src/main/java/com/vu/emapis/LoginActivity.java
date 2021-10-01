@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.vu.tutorialapp.MESSAGE";
+    public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
