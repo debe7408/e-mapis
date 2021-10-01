@@ -8,4 +8,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="teal">#1FDDAF</color>
     <color name="teal_200">#1FDDAF</color>
+    <color name="textColor">#231651</color>
+    <color name="backgroundColor">#A0C4FF</color>
 </resources>

@@ -19,11 +19,17 @@ public class MainScreenActivity extends AppCompatActivity {
         String message = "Hello, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!";
 
         // Capture the layout's TextView and set the string as its text
-        TextView textView = findViewById(R.id.greetingMessage);
+        TextView textView = findViewById(R.id.statText);
         textView.setText(message);
     }
 
     public void showStatistics(View view) {
+        Intent intent = new Intent(MainScreenActivity.this, StatisticsActivity.class);
+        startActivity(intent);
+    }
 
+    public void tripSettings(View view) {
+        Intent intent = new Intent(MainScreenActivity.this, TripSettingsActivity.class);
+        startActivity(intent);
     }
 }
