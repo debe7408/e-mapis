@@ -7,4 +7,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="teal">#1FDDAF</color>
+    <color name="teal_200">#1FDDAF</color>
 </resources>

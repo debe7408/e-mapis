@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /** This method is called when the user clicks "LOGIN" button **/
-    public void sendMessage(View view) {
+    public void onClick(View view) {
 
         Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
         EditText editUsername = (EditText) findViewById(R.id.usernameTextField); // find text from username field
@@ -28,8 +28,4 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message); // Adds extra data to intent. (nameOfData, data)
         startActivity(intent); // Starts the new activity
     }
-
-
-
-
 }
