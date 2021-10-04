@@ -43,15 +43,40 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="120dp"
-        android:layout_marginBottom="16dp"
-        android:textColor="@color/textColor"
+        android:layout_marginBottom="128dp"
         android:ems="10"
         android:hint="@string/edit_password"
         android:importantForAutofill="no"
         android:inputType="textPassword"
+        android:textColor="@color/textColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/RegisterNowText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="New user? Register now!"
+        android:textColor="@color/textColor"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/passwordTextField"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/passwordTextField"
+        app:layout_constraintTop_toBottomOf="@+id/passwordTextField" />
+
+    <Button
+        android:id="@+id/buttonToRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:onClick="onClickRegister"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/RegisterNowText"
+        app:layout_constraintStart_toStartOf="@+id/RegisterNowText"
+        app:layout_constraintTop_toBottomOf="@+id/RegisterNowText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

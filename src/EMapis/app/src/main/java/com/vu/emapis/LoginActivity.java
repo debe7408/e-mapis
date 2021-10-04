@@ -24,8 +24,15 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
         EditText editUsername = (EditText) findViewById(R.id.usernameTextField); // find text from username field
-        String message = editUsername.getText().toString(); // EditText -> String transformation
-        intent.putExtra(EXTRA_MESSAGE, message); // Adds extra data to intent. (nameOfData, data)
+        String username = editUsername.getText().toString(); // EditText -> String transformation
+        intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
         startActivity(intent); // Starts the new activity
+    }
+
+    public void onClickRegister(View view) {
+
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+
     }
 }
