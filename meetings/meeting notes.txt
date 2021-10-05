@@ -48,3 +48,14 @@ Attendants: Julius, Emilis, Deividas.
 Topic(s): Documentation, presentation and database connection.
 Decided on/done: Updated documentation for PSI, started working on PBL presentation and created a connection between our local PgAdmins
 and the database server.
+
+[2020-09-29 14:00-15:30] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Setting up sprint for the week, sharing knowledge, discussing what needs to be done in the short term.
+Decided on/done: We have shared our knowledge on the database server connection set-up so that we would all be on the same page, discussed what is the next goal of our project.
+
+[2020-10-04 19:30-21:00] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Sharing knowledge, writing documentation.
+Decided on/done: We have shared our knowledge about Android studio and the progress of our app so that we would all be on the same page,
+started working on documentation.
