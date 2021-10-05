@@ -1,0 +1,22 @@
+com/vu/emapis/MainScreenActivity.java
+ com.vu.emapis.MainScreenActivity
+com/vu/emapis/databinding/ActivityStatisticsBinding.java
+ com.vu.emapis.databinding.ActivityStatisticsBinding
+com/vu/emapis/BuildConfig.java
+ com.vu.emapis.BuildConfig
+com/vu/emapis/StatisticsActivity.java
+ com.vu.emapis.StatisticsActivity
+com/vu/emapis/TripSettingsActivity.java
+ com.vu.emapis.TripSettingsActivity
+com/vu/emapis/databinding/ActivityRegisterBinding.java
+ com.vu.emapis.databinding.ActivityRegisterBinding
+com/vu/emapis/databinding/ActivityMainScreenBinding.java
+ com.vu.emapis.databinding.ActivityMainScreenBinding
+com/vu/emapis/databinding/ActivityTripSettingsBinding.java
+ com.vu.emapis.databinding.ActivityTripSettingsBinding
+com/vu/emapis/databinding/ActivityLoginBinding.java
+ com.vu.emapis.databinding.ActivityLoginBinding
+com/vu/emapis/LoginActivity.java
+ com.vu.emapis.LoginActivity
+com/vu/emapis/RegisterActivity.java
+ com.vu.emapis.RegisterActivity

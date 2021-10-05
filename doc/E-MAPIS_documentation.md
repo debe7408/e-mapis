@@ -1,26 +1,40 @@
 # Table of contents
+- [Table of contents](#table-of-contents)
 - [1. Requirement’s specification](#1-requirements-specification)
-  - [1.1 Purpose of the system](#11-purpose-of-the-system)
-  - [1.2 A high-level overview of the system](#12-a-high-level-overview-of-the-system)
-  - [1.3 Complete functional requirements (reasoning/value behind the requirement)](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement)
-  - [1.4 Non-functional requirements](#14-non-functional-requirements)
+  - [1.1. Purpose and summary of the project](#11-purpose-and-summary-of-the-project)
+  - [1.2. A high-level overview of the system](#12-a-high-level-overview-of-the-system)
+  - [1.3. Complete functional requirements (reasoning/value behind the requirement)](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement)
+  - [1.4. Non-functional requirements](#14-non-functional-requirements)
 
-## 1. Requirement’s specification
+# 1. Requirement’s specification
 
-### 1.1. Purpose of the system
+## 1.1. Purpose and summary of the project
 
-E-MAPIS is an application that, by collecting data about user's trips, car information and geolocational data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems.  
+E-MAPIS is an application that, by collecting data about user's trips, car information and geolocational data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems. Moreover, the data collected about fuel consumption for specific vehicles will be compared to the data provided in the vehicle's manual.
 
-### 1.2. A high-level overview of the system
+## 1.2. A high-level overview of the system
 
-
-| High-level requirements. User stories |
+| Technical: |
 | --- |
-| As a Customer, I will be able to use this application on my Android device.|
-| As a Customer, I will provide the application with various trip and vehicle data to get statistics about my trips.|
-| As a Customer, I will be given a collection of statistics to help me plan trips better.|
-| As a Customer, I will be able to track my fuel/energy consumption throughout the period of time and this way track expenses|
+| As a Customer, I expect to be able to run the application on my Android device. |
+| As a Customer, I want to create an account to have a layer of security with my data.|
+| As a Customer, I want to have an account so I would not lose my statistical data in case of device failure.|
+||
 
+| Data Collection: |
+| --- |
+| As a Customer, I will provide the application with various trip and vehicle data to get statistics about my trips. |
+| As a Customer, I will be given a collection of statistics to help me plan trips better. |
+| As a Customer, I will be able to track my fuel/energy consumption throughout the period of time and this way track expenses. |
+||
+
+| Functionalities: |
+| --- |
+| As a Customer, I expect to be able to select my vehicle specification from a dropdown menu or add my own. |
+| As a Customer, I expect my vehicle specification to be saved for faster trip start, but easily changed if needed in the settings menu. |
+| As a Customer, I want to be able to pause/resume my trip whenever needed. |
+| As a Customer, I want to have the ability to input new energy/fuel levels if I refueled my vehicle. |
+||
 
 In the flowchart below, an example of how the application from the user's perspective flows is displayed.
 
@@ -28,8 +42,9 @@ In the flowchart below, an example of how the application from the user's perspe
 
 *Flowchart 1. System flow from the user's perspective*
 
+(I will input wireframes here later)
 
-### 1.3. Complete functional requirements (reasoning/value behind the requirement)
+## 1.3. Complete functional requirements (reasoning/value behind the requirement)
 
 The main tool for this app will be a relational database, in particular PostgreSQL with a suitable PostgreSQL geographic information system extension PostGIS. It adds support for geographic objects allowing location queries to be run in SQL. To test if the data was correctly inserted, we will use the QGIS tool. Since the weather and traffic highly impact road trips, public APIs containing this type of information will be used. Elevation will also be taken into account because it impacts energy consumption.
 
@@ -39,7 +54,7 @@ The main tool for this app will be a relational database, in particular PostgreS
 *Flowchart 2. Effective route-finding algorithm*
 
 
-### 1.4. Non-functional requirements
+## 1.4. Non-functional requirements
 
 - **SECURITY**
 
@@ -65,3 +80,12 @@ To ensure that the system can handle the projected increase in user traffic, dat
 - **PERFORMANCE**
 
 The application itself will do minimal calculations in itself because everything is considered to be calculated in the database. Therefore, the application will not use a lot of the device's resources (this is yet to be determined fully when the application is developed). Responding to the user's data input should not take more than 5 seconds, because these are simple queries to the database, while responding to the user's navigation between pannels, will depend mostly on the hardware and it's overload, it should not take more than also 5 seconds with minimal requirements.
+
+- **ARCHITECTUAL DECISIONS**
+
+For the relational database management system - PostgreSQL will be used.
+For the service that is the medium for the connection between the
+application and DBMS server - PostgREST will be used.
+The application will be written using AndroidStudio in Java and XML.
+
+
