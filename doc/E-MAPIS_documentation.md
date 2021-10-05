@@ -2,9 +2,8 @@
 - [Table of contents](#table-of-contents)
 - [1. Requirement’s specification](#1-requirements-specification)
   - [1.1. Purpose and summary of the project](#11-purpose-and-summary-of-the-project)
-  - [1.2. A high-level overview of the system](#12-a-high-level-overview-of-the-system)
-  - [1.3. Complete functional requirements (reasoning/value behind the requirement)](#13-complete-functional-requirements-reasoningvalue-behind-the-requirement)
-  - [1.4. Non-functional requirements](#14-non-functional-requirements)
+  - [1.2. A high-level overview of the system and functional requirements.](#12-a-high-level-overview-of-the-system-and-functional-requirements)
+  - [1.3. Non-functional requirements](#13-non-functional-requirements)
 
 # 1. Requirement’s specification
 
@@ -12,7 +11,7 @@
 
 E-MAPIS is an application that, by collecting data about user's trips, car information and geolocational data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems. Moreover, the data collected about fuel consumption for specific vehicles will be compared to the data provided in the vehicle's manual.
 
-## 1.2. A high-level overview of the system
+## 1.2. A high-level overview of the system and functional requirements.
 
 | Technical: |
 | --- |
@@ -44,26 +43,11 @@ In the flowchart below, an example of how the application from the user's perspe
 
 (I will input wireframes here later)
 
-## 1.3. Complete functional requirements (reasoning/value behind the requirement)
-
-The main tool for this app will be a relational database, in particular PostgreSQL with a suitable PostgreSQL geographic information system extension PostGIS. It adds support for geographic objects allowing location queries to be run in SQL. To test if the data was correctly inserted, we will use the QGIS tool. Since the weather and traffic highly impact road trips, public APIs containing this type of information will be used. Elevation will also be taken into account because it impacts energy consumption.
-
-
-![Flowchart 2. Effective route-finding algorithm](/assets/images/Flowchart2.png)
-
-*Flowchart 2. Effective route-finding algorithm*
-
-
-## 1.4. Non-functional requirements
+## 1.3. Non-functional requirements
 
 - **SECURITY**
 
 The app will be using HTTPS requests to ensure data encryption. Sensitive geolocation data will be collected, to combat the privacy risk of such data collection, we will be cutting short parts of the trip (the beginning, the ending) and this way, even if there is a data breach, no precise locations would be revealed. There will also be an account creation step to have another layer of security. 
-
-- **CAPACITY** (NEED TO CHANGE THIS W.I.P)
-
- Implementing the Vilnius map in the database will take up to 500 MB of storage at most. On the other hand, the application will be collecting GIS data, fuel consumption, and other details from the user, so storage may be in shortage, in which case it will be increased. In the future, depending on the increasing volume demand, storage will be increased to meet such demands.
-
 
 - **COMPATIBILITY**
 
@@ -87,5 +71,3 @@ For the relational database management system - PostgreSQL will be used.
 For the service that is the medium for the connection between the
 application and DBMS server - PostgREST will be used.
 The application will be written using AndroidStudio in Java and XML.
-
-
