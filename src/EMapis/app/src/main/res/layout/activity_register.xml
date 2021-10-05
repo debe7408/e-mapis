@@ -17,6 +17,7 @@
         android:inputType="textPersonName"
         android:minHeight="48dp"
         android:textColor="@color/textColor"
+        android:textColorHint="@color/hintTextColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,6 +33,7 @@
         android:inputType="textPassword"
         android:minHeight="48dp"
         android:textColor="@color/textColor"
+        android:textColorHint="@color/hintTextColor"
         app:layout_constraintEnd_toEndOf="@+id/registerUsernameText"
         app:layout_constraintStart_toStartOf="@+id/registerUsernameText"
         app:layout_constraintTop_toBottomOf="@+id/registerUsernameText" />
@@ -46,6 +48,7 @@
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
         android:textColor="@color/textColor"
+        android:textColorHint="@color/hintTextColor"
         app:layout_constraintEnd_toEndOf="@+id/registerPasswordText"
         app:layout_constraintStart_toStartOf="@+id/registerPasswordText"
         app:layout_constraintTop_toBottomOf="@+id/registerPasswordText" />
@@ -58,6 +61,7 @@
         android:onClick="onClick"
         android:text="Register!"
         android:textColor="@color/textColor"
+        android:backgroundTint="@color/buttonColor"
         app:layout_constraintEnd_toEndOf="@+id/registerEmailText"
         app:layout_constraintStart_toStartOf="@+id/registerEmailText"
         app:layout_constraintTop_toBottomOf="@+id/registerEmailText" />

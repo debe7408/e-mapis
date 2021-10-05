@@ -9,5 +9,7 @@
     <color name="teal">#1FDDAF</color>
     <color name="teal_200">#1FDDAF</color>
     <color name="textColor">#231651</color>
-    <color name="backgroundColor">#A0C4FF</color>
+    <color name="backgroundColor">#FFFFFFFF</color>
+    <color name="buttonColor">#7FE1AD</color>
+    <color name="hintTextColor">#989EB1</color>
 </resources>
