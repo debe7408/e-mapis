@@ -41,7 +41,11 @@ In the flowchart below, an example of how the application from the user's perspe
 
 *Flowchart 1. System flow from the user's perspective*
 
-(I will input wireframes here later)
+Listed below are a wireframe represintation of our the application side will work from the user's perspective
+
+![Wireframe Diagram 1. Visual user's pespective](/assets/images/WireframeDiagram.png)
+*Wireframe 1. Visual user's perspective*
+
 
 ## 1.3. Non-functional requirements
 
