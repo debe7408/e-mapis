@@ -47,7 +47,8 @@ The app will be using HTTPS requests to ensure data encryption. Sensitive geoloc
 
 - **CAPACITY** (NEED TO CHANGE THIS W.I.P)
 
-For the time being, E-MAPIS will not store a big amount of data. Implementing the Vilnius map in the database will take up from 3-10 GB of memory. On the other hand, the application will be collecting GIS data, fuel consumption, and other details from the user, so storage may be in shortage, in which case it will be increased. In the future, depending on the increasing volume demand, storage will be increased to meet such demands.
+ Implementing the Vilnius map in the database will take up to 500 MB of storage at most. On the other hand, the application will be collecting GIS data, fuel consumption, and other details from the user, so storage may be in shortage, in which case it will be increased. In the future, depending on the increasing volume demand, storage will be increased to meet such demands.
+
 
 - **COMPATIBILITY**
 
