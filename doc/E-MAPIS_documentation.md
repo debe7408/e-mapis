@@ -9,7 +9,7 @@
 
 ## 1.1. Purpose and summary of the project
 
-E-MAPIS is an application that, by collecting data about user's trips, car information and geolocational data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems. Moreover, the data collected about fuel consumption for specific vehicles will be compared to the data provided in the vehicle's manual.
+E-MAPIS is an application that, by collecting data about user's trips, car information, and geolocational data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems. Moreover, the data collected about fuel consumption for specific vehicles will be compared to the data provided in the vehicle's manual.
 
 ## 1.2. A high-level overview of the system and functional requirements.
 
@@ -30,7 +30,7 @@ E-MAPIS is an application that, by collecting data about user's trips, car infor
 | Functionalities: |
 | --- |
 | As a Customer, I expect to be able to select my vehicle specification from a dropdown menu or add my own. |
-| As a Customer, I expect my vehicle specification to be saved for faster trip start, but easily changed if needed in the settings menu. |
+| As a Customer, I expect my vehicle specification to be saved for a faster trip start, but easily changed if needed in the settings menu. |
 | As a Customer, I want to be able to pause/resume my trip whenever needed. |
 | As a Customer, I want to have the ability to input new energy/fuel levels if I refueled my vehicle. |
 ||
@@ -41,7 +41,7 @@ In the flowchart below, an example of how the application from the user's perspe
 
 *Flowchart 1. System flow from the user's perspective*
 
-Listed below are a wireframe represintation of our the application side will work from the user's perspective
+Listed below are a wireframe representation of our the application side will work from the user's perspective
 
 ![Wireframe Diagram 1. Visual user's pespective](/assets/images/WireframeDiagram.png)
 *Wireframe 1. Visual user's perspective*
@@ -55,7 +55,7 @@ The app will be using HTTPS requests to ensure data encryption. Sensitive geoloc
 
 - **COMPATIBILITY**
 
-Application's minimum API level required to run the app is API level 22 or Android 5.1, since, by AndroidStudio statistics, 92.3% of devices can run it. The device to run the application will have to have at least 1.5 GB RAM memory to make the Android system work efficiently and fast.
+Application's minimum API level required to run the app is API level 22 or Android 5.1, since, by AndroidStudio statistics, 92.3% of devices can run it. The device to run the application will have to have at least 1.5 GB RAM to make the Android system work efficiently and fast.
 
 - **USABILITY** 
 
@@ -67,9 +67,9 @@ To ensure that the system can handle the projected increase in user traffic, dat
 
 - **PERFORMANCE**
 
-The application itself will do minimal calculations in itself because everything is considered to be calculated in the database. Therefore, the application will not use a lot of the device's resources (this is yet to be determined fully when the application is developed). Responding to the user's data input should not take more than 5 seconds, because these are simple queries to the database, while responding to the user's navigation between pannels, will depend mostly on the hardware and it's overload, it should not take more than also 5 seconds with minimal requirements.
+The application itself will do minimal calculations in itself because everything is considered to be calculated in the database. Therefore, the application will not use a lot of the device's resources (this is yet to be determined fully when the application is developed). Responding to the user's data input should not take more than 5 seconds, because these are simple queries to the database, while responding to the user's navigation between pannels, will depend mostly on the hardware and its overload, it should not take more than also 5 seconds with minimal requirements.
 
-- **ARCHITECTUAL DECISIONS**
+- **ARCHITECTURAL DECISIONS**
 
 For the relational database management system - PostgreSQL will be used.
 For the service that is the medium for the connection between the
