@@ -9,7 +9,7 @@
 
 ## 1.1. Purpose and summary of the project
 
-E-MAPIS is an application that, by collecting data about user's trips, car information, and geolocational data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems. Moreover, the data collected about fuel consumption for specific vehicles will be compared to the data provided in the vehicle's manual.
+E-MAPIS is an application that, by collecting data about user's trips, car information, and geolocation data, delivers statistics for fuel or energy consumption for vehicles, and e-vehicles. By storing the statistics, the user will be able to view them at a later time to help determine and estimate the amount of fuel or energy that the trip will require. The application seeks to provide the user with stress-free planning of the trips and avoid unnecessary problems. Moreover, the data collected about fuel consumption for specific vehicles will be compared to the data provided in the vehicle's manual.
 
 ## 1.2. A high-level overview of the system and functional requirements.
 
