@@ -55,4 +55,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statButton" />
 
+    <Button
+        android:id="@+id/locationButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="260dp"
+        android:text="GET CURRENT LOCATION"
+        android:textColor="@color/textColor"
+        android:backgroundTint="@color/buttonColor"
+        android:onClick="LocationActivity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tripButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
