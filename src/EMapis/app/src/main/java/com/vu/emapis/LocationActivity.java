@@ -154,8 +154,8 @@ public class LocationActivity extends AppCompatActivity {
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
             txtLocationResult.setText(
-                    "Lat: " + mCurrentLocation.getLatitude() + ", " +
-                            "Lng: " + mCurrentLocation.getLongitude()
+                    "Latitude: " + mCurrentLocation.getLatitude() + ", " +
+                            "Longitude: " + mCurrentLocation.getLongitude()
             );
 
             // location last updated time

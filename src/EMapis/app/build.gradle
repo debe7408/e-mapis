@@ -44,10 +44,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.5'
 
     // location play services
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     // dexter runtime permissions
-    implementation 'com.karumi:dexter:4.2.0'
+    implementation 'com.karumi:dexter:6.2.2'
 
     // ButterKnife view binding
     implementation 'com.jakewharton:butterknife:10.0.0'
