@@ -59,3 +59,9 @@ Attendants: Julius, Emilis, Deividas.
 Topic(s): Sharing knowledge, writing documentation.
 Decided on/done: We have shared our knowledge about Android studio and the progress of our app so that we would all be on the same page,
 started working on documentation.
+
+[2020-10-11 20:00-21:50] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Sharing knowledge, presentation, ER diagram of tables and relations.
+Decided on/done: We have shared our knowledge about the new features implemented into our app (non-working gps code), discussed on the system's architecture, 
+worked on the slides of our presentation on the 14th, discussed and create a rough draft of our ER diagram of tables and relations.
