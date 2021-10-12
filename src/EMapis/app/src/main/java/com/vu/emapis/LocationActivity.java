@@ -97,7 +97,7 @@ public class LocationActivity extends AppCompatActivity {
         restoreValuesFromBundle(savedInstanceState);
     }
 
-    private void init() {
+    private void init() {  //initialize all the location related clients
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
@@ -149,7 +149,6 @@ public class LocationActivity extends AppCompatActivity {
 
     /**
      * Update the UI displaying the location data
-     * and toggling the buttons
      */
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
@@ -227,7 +226,7 @@ public class LocationActivity extends AppCompatActivity {
     @OnClick(R.id.btn_start_location_updates)
     public void startLocationButtonClick() {
         // Requesting ACCESS_FINE_LOCATION using Dexter library
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
                     @Override
