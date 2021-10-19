@@ -11,6 +11,12 @@ public class Post {
     private int userId;
     private boolean done;
 
+    public Post(String text, String due, boolean done) {
+        this.text = text;
+        this.due = due;
+        this.done = done;
+    }
+
     public int getUserId() {
         return userId;
     }

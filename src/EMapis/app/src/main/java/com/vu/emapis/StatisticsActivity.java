@@ -17,6 +17,8 @@ public class StatisticsActivity extends AppCompatActivity {
 
     private TextView textViewResult;
 
+    private JsonPlaceHolderApi jsonPlaceHolderApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +33,13 @@ public class StatisticsActivity extends AppCompatActivity {
                 .build();
 
         //Interface instance
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+        //getPosts();
+        createPost();
+    }
+
+    private void getPosts() {
         Call<List<Post>> call = jsonPlaceHolderApi.getPosts();
 
         call.enqueue(new Callback<List<Post>>() {
@@ -64,5 +72,39 @@ public class StatisticsActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private void createPost() {
+        Post post = new Post("psi task", "October 24th", true);
+
+        Call<Post> call = jsonPlaceHolderApi.createPost(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (response.code() != 200) {
+                    textViewResult.setText("Check connection");
+                }
+
+                Post postResponce = response.body();
+
+                String content = "";
+                content += "Code: " + response.code() + "\n";
+                content += "ID: " + postResponce.getUserId() + "\n";
+                content += "Is done? " + postResponce.isDone() + "\n";
+                content += "Text: " + postResponce.getText() + "\n";
+                content += "Due: " + postResponce.getDue() + "\n\n";
+
+                textViewResult.setText(content);
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+            }
+        });
+
     }
 }
