@@ -6,28 +6,24 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".LocationActivity">
 
     <Button
         android:id="@+id/btn_start_location_updates"
+        android:textColor="@color/textColor"
+        android:backgroundTint="@color/buttonColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="start location updates" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal"
-        android:text="Location updates will be received only when app is foreground" />
-
-    <TextView
         android:id="@+id/location_result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:textColor="#FFF"
+        android:textColor="#000"
         android:textSize="18dp" />
 
     <TextView
@@ -35,5 +31,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:textColor="#000"
         android:textSize="11dp" />
 </LinearLayout>
