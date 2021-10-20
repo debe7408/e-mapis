@@ -32,7 +32,7 @@ android {
 
 dependencies {
 
-    // location play services
+    // Google play location services
     implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     // dexter runtime permissions
