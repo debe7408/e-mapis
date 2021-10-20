@@ -42,6 +42,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.function.ToDoubleBiFunction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,25 +51,22 @@ import butterknife.OnClick;
 
 public class LocationActivity extends AppCompatActivity {
 
+    // Longitude and Latitude text view
     @BindView(R.id.location_result)
     TextView txtLocationResult;
-
+    // Time of latest update text view
     @BindView(R.id.updated_on)
     TextView txtUpdatedOn;
-
+    // Button to start the updates
     @BindView(R.id.btn_start_location_updates)
     Button btnStartUpdates;
 
     // location last updated time
     private String mLastUpdateTime;
-
     // location updates interval - 10sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-
     // fastest updates interval - 5 sec
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
-
-
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
@@ -87,20 +85,33 @@ public class LocationActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initLib();
-
     }
 
     private void initLib() {  //initialize all the location related clients
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mSettingsClient = LocationServices.getSettingsClient(this); //this API makes it easy for an app to ensure that the device's system settings are properly configured for the app's location needs.
 
+        /*
+         * The fused location provider is a location API in Google Play services,
+         * that intelligently combines different signals to provide the location information that the application needs.
+         */
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        /*
+         * SettingsClient API makes it easy for the application to ensure that the device's system settings are properly configured for the app's location needs.
+         */
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+
+        // Used for receiving notifications from FusedLocationClient API about location changes.
         mLocationCallback = new LocationCallback() {
+
+            // Called when device location information is available.
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                // location is received
+
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+                //TODO using locationResults.getLocations().toString() write everything to file for now
 
                 updateLocation();
             }
@@ -118,20 +129,45 @@ public class LocationActivity extends AppCompatActivity {
         mLocationSettingsRequest = builder.build();
     }
 
-
     /**
      * Update the UI displaying the location data
      */
     private void updateLocation() {
+        // If the current location is NOT null, we get the latitude and longitude.
         if (mCurrentLocation != null) {
-            txtLocationResult.setText(
-                    "Latitude: " + mCurrentLocation.getLatitude() + ", " +
-                            "Longitude: " + mCurrentLocation.getLongitude()
-            );
+            txtLocationResult.setText("Latitude: " + mCurrentLocation.getLatitude() + ", " + "Longitude: " + mCurrentLocation.getLongitude());
 
             // location last updated time
             txtUpdatedOn.setText("Last updated on: " + mLastUpdateTime);
         }
+    }
+
+    @OnClick(R.id.btn_start_location_updates)
+    public void startLocationButtonClick() {
+        // Requesting ACCESS_FINE_LOCATION using Dexter library
+        Dexter.withContext(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        mRequestingLocationUpdates = true;
+                        startLocationUpdates();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (response.isPermanentlyDenied()) {
+                            // open device settings when permission denied
+                            openSettings();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) { //fix
+                        token.continuePermissionRequest();
+                    }
+                }).check();
     }
 
     /**
@@ -157,33 +193,6 @@ public class LocationActivity extends AppCompatActivity {
                 });
     }
 
-    @OnClick(R.id.btn_start_location_updates)
-    public void startLocationButtonClick() {
-        // Requesting ACCESS_FINE_LOCATION using Dexter library
-        Dexter.withContext(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        mRequestingLocationUpdates = true;
-                        startLocationUpdates();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        if (response.isPermanentlyDenied()) {
-                            // open device settings when permission denied
-                            openSettings();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) { //fix
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-    }
-
     private void openSettings() { //opens settings to add permission
         Intent intent = new Intent();
         intent.setAction(
@@ -194,5 +203,4 @@ public class LocationActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
 }
