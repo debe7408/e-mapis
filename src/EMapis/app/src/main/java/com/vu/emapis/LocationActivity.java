@@ -80,6 +80,9 @@ public class LocationActivity extends AppCompatActivity {
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
 
+    // lat and log vars
+    private double latitude, longitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +131,9 @@ public class LocationActivity extends AppCompatActivity {
                     "Latitude: " + mCurrentLocation.getLatitude() + ", " +
                             "Longitude: " + mCurrentLocation.getLongitude()
             );
+
+            longitude = mCurrentLocation.getLongitude();
+            latitude = mCurrentLocation.getLongitude();
 
             // location last updated time
             txtUpdatedOn.setText("Last updated on: " + mLastUpdateTime);
@@ -194,5 +200,9 @@ public class LocationActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+
+
+
 
 }

@@ -35,8 +35,8 @@ public class StatisticsActivity extends AppCompatActivity {
         //Interface instance
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        //getPosts();
-        createPost();
+        getPosts();
+        //createPost();
     }
 
     private void getPosts() {
