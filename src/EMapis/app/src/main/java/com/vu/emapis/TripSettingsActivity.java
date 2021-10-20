@@ -32,7 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
 
     TextView seekBarLabel;
     TextView test;
@@ -64,6 +64,10 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
     }
 
+    public void startTheTrip(View view) {
+        Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+        startActivity(intent);
+    }
 
     // Gets called when an item has been selected
     @Override
