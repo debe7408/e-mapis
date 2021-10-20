@@ -14,6 +14,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class StatisticsActivity extends AppCompatActivity {
+
     private TextView textViewResult;
 
     @Override
@@ -22,28 +23,33 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
 
         textViewResult = findViewById(R.id.text_view_result);
+
+        // Retrofit builder
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://193.219.91.103:3906/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        //Interface instance
         JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
         Call<List<Post>> call = jsonPlaceHolderApi.getPosts();
 
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
+
+                //Checking for the response
+                if (response.code() != 200) {
+                    textViewResult.setText("Check connection");
                 }
 
+                //Put data into textview
                 List<Post> posts = response.body();
 
                 for (Post post: posts) {
                     String content = "";
                     content += "ID: " + post.getUserId() + "\n";
-                    content += "Is done? " + post.getDone() + "\n";
+                    content += "Is done? " + post.isDone() + "\n";
                     content += "Text: " + post.getText() + "\n";
                     content += "Due: " + post.getDue() + "\n\n";
 
@@ -56,6 +62,7 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onFailure(Call<List<Post>> call, Throwable t) {
                 textViewResult.setText(t.getMessage());
             }
+
         });
     }
 }

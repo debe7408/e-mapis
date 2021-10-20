@@ -3,13 +3,13 @@ package com.vu.emapis;
 import com.google.gson.annotations.SerializedName;
 
 public class Post {
-    private int userId;
-    private String done;
 
     @SerializedName("task")
     private String text;
 
     private String due;
+    private int userId;
+    private boolean done;
 
     public int getUserId() {
         return userId;
@@ -19,11 +19,11 @@ public class Post {
         this.userId = userId;
     }
 
-    public String getDone() {
+    public boolean isDone() {
         return done;
     }
 
-    public void setDone(String done) {
+    public void setDone(boolean done) {
         this.done = done;
     }
 
