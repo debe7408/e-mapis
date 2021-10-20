@@ -40,12 +40,21 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class LocationActivity extends AppCompatActivity {
@@ -82,6 +91,8 @@ public class LocationActivity extends AppCompatActivity {
 
     // lat and log vars
     private double latitude, longitude;
+
+    private JsonPlaceHolderApi jsonPlaceHolderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +144,7 @@ public class LocationActivity extends AppCompatActivity {
             );
 
             longitude = mCurrentLocation.getLongitude();
-            latitude = mCurrentLocation.getLongitude();
+            latitude = mCurrentLocation.getLatitude();
 
             // location last updated time
             txtUpdatedOn.setText("Last updated on: " + mLastUpdateTime);
@@ -201,8 +212,47 @@ public class LocationActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.qusYUABWSUHBopNCItHAvrW6SHJe1BAoKqXqo-E26Zs";
+
+    @BindView(R.id.sent_location)
+    TextView txtSentLocation;
+
+    @OnClick(R.id.btn_send_location)
+    public void sendLocationButtonClick() {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://193.219.91.103:3906/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+        createPost();
+    }
+
+    private void createPost() {
+
+        Call<Post> call = jsonPlaceHolderApi.createPost("13.37", "Bearer " + token);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, retrofit2.Response<Post> response) {
+
+                if (response.code() != 200) {
+                    Toast.makeText(LocationActivity.this, "Nicht", Toast.LENGTH_SHORT).show();
+                }
 
 
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                txtSentLocation.setText(t.getMessage());
+            }
+        });
+
+    }
 
 
 }
