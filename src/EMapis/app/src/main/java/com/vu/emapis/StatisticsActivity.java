@@ -74,7 +74,7 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
-    private void createPost() {
+    /*private void createPost() {
         Post post = new Post("psi task", "October 24th", true);
 
         Call<Post> call = jsonPlaceHolderApi.createPost(post);
@@ -106,5 +106,5 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
 
-    }
+    }*/
 }

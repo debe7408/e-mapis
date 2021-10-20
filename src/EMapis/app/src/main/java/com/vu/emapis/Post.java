@@ -2,6 +2,8 @@ package com.vu.emapis;
 
 import com.google.gson.annotations.SerializedName;
 
+import retrofit2.http.Body;
+
 public class Post {
 
     @SerializedName("task")
@@ -11,10 +13,29 @@ public class Post {
     private int userId;
     private boolean done;
 
+    private double latitude;
+    private double longitude;
+
     public Post(String text, String due, boolean done) {
         this.text = text;
         this.due = due;
         this.done = done;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public int getUserId() {
