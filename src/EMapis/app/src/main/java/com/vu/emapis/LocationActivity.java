@@ -2,24 +2,25 @@ package com.vu.emapis;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -27,12 +28,8 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -40,22 +37,17 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 
 public class LocationActivity extends AppCompatActivity {
 
@@ -68,6 +60,9 @@ public class LocationActivity extends AppCompatActivity {
     @BindView(R.id.btn_start_location_updates)
     Button btnStartUpdates;
 
+    @BindView(R.id.sent_location)
+    TextView txtSentLocation;
+
     // location last updated time
     private String mLastUpdateTime;
 
@@ -77,6 +72,8 @@ public class LocationActivity extends AppCompatActivity {
     // fastest updates interval - 5 sec
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
+    // postURL
+    private final String postURL = "http://193.219.91.103:3906/rpc/points_insert";
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -90,7 +87,7 @@ public class LocationActivity extends AppCompatActivity {
     private Boolean mRequestingLocationUpdates;
 
     // lat and log vars
-    private double latitude, longitude;
+    private double latitude, longitude, altitude;
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
 
@@ -102,6 +99,16 @@ public class LocationActivity extends AppCompatActivity {
 
         initLib();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     private void initLib() {  //initialize all the location related clients
@@ -132,22 +139,21 @@ public class LocationActivity extends AppCompatActivity {
         mLocationSettingsRequest = builder.build();
     }
 
-
     /**
      * Update the UI displaying the location data
      */
+
+    @SuppressLint("SetTextI18n")
     private void updateLocation() {
         if (mCurrentLocation != null) {
             txtLocationResult.setText(
                     "Latitude: " + mCurrentLocation.getLatitude() + ", " +
-                            "Longitude: " + mCurrentLocation.getLongitude()
-            );
-
-            longitude = mCurrentLocation.getLongitude();
-            latitude = mCurrentLocation.getLatitude();
+                            "Longitude: " + mCurrentLocation.getLongitude() + " Altitude: " + mCurrentLocation.getAltitude() + " Speed: " + mCurrentLocation.getSpeed());
 
             // location last updated time
             txtUpdatedOn.setText("Last updated on: " + mLastUpdateTime);
+
+            sendPostRequest(); //TODO UNCOMMENT THIS TO SEND X,Y,Z AUTOMATICALLY
         }
     }
 
@@ -159,7 +165,6 @@ public class LocationActivity extends AppCompatActivity {
     private void startLocationUpdates() {
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-                    @SuppressLint("MissingPermission")
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
 
@@ -201,7 +206,7 @@ public class LocationActivity extends AppCompatActivity {
                 }).check();
     }
 
-    private void openSettings() { //opens settings to add permission
+    private void openSettings() { // Opens settings to add permissions.
         Intent intent = new Intent();
         intent.setAction(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -212,47 +217,48 @@ public class LocationActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.qusYUABWSUHBopNCItHAvrW6SHJe1BAoKqXqo-E26Zs";
 
-    @BindView(R.id.sent_location)
-    TextView txtSentLocation;
-
+    // when SEND_LOCATION button is clicked.
     @OnClick(R.id.btn_send_location)
     public void sendLocationButtonClick() {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://193.219.91.103:3906/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-
-        createPost();
+        sendPostRequest();
     }
 
-    private void createPost() {
+    // Method for sending post requests.
+    private void sendPostRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
-        Call<Post> call = jsonPlaceHolderApi.createPost("13.37", "Bearer " + token);
+        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
+        try {
 
-        call.enqueue(new Callback<Post>() {
+            postData.put("trip_id", 1);
+            postData.put("x", mCurrentLocation.getLatitude());
+            postData.put("y", mCurrentLocation.getLongitude());
+            postData.put("z", mCurrentLocation.getAltitude());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postURL, postData, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(Call<Post> call, retrofit2.Response<Post> response) {
-
-                if (response.code() != 200) {
-                    Toast.makeText(LocationActivity.this, "Nicht", Toast.LENGTH_SHORT).show();
-                }
-
-
-
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
             }
-
+        }, new Response.ErrorListener() {
             @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-                txtSentLocation.setText(t.getMessage());
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.qusYUABWSUHBopNCItHAvrW6SHJe1BAoKqXqo-E26Zs");
+                return headers;
+            }
+        };
 
+        queue.add(jsonObjectRequest);
     }
-
-
 }

@@ -56,10 +56,10 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 for (Post post: posts) {
                     String content = "";
-                    content += "ID: " + post.getUserId() + "\n";
-                    content += "Is done? " + post.isDone() + "\n";
-                    content += "Text: " + post.getText() + "\n";
-                    content += "Due: " + post.getDue() + "\n\n";
+                    content += "ID:" + post.getUserId() + "\n";
+                    content += "Is done?" + post.isDone() + "\n";
+                    content += "Text: "+ post.getText() + "\n";
+                    content += "Due: "+ post.getDue() + "\n\n";
 
                     textViewResult.append(content);
                 }
