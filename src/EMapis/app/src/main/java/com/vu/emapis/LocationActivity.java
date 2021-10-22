@@ -60,8 +60,8 @@ public class LocationActivity extends AppCompatActivity {
     @BindView(R.id.btn_start_location_updates)
     Button btnStartUpdates;
 
-    @BindView(R.id.sent_location)
-    TextView txtSentLocation;
+    @BindView(R.id.btn_stop_location_updates)
+    Button btnStopUpdates;
 
     // location last updated time
     private String mLastUpdateTime;
@@ -86,11 +86,6 @@ public class LocationActivity extends AppCompatActivity {
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
 
-    // lat and log vars
-    private double latitude, longitude, altitude;
-
-    private JsonPlaceHolderApi jsonPlaceHolderApi;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,10 +96,11 @@ public class LocationActivity extends AppCompatActivity {
 
     }
 
-    @Override
+    @OnClick(R.id.btn_stop_location_updates)
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
+        Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
     }
 
     private void stopLocationUpdates() {
@@ -217,12 +213,6 @@ public class LocationActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-    // when SEND_LOCATION button is clicked.
-    @OnClick(R.id.btn_send_location)
-    public void sendLocationButtonClick() {
-        sendPostRequest();
-    }
 
     // Method for sending post requests.
     private void sendPostRequest() {

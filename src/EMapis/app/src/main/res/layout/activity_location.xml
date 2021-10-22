@@ -35,19 +35,12 @@
         android:textSize="11dp" />
 
     <Button
-        android:id="@+id/btn_send_location"
+        android:id="@+id/btn_stop_location_updates"
         android:textColor="@color/textColor"
         android:backgroundTint="@color/buttonColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="send location to db" />
+        android:text="stop location updates" />
 
-    <TextView
-        android:id="@+id/sent_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:textColor="#000"
-        android:textSize="11dp" />
 </LinearLayout>
