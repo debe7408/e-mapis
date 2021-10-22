@@ -21,8 +21,10 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class VolleyActivityTest extends AppCompatActivity {
+public class VolleyActivity extends AppCompatActivity {
 
     private TextView get_response_text, post_response_text;
     private String url ="http://193.219.91.103:3906/todos";
@@ -31,7 +33,7 @@ public class VolleyActivityTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_volley_test);
+        setContentView(R.layout.activity_volley);
 
         get_response_text = (TextView) findViewById(R.id.get_response_text);
         post_response_text = (TextView) findViewById(R.id.post_response_text);
@@ -59,21 +61,16 @@ public class VolleyActivityTest extends AppCompatActivity {
 
         JSONObject postData = new JSONObject();
         try {
-            //postData.put("id", "222");
-            //postData.put("done", true);
-            //postData.put("task", "Send POST REQUEST from android");
-           //postData.put("due", "2021-10-14T00:00:00+03:00");
-            postData.put("trip_id", 2);
-            postData.put("x", 54.123);
-            postData.put("y", 12.543);
-            postData.put("z", 1.2345);
-
+            postData.put("id", ThreadLocalRandom.current().nextInt(0, 100));
+            postData.put("done", true);
+            postData.put("task", "Send POST REQUEST from android");
+            postData.put("due", "2021-10-14T00:00:00+03:00");
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url2, postData, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 System.out.println(response);

@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EMapis">
         <activity
-            android:name=".VolleyActivityTest"
+            android:name=".VolleyActivity"
             android:exported="false" />
         <activity
             android:name=".LocationActivity"
@@ -29,9 +29,6 @@
             android:exported="true" />
         <activity
             android:name=".OngoingTripActivity"
-            android:exported="true" />
-        <activity
-            android:name=".StatisticsActivity"
             android:exported="true" />
         <activity
             android:name=".MainScreenActivity"

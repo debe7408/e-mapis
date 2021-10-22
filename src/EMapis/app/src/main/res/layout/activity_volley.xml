@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    tools:context=".VolleyActivityTest">
+    tools:context=".VolleyActivity">
 
     <TextView
         android:id="@+id/statText2"

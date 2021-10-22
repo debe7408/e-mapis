@@ -34,14 +34,8 @@ import com.google.android.gms.tasks.Task;
 
 public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
 
-    TextView seekBarLabel;
     TextView test;
     String[] vehicles = new String[] {"BMW","Golf","Bolto paspirtukas"}; // String array for testing purposes ( Will be replaced with a database later ).
-
-    //GPS variables
-    Button button;
-    TextView latitude, longitude;
-    FusedLocationProviderClient fusedLocationProviderClient; //google api get location
 
 
     @Override
