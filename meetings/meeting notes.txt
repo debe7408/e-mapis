@@ -65,3 +65,8 @@ Attendants: Julius, Emilis, Deividas.
 Topic(s): Sharing knowledge, presentation, ER diagram of tables and relations.
 Decided on/done: We have shared our knowledge about the new features implemented into our app (non-working gps code), discussed on the system's architecture, 
 worked on the slides of our presentation on the 14th, discussed and create a rough draft of our ER diagram of tables and relations.
+
+[2020-10-21 14:10-15:00] IRL
+Attendants: Juius, Emilis, Deividas
+Topic(s): Code review, next week's planning, documentation discussion.
+Decided on/done: We have decided on how we will split work among us for the next week, as we have a presentation and PSI documentation to do. We will be trying to send coordinates of ongoing trips to our database automatically, without additional user input. After that, we will prepare for the PSI assignment and by the end of the week, finalize our presentation.
