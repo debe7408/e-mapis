@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,9 @@ public class LocationActivity extends AppCompatActivity {
     @BindView(R.id.updated_on)
     TextView txtUpdatedOn;
 
+    @BindView(R.id.trip_id_insert)
+    EditText trip_id;
+
     @BindView(R.id.btn_start_location_updates)
     Button btnStartUpdates;
 
@@ -65,6 +69,8 @@ public class LocationActivity extends AppCompatActivity {
 
     // location last updated time
     private String mLastUpdateTime;
+
+    private boolean buttonUpdatePressed = false;
 
     // location updates interval - 10sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
@@ -91,20 +97,28 @@ public class LocationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         ButterKnife.bind(this);
-
         initLib();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(buttonUpdatePressed) {
+            startLocationUpdates();
+        }
     }
 
     @OnClick(R.id.btn_stop_location_updates)
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
-        Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
     }
 
     private void stopLocationUpdates() {
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        if(buttonUpdatePressed) {
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+            Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initLib() {  //initialize all the location related clients
@@ -177,6 +191,11 @@ public class LocationActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_start_location_updates)
     public void startLocationButtonClick() {
+
+        if(!buttonUpdatePressed && btnStartUpdates.isPressed()) {
+            buttonUpdatePressed = true;
+        }
+
         // Requesting ACCESS_FINE_LOCATION using Dexter library
         Dexter.withContext(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -221,7 +240,7 @@ public class LocationActivity extends AppCompatActivity {
         JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
         try {
 
-            postData.put("trip_id", 1);
+            postData.put("trip_id", Integer.parseInt(trip_id.getText().toString()));
             postData.put("x", mCurrentLocation.getLatitude());
             postData.put("y", mCurrentLocation.getLongitude());
             postData.put("z", mCurrentLocation.getAltitude());
