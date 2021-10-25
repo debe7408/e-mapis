@@ -97,6 +97,7 @@ public class LocationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         ButterKnife.bind(this);
+
         initLib();
     }
 
@@ -204,6 +205,7 @@ public class LocationActivity extends AppCompatActivity {
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         mRequestingLocationUpdates = true;
                         startLocationUpdates();
+
                     }
 
                     @Override

@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class VolleyActivity extends AppCompatActivity {
 
     private TextView get_response_text, post_response_text;
-    private String url ="http://193.219.91.103:3906/todos";
+    private String url ="http://193.219.91.103:3906/points";
     private String url2 = "http://193.219.91.103:3906/rpc/points_insert";
 
     @Override
