@@ -1,9 +1,9 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -50,7 +52,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class OngoingTripActivity extends AppCompatActivity {
 
@@ -61,12 +62,14 @@ public class OngoingTripActivity extends AppCompatActivity {
     @BindView(R.id.tripStatus)
     TextView tripStatus;
 
-
     @BindView(R.id.btn_pause_trip)
     Button btnPauseTrip;
 
     @BindView(R.id.btn_stop_trip)
     Button btnStopTrip;
+
+    @BindView(R.id.btn_recharge)
+    Button btnRecharge;
 
     // location last updated time
     private String mLastUpdateTime;
@@ -91,6 +94,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
+    private View view;
 
 
     @Override
@@ -105,7 +109,35 @@ public class OngoingTripActivity extends AppCompatActivity {
         simpleChronometer = findViewById(R.id.simpleChronometer);
         simpleChronometer.start();
         simpleChronometer.setBase(SystemClock.elapsedRealtime());
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(clicked) {
+            resumeLocationUpdates();
+            simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
+            simpleChronometer.start();
+            clicked = false;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting")
+                .setMessage("Are you sure you want to exit? Your progress will be lost.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void initLib() {  //initialize all the location related clients
@@ -199,26 +231,6 @@ public class OngoingTripActivity extends AppCompatActivity {
                 });
     }
 
-    @OnClick(R.id.btn_pause_trip)
-    public void pauseTripOnClick(View view) {
-
-        if(!clicked) {
-            stopLocationUpdates();
-            lastPause = SystemClock.elapsedRealtime();
-            simpleChronometer.stop();
-            tripStatus.setText("Trip is paused");
-            btnPauseTrip.setText("Resume the trip");
-            clicked = true;
-        } else {
-            resumeLocationUpdates();
-            simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
-            simpleChronometer.start();
-            tripStatus.setText("Trip is in progress");
-            btnPauseTrip.setText("Pause the trip");
-            clicked = false;
-        }
-    }
-
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
@@ -229,7 +241,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest() {
-        String trip_id = "9";
+        String trip_id = "69";
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
@@ -265,5 +277,42 @@ public class OngoingTripActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
+    }
+
+    public void rechargeOnClick(View view) {
+        Intent intent = new Intent(this, RechargingActivity.class);
+
+        stopLocationUpdates();
+        lastPause = SystemClock.elapsedRealtime();
+        simpleChronometer.stop();
+        clicked = true;
+
+        startActivity(intent);
+    }
+
+    public void pauseTripOnClick(View view) {
+
+        if(!clicked) {
+            stopLocationUpdates();
+            lastPause = SystemClock.elapsedRealtime();
+            simpleChronometer.stop();
+            tripStatus.setText("Trip is paused");
+            btnPauseTrip.setText("Resume the trip");
+            clicked = true;
+        } else {
+            resumeLocationUpdates();
+            simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
+            simpleChronometer.start();
+            tripStatus.setText("Trip is in progress");
+            btnPauseTrip.setText("Pause the trip");
+            clicked = false;
+        }
+    }
+
+    public void endTripOnClick(View view) {
+        stopLocationUpdates();
+        Intent intent = new Intent(this, TripEndActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

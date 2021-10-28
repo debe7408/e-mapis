@@ -16,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EMapis">
         <activity
+            android:name=".TripEndActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RechargingActivity"
+            android:exported="false" />
+        <activity
             android:name=".VolleyActivity"
             android:exported="false" />
         <activity
