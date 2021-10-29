@@ -127,11 +127,12 @@ public class OngoingTripActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Exiting")
-                .setMessage("Are you sure you want to exit? Your progress will be lost.")
+                .setMessage("Are you sure you want to go back? Your progress will be lost.")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        stopLocationUpdates();
                         finish();
                     }
 
