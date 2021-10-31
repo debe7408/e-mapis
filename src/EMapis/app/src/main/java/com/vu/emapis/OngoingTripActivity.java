@@ -75,11 +75,11 @@ public class OngoingTripActivity extends AppCompatActivity {
     private String mLastUpdateTime;
 
 
-    // location updates interval - 10sec
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    // location updates interval - 5 sec
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
-    // fastest updates interval - 5 sec
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    // fastest updates interval - 1 sec
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     // postURL
     private final String postURL = "http://193.219.91.103:3906/rpc/points_insert";
