@@ -56,6 +56,7 @@
         android:backgroundTint="@color/buttonColor"
         android:textColor="@color/textColor"
         android:text="Get statistics!"
+        android:onClick="showStatistics"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
