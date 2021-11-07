@@ -48,3 +48,25 @@ Attendants: Julius, Emilis, Deividas.
 Topic(s): Documentation, presentation and database connection.
 Decided on/done: Updated documentation for PSI, started working on PBL presentation and created a connection between our local PgAdmins
 and the database server.
+
+[2020-09-29 14:00-15:30] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Setting up sprint for the week, sharing knowledge, discussing what needs to be done in the short term.
+Decided on/done: We have shared our knowledge on the database server connection set-up so that we would all be on the same page, discussed what is the next goal of our project.
+
+[2020-10-04 19:30-21:00] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Sharing knowledge, writing documentation.
+Decided on/done: We have shared our knowledge about Android studio and the progress of our app so that we would all be on the same page,
+started working on documentation.
+
+[2020-10-11 20:00-21:50] IRL
+Attendants: Julius, Emilis, Deividas.
+Topic(s): Sharing knowledge, presentation, ER diagram of tables and relations.
+Decided on/done: We have shared our knowledge about the new features implemented into our app (non-working gps code), discussed on the system's architecture, 
+worked on the slides of our presentation on the 14th, discussed and create a rough draft of our ER diagram of tables and relations.
+
+[2020-10-21 14:10-15:00] IRL
+Attendants: Juius, Emilis, Deividas
+Topic(s): Code review, next week's planning, documentation discussion.
+Decided on/done: We have decided on how we will split work among us for the next week, as we have a presentation and PSI documentation to do. We will be trying to send coordinates of ongoing trips to our database automatically, without additional user input. After that, we will prepare for the PSI assignment and by the end of the week, finalize our presentation.
