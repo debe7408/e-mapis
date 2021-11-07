@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <base-config cleartextTrafficPermitted="true"> // kad leistu http request (non-https)
+    <base-config cleartextTrafficPermitted="true">
+        <base includeSubdomains="true">10.0.2.2</base>
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

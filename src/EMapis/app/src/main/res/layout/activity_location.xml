@@ -33,4 +33,36 @@
         android:layout_marginTop="30dp"
         android:textColor="#000"
         android:textSize="11dp" />
+
+    <Button
+        android:id="@+id/btn_stop_location_updates"
+        android:textColor="@color/textColor"
+        android:backgroundTint="@color/buttonColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="stop location updates" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/trip_id_insert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="trip_ID"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/hintTextColor"
+            android:inputType="number"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.079"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.501" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

@@ -2,14 +2,18 @@ package com.vu.emapis;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,35 +52,34 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class LocationActivity extends AppCompatActivity {
+public class OngoingTripActivity extends AppCompatActivity {
 
-    // Longitude and Latitude text view
-    @BindView(R.id.location_result)
-    TextView txtLocationResult;
-    // Time of latest update text view
-    @BindView(R.id.updated_on)
-    TextView txtUpdatedOn;
+    Chronometer simpleChronometer;
+    boolean clicked = false;
+    private long lastPause;
 
-    @BindView(R.id.trip_id_insert)
-    EditText trip_id;
+    @BindView(R.id.tripStatus)
+    TextView tripStatus;
 
-    @BindView(R.id.btn_start_location_updates)
-    Button btnStartUpdates;
+    @BindView(R.id.btn_pause_trip)
+    Button btnPauseTrip;
 
-    @BindView(R.id.btn_stop_location_updates)
-    Button btnStopUpdates;
+    @BindView(R.id.btn_stop_trip)
+    Button btnStopTrip;
+
+    @BindView(R.id.btn_recharge)
+    Button btnRecharge;
 
     // location last updated time
     private String mLastUpdateTime;
 
-    private boolean buttonUpdatePressed = false;
 
-    // location updates interval - 10sec
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-    // fastest updates interval - 5 sec
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    // location updates interval - 5 sec
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+
+    // fastest updates interval - 1 sec
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     // postURL
     private final String postURL = "http://193.219.91.103:3906/rpc/points_insert";
@@ -91,62 +94,65 @@ public class LocationActivity extends AppCompatActivity {
 
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
+    private View view;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_ongoing_trip);
 
+        ButterKnife.bind(this);
         initLib();
+        startLocationService();
+
+        simpleChronometer = findViewById(R.id.simpleChronometer);
+        simpleChronometer.start();
+        simpleChronometer.setBase(SystemClock.elapsedRealtime());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(buttonUpdatePressed) {
-            startLocationUpdates();
+        if(clicked) {
+            resumeLocationUpdates();
+            simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
+            simpleChronometer.start();
+            clicked = false;
         }
     }
 
-    @OnClick(R.id.btn_stop_location_updates)
-    protected void onPause() {
-        super.onPause();
-        stopLocationUpdates();
-    }
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting")
+                .setMessage("Are you sure you want to go back? Your progress will be lost.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        stopLocationUpdates();
+                        finish();
+                    }
 
-    private void stopLocationUpdates() {
-        if(buttonUpdatePressed) {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-            Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
-        }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void initLib() {  //initialize all the location related clients
-
-        /*
-         * The fused location provider is a location API in Google Play services,
-         * that intelligently combines different signals to provide the location information that the application needs.
-         */
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mSettingsClient = LocationServices.getSettingsClient(this); //this API makes it easy for an app to ensure that the device's system settings are properly configured for the app's location needs.
 
-        /*
-         * SettingsClient API makes it easy for the application to ensure that the device's system settings are properly configured for the app's location needs.
-         */
-        mSettingsClient = LocationServices.getSettingsClient(this);
-
-
-        // Used for receiving notifications from FusedLocationClient API about location changes.
         mLocationCallback = new LocationCallback() {
-
-            // Called when device location information is available.
             @Override
             public void onLocationResult(LocationResult locationResult) {
-
+                super.onLocationResult(locationResult);
+                // location is received
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-                //TODO using locationResults.getLocations().toString() write everything to file for now
                 updateLocation();
             }
         };
@@ -163,59 +169,19 @@ public class LocationActivity extends AppCompatActivity {
         mLocationSettingsRequest = builder.build();
     }
 
-    /**
-     * Update the UI displaying the location data
-     */
-
     @SuppressLint("SetTextI18n")
     private void updateLocation() {
-        // If the current location is NOT null, we get the latitude and longitude.
         if (mCurrentLocation != null) {
-            txtLocationResult.setText(
-                    "Latitude: " + mCurrentLocation.getLatitude() + ", " +
-                            "Longitude: " + mCurrentLocation.getLongitude() + " Altitude: " + mCurrentLocation.getAltitude() + " Speed: " + mCurrentLocation.getSpeed());
-
-            // location last updated time
-            txtUpdatedOn.setText("Last updated on: " + mLastUpdateTime);
-
             sendPostRequest(); //TODO UNCOMMENT THIS TO SEND X,Y,Z AUTOMATICALLY
         }
     }
 
-    /**
-     * Starting location updates
-     * Check whether location settings are satisfied and then
-     * location updates will be requested
-     */
-    private void startLocationUpdates() {
-        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-                    @Override
-                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-
-                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
-
-                        //noinspection MissingPermission
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                mLocationCallback, Looper.myLooper());
-
-                        updateLocation();
-                    }
-                });
-    }
-
-    @OnClick(R.id.btn_start_location_updates)
-    public void startLocationButtonClick() {
-
-        if(!buttonUpdatePressed && btnStartUpdates.isPressed()) {
-            buttonUpdatePressed = true;
-        }
+    public void startLocationService() {
 
         // Requesting ACCESS_FINE_LOCATION using Dexter library
         Dexter.withContext(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
-
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         mRequestingLocationUpdates = true;
@@ -249,15 +215,41 @@ public class LocationActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void startLocationUpdates() {
+        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
 
-    // Method for sending post requests.
+                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
+
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+
+                        updateLocation();
+                    }
+                });
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
+    }
+
+    protected void resumeLocationUpdates() {
+        startLocationUpdates();
+    }
+
     private void sendPostRequest() {
+        String trip_id = "69";
+
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
         JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
         try {
 
-            postData.put("trip_id", Integer.parseInt(trip_id.getText().toString()));
+            postData.put("trip_id", Integer.parseInt(trip_id));
             postData.put("x", mCurrentLocation.getLatitude());
             postData.put("y", mCurrentLocation.getLongitude());
             postData.put("z", mCurrentLocation.getAltitude());
@@ -286,5 +278,42 @@ public class LocationActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
+    }
+
+    public void rechargeOnClick(View view) {
+        Intent intent = new Intent(this, RechargingActivity.class);
+
+        stopLocationUpdates();
+        lastPause = SystemClock.elapsedRealtime();
+        simpleChronometer.stop();
+        clicked = true;
+
+        startActivity(intent);
+    }
+
+    public void pauseTripOnClick(View view) {
+
+        if(!clicked) {
+            stopLocationUpdates();
+            lastPause = SystemClock.elapsedRealtime();
+            simpleChronometer.stop();
+            tripStatus.setText("Trip is paused");
+            btnPauseTrip.setText("Resume the trip");
+            clicked = true;
+        } else {
+            resumeLocationUpdates();
+            simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
+            simpleChronometer.start();
+            tripStatus.setText("Trip is in progress");
+            btnPauseTrip.setText("Pause the trip");
+            clicked = false;
+        }
+    }
+
+    public void endTripOnClick(View view) {
+        stopLocationUpdates();
+        Intent intent = new Intent(this, TripEndActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

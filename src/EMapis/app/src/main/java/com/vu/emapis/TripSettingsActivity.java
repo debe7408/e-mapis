@@ -1,47 +1,21 @@
 package com.vu.emapis;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
-import android.provider.Settings;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
 
-    TextView seekBarLabel;
-    TextView test;
-    String[] vehicles = new String[] {"BMW","Golf","Bolto paspirtukas"}; // String array for testing purposes ( Will be replaced with a database later ).
-
-    //GPS variables
-    Button button;
-    TextView latitude, longitude;
-    FusedLocationProviderClient fusedLocationProviderClient; //google api get location
+    private String[] vehicles = new String[] {"BMW","Golf","Bolto paspirtukas"}; // String array for testing purposes ( Will be replaced with a database later ).
+    private SeekBar seekBar;
+    private TextView textView;
 
 
     @Override
@@ -50,6 +24,11 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.activity_trip_settings);
 
         Spinner selectVehicle = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
+        seekBar = findViewById(R.id.rechargedEnergyLevels);
+        textView = findViewById(R.id.energyLevelText);
+
+        seekBarInit();
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicles);
         /** Here we create a new ArrayAdapter, which supplies the spinner with the array.
@@ -64,15 +43,41 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
     }
 
+    public void seekBarInit() {
+        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            int progressValue = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                progressValue = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                textView.setText("Energy levels: "+progressValue + "%");
+            }
+        });
+    }
+
+    public void startTheTrip(View view) {
+        Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     // Gets called when an item has been selected
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
         String make = (String) parent.getItemAtPosition(pos); // Get the content of selected item in the spinner
-
-        test  = findViewById(R.id.TEST);
-        test.setText("DEBUG: You have selected: ".concat(make)); // Display the text in the textview
 
     }
 

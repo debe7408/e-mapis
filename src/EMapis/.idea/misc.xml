@@ -3,16 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_location.xml" value="0.536" />
-        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_location.xml" value="0.4" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_login.xml" value="0.4" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_main_screen.xml" value="0.259375" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_ongoing_trip.xml" value="0.264" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_register.xml" value="0.4" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_trip_settings.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_location.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_login.xml" value="0.2598958333333333" />
         <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_main_screen.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_ongoing_trip.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_recharging.xml" value="0.2598958333333333" />
         <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_register.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_statistics.xml" value="0.3555253623188406" />
+        <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_trip_end.xml" value="0.2598958333333333" />
         <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_trip_settings.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_volley.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/layout/activity_volley_test.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/shery/AndroidStudioProjects/e-mapis-app/src/EMapis/app/src/main/res/xml/strings.xml" value="0.2015625" />
       </map>
     </option>
