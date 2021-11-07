@@ -52,9 +52,10 @@ import butterknife.OnClick;
 
 public class LocationActivity extends AppCompatActivity {
 
+    // Longitude and Latitude text view
     @BindView(R.id.location_result)
     TextView txtLocationResult;
-
+    // Time of latest update text view
     @BindView(R.id.updated_on)
     TextView txtUpdatedOn;
 
@@ -74,7 +75,6 @@ public class LocationActivity extends AppCompatActivity {
 
     // location updates interval - 10sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-
     // fastest updates interval - 5 sec
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
@@ -123,17 +123,30 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     private void initLib() {  //initialize all the location related clients
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mSettingsClient = LocationServices.getSettingsClient(this); //this API makes it easy for an app to ensure that the device's system settings are properly configured for the app's location needs.
 
+        /*
+         * The fused location provider is a location API in Google Play services,
+         * that intelligently combines different signals to provide the location information that the application needs.
+         */
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        /*
+         * SettingsClient API makes it easy for the application to ensure that the device's system settings are properly configured for the app's location needs.
+         */
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+
+        // Used for receiving notifications from FusedLocationClient API about location changes.
         mLocationCallback = new LocationCallback() {
+
+            // Called when device location information is available.
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                // location is received
+
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
+                //TODO using locationResults.getLocations().toString() write everything to file for now
                 updateLocation();
             }
         };
@@ -156,6 +169,7 @@ public class LocationActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void updateLocation() {
+        // If the current location is NOT null, we get the latitude and longitude.
         if (mCurrentLocation != null) {
             txtLocationResult.setText(
                     "Latitude: " + mCurrentLocation.getLatitude() + ", " +
@@ -201,6 +215,7 @@ public class LocationActivity extends AppCompatActivity {
         Dexter.withContext(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
+
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         mRequestingLocationUpdates = true;
