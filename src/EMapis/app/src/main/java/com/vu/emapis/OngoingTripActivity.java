@@ -82,7 +82,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     // postURL
-    private final String postURL = "http://193.219.91.103:3906/rpc/points_insert";
+    private final String postURL = "http://193.219.91.103:8666/rpc/point_insert";
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -242,7 +242,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest() {
-        String trip_id = "69";
+        String trip_id = "1";
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
@@ -272,7 +272,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.qusYUABWSUHBopNCItHAvrW6SHJe1BAoKqXqo-E26Zs");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
                 return headers;
             }
         };

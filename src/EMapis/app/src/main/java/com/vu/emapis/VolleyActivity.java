@@ -1,11 +1,11 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -26,8 +26,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class VolleyActivity extends AppCompatActivity {
 
     private TextView get_response_text, post_response_text;
-    private String url ="http://193.219.91.103:3906/todos";
-    private String url2 = "http://193.219.91.103:3906/rpc/points_insert";
+    private String url ="http://193.219.91.103:8666/todos";
+    private String url2 = "http://193.219.91.103:8666/rpc/point_insert";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
