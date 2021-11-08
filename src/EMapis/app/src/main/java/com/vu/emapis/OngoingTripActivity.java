@@ -96,6 +96,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     private Boolean mRequestingLocationUpdates;
     private View view;
 
+    private int trip_ID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,14 +244,14 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest() {
-        String trip_id = "1";
+        //String trip_id = "1";
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
         JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
         try {
 
-            postData.put("trip_id", Integer.parseInt(trip_id));
+            postData.put("trip_id", 1);
             postData.put("x", mCurrentLocation.getLatitude());
             postData.put("y", mCurrentLocation.getLongitude());
             postData.put("z", mCurrentLocation.getAltitude());
@@ -266,7 +268,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+
             }
         }) {
             @Override

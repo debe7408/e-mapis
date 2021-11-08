@@ -11,11 +11,27 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
 
     private String[] vehicles = new String[] {"BMW","Golf","Bolto paspirtukas"}; // String array for testing purposes ( Will be replaced with a database later ).
     private SeekBar seekBar;
     private TextView textView;
+    private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
+    private String trip_ID;
 
 
     @Override
@@ -68,7 +84,9 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void startTheTrip(View view) {
+        sendPostRequest();
         Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+        intent.putExtra("tripID", trip_ID);
         startActivity(intent);
         finish();
     }
@@ -85,6 +103,47 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
+    }
+
+    private void sendPostRequest() {
+
+        int userID = 1;
+        int vehicleID = 1;
+
+        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
+
+        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
+        try {
+
+            postData.put("user_id", userID);
+            postData.put("user_vehicle_id", vehicleID);
+            postData.put("fuel_at_start", seekBar.getProgress());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postURL, postData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("NO RESPONSE :(");
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
     }
 
 
