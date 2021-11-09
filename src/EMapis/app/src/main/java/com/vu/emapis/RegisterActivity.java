@@ -52,10 +52,11 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
 
-            String hashPassword = "12345";
-            String bcryptHashString = BCrypt.withDefaults().hashToString(12, hashPassword.toCharArray());
+            String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
             Log.d("register", bcryptHashString);
-            BCrypt.Result result = BCrypt.verifyer().verify(hashPassword.toCharArray(), bcryptHashString);
+
+
+            BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), bcryptHashString);
             if (result.verified) {
                 Toast.makeText(this, "Password hashed", Toast.LENGTH_SHORT).show();
             } else {
