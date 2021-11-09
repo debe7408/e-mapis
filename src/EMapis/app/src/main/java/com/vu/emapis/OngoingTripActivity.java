@@ -96,7 +96,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     private Boolean mRequestingLocationUpdates;
     private View view;
 
-    private int trip_ID;
+    public static String trip_ID;
 
 
     @Override
@@ -105,12 +105,20 @@ public class OngoingTripActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ongoing_trip);
 
         ButterKnife.bind(this);
-        initLib();
-        startLocationService();
 
         simpleChronometer = findViewById(R.id.simpleChronometer);
         simpleChronometer.start();
         simpleChronometer.setBase(SystemClock.elapsedRealtime());
+
+        Intent intent = getIntent();
+        trip_ID = intent.getStringExtra(TripSettingsActivity.trip_ID);
+        // DEBUG: System.out.println("Testas =" + trip_ID);
+
+        initLib();
+        startLocationService();
+
+
+
     }
 
     @Override
@@ -251,7 +259,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
         try {
 
-            postData.put("trip_id", 1);
+            postData.put("trip_id", Integer.parseInt(trip_ID));
             postData.put("x", mCurrentLocation.getLatitude());
             postData.put("y", mCurrentLocation.getLongitude());
             postData.put("z", mCurrentLocation.getAltitude());
@@ -268,7 +276,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
             }
         }) {
             @Override
@@ -315,6 +323,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     public void endTripOnClick(View view) {
         stopLocationUpdates();
         Intent intent = new Intent(this, TripEndActivity.class);
+        intent.putExtra(trip_ID, trip_ID);
         startActivity(intent);
         finish();
     }

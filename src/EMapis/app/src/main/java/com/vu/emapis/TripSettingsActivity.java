@@ -2,6 +2,8 @@ package com.vu.emapis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,11 +18,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
     private SeekBar seekBar;
     private TextView textView;
     private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
-    private String trip_ID;
+    public static String trip_ID;
 
 
     @Override
@@ -83,12 +83,24 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
         });
     }
 
+    // Gets called when the button "Start the trip" is pressed
     public void startTheTrip(View view) {
+
         sendPostRequest();
-        Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
-        intent.putExtra("tripID", trip_ID);
-        startActivity(intent);
-        finish();
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run(){
+                Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+                intent.putExtra(trip_ID, trip_ID);
+                startActivity(intent);
+                finish();
+            }
+        };
+
+        Handler h = new Handler();
+        h.postDelayed(r, 500); // <-- the "1000" is the delay time in miliseconds.
+
     }
 
     // Gets called when an item has been selected
@@ -110,31 +122,30 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
         int userID = 1;
         int vehicleID = 1;
 
-        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
-        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
-        try {
-
-            postData.put("user_id", userID);
-            postData.put("user_vehicle_id", vehicleID);
-            postData.put("fuel_at_start", seekBar.getProgress());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postURL, postData, new Response.Listener<JSONObject>() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
+                trip_ID = response;
+               //DEBUG: System.out.println("Testas 1:" + trip_ID);
 
             }
-        }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                System.out.println("NO RESPONSE :(");
             }
         }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("user_id", String.valueOf(userID));
+                MyData.put("user_vehicle_id", String.valueOf(vehicleID));
+                MyData.put("fuel_at_start", String.valueOf(seekBar.getProgress()));
+                return MyData;
+            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -143,7 +154,7 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
             }
         };
 
-        queue.add(jsonObjectRequest);
+        requestQueue.add(stringRequest);
     }
 
 
