@@ -53,20 +53,10 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
 
             String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
-            Log.d("register", bcryptHashString);
-
-
-            BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), bcryptHashString);
-            if (result.verified) {
-                Toast.makeText(this, "Password hashed", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Password not hashed", Toast.LENGTH_SHORT).show();
-            }
 
             sendPostRequest(username, bcryptHashString, email);
 
-            Intent intent = new Intent(this, MainScreenActivity.class);
-            intent.putExtra(EXTRA_MESSAGE,username);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
     }
@@ -88,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println(response);
+
             }
         }, new Response.ErrorListener() {
             @Override

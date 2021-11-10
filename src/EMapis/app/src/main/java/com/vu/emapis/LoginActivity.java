@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -24,6 +25,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,36 +48,46 @@ public class LoginActivity extends AppCompatActivity {
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
 
-        Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
-        EditText editUsername = (EditText) findViewById(R.id.usernameTextField); // find text from username field
-        intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
-        startActivity(intent); // Starts the new activity
+        if (username.matches("") || password.matches("")) {
+            Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
+        } else {
+            sendPostRequest(username, password);
+        }
 
-        sendPostRequest(username);
     }
 
-    private void sendPostRequest(String username) {
+    private void sendPostRequest(String username, String password) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        JSONObject postData = new JSONObject();
-        try {
-            postData.put("x", "cr");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Log.d("HERERER", response.toString());
+            public void onResponse(String response) {
+                String hashedPassword = response;
+                hashedPassword = hashedPassword.replace("\"", "");
+
+                BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hashedPassword);
+                Log.d("result", result.toString());
+                if (result.verified) {
+                    Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
+                    intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
+                    startActivity(intent); // Starts the new activity
+                } else {
+                    Toast.makeText(LoginActivity.this, "Password or username incorrect", Toast.LENGTH_SHORT).show();
+                }
             }
-        }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
         }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("x", username);
+                return MyData;
+            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -83,67 +96,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        requestQueue.add(jsonObjectRequest);
+        requestQueue.add(stringRequest);
 
-        /*try {
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("x", username);
-            final String requestBody = jsonBody.toString();
-
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("xddd", response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
-                    return headers;
-                }
-            };
-
-            requestQueue.add(stringRequest);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        */
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-
-        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d("xddd", response.toString());
-                System.out.println(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
-                return headers;
-            }
-        };
-
-        queue.add(jsonObjectRequest);*/
     }
 
     public void onClickRegister(View view) {
