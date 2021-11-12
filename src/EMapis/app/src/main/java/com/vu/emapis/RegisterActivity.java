@@ -4,10 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -23,7 +21,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
@@ -48,8 +47,12 @@ public class RegisterActivity extends AppCompatActivity {
         String password = txtPassword.getText().toString();
         String email = txtEmail.getText().toString();
 
-        if(username.matches("") || password.matches("") || email.matches("")) {
+        boolean userNameValid = checkUsername(username);
+
+        if (username.matches("") || password.matches("") || email.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
+        } else if (userNameValid == false) {
+            Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain special characters", Toast.LENGTH_SHORT).show();
         } else {
 
             String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
@@ -59,6 +62,19 @@ public class RegisterActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
+    }
+
+    public boolean checkUsername(String username) {
+        boolean passed = true;
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE); //check if username does not contain special characters
+        Matcher m = p.matcher(username);
+        boolean special = m.find();
+
+        if (special==true || (username.length() < 4 || username.length() > 20)) {
+            passed = false;
+        }
+
+        return passed;
     }
 
 
