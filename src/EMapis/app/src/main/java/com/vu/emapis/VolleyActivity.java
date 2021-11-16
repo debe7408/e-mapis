@@ -29,6 +29,7 @@ public class VolleyActivity extends AppCompatActivity {
     private String url ="http://193.219.91.103:8666/todos";
     private String url2 = "http://193.219.91.103:8666/rpc/point_insert";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
