@@ -2,6 +2,8 @@ package com.vu.emapis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,17 +13,33 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
 
     private String[] vehicles = new String[] {"BMW","Golf","Bolto paspirtukas"}; // String array for testing purposes ( Will be replaced with a database later ).
     private SeekBar seekBar;
     private TextView textView;
+    private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
+    public static String trip_ID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_settings);
+
+
 
         Spinner selectVehicle = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
         seekBar = findViewById(R.id.rechargedEnergyLevels);
@@ -67,10 +85,24 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
         });
     }
 
+    // Gets called when the button "Start the trip" is pressed
     public void startTheTrip(View view) {
-        Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
-        startActivity(intent);
-        finish();
+
+        sendPostRequest();
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run(){
+                Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+                intent.putExtra(trip_ID, trip_ID);
+                startActivity(intent);
+                finish();
+            }
+        };
+
+        Handler h = new Handler();
+        h.postDelayed(r, 500); // <-- the "1000" is the delay time in miliseconds.
+
     }
 
     // Gets called when an item has been selected
@@ -85,6 +117,46 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
+    }
+
+    private void sendPostRequest() {
+
+        int userID = 1;
+        int vehicleID = 1;
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                trip_ID = response;
+               //DEBUG: System.out.println("Testas 1:" + trip_ID);
+
+            }
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("user_id", String.valueOf(userID));
+                MyData.put("user_vehicle_id", String.valueOf(vehicleID));
+                MyData.put("fuel_at_start", String.valueOf(seekBar.getProgress()));
+                return MyData;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                return headers;
+            }
+        };
+
+        requestQueue.add(stringRequest);
     }
 
 
