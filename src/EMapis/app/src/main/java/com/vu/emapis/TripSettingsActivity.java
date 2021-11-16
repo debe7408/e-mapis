@@ -121,8 +121,10 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
     private void sendPostRequest() {
 
-        int userID = 1;
+        int userID = Integer.parseInt(LoginActivity.userId);
         int vehicleID = 1;
+
+        System.out.println("Testas:" + userID);
 
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
