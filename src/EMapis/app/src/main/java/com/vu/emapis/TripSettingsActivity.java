@@ -11,7 +11,6 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -22,9 +21,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -32,13 +34,13 @@ import java.util.stream.Stream;
 public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
 
     private String[] vehicles;
+    private VehicleObject[] vehiclesList;
     private SeekBar seekBar;
     private TextView textView;
     private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
     public static String trip_ID;
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +55,13 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
         sendPostRequest();
 
+
+
         Runnable r = new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
                 spinnerInit();
+                System.out.println("Test" + Arrays.toString(vehiclesList));
             }
         };
 
@@ -182,7 +186,7 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
     private void sendGetRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url = "http://193.219.91.103:8666/vehicles?select=make";
+        String url = "http://193.219.91.103:8666/vehicles?select=*";
 
 // Request a string response from the provided URL.
 
@@ -190,15 +194,16 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
             @Override
             public void onResponse(JSONArray response) {
 
+                Gson gson = new Gson();
+                vehiclesList = gson.fromJson(String.valueOf(response), VehicleObject[].class);
 
 
-                    vehicles = new String[response.length()];
+                vehicles = new String[response.length()];
 
-                    for(int i=0; i< response.length(); i++) {
+                for(int i=0; i< response.length(); i++) {
 
-                        vehicles[i] = response.optString(i).replace("{\"make\":\"", "").replace("\"}", "");
-                    }
-
+                    vehicles[i] = response.optString(i).replace("{\"make\":\"", "").replace("\"}", "");
+                }
             }
         }, new Response.ErrorListener() {
 
