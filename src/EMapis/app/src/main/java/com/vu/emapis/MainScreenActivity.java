@@ -16,7 +16,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String message = "Hi, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!";
+        String message = "Hi, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!" + " user_id: " + LoginActivity.userId;
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.statText);

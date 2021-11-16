@@ -77,7 +77,6 @@ public class RegisterActivity extends AppCompatActivity {
         return passed;
     }
 
-
     private void sendPostRequest(String username, String password, String email) {
         RequestQueue queue = Volley.newRequestQueue(this);
 

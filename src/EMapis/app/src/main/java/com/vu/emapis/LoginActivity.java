@@ -30,6 +30,13 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginActivity extends AppCompatActivity {
 
+
+    public static String userId;
+
+    public static String getUserId() {
+        return userId;
+    }
+
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
     private String url ="http://193.219.91.103:8666/rpc/get_pw";
 
@@ -48,11 +55,17 @@ public class LoginActivity extends AppCompatActivity {
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
 
+
+
         if (username.matches("") || password.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
             sendPostRequest(username, password);
         }
+
+        String getUrl = "http://193.219.91.103:8666/users?select=user_id&username=eq." + username;
+        sendGetRequest(getUrl);
+
 
     }
 
@@ -100,11 +113,39 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void onClickRegister(View view) {
+    private void sendGetRequest(String url) {
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        userId = response.replaceAll("[\"\\[\\].{}:user_id]", "");
+                        Log.d("bybis", userId);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                return headers;
+            }
+        };
+
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+
+
+    public void onClickRegister(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
-
     }
 
     @Override
