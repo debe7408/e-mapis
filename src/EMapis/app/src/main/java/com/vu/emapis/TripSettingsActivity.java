@@ -3,13 +3,13 @@ package com.vu.emapis;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,47 +18,104 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
+import org.json.JSONArray;
+
+import java.lang.reflect.Array;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
+public class TripSettingsActivity extends AppCompatActivity {
 
-    private String[] vehicles = new String[] {"BMW","Golf","Bolto paspirtukas"}; // String array for testing purposes ( Will be replaced with a database later ).
     private SeekBar seekBar;
     private TextView textView;
     private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
     public static String trip_ID;
 
 
+    private userVehicleObject[] userVehicleList;
+    private String alias;
+    private int VehicleID;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_settings);
-
-
-
-        Spinner selectVehicle = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
 
+
+
+        sendGetRequest();
+
         seekBarInit();
 
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicles);
-        /** Here we create a new ArrayAdapter, which supplies the spinner with the array.
-         * 1st argument -> the context in which this will be done.
-         * 2nd argument -> the layout resource that defines how the selected choice appears in the spinner.
-         * 3rd argument -> the String array we have defined earlier.
-         */
+                if(userVehicleList.length == 0) {
+                    Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(TripSettingsActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
 
-        selectVehicle.setAdapter(adapter); // call the adapter to the spinner
-        selectVehicle.setOnItemSelectedListener(this);
+               // Set<String> vehicleSetModel = new HashSet<>();
+                Set<String> vehicleAliasSet = new HashSet<>();
+                String[] vehicleAlias;
 
 
+                for(int i=0; i< userVehicleList.length; i++) {
+                    vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
+                   // vehicleSetModel.add(vehiclesList[i].getModel());
+                }
+                vehicleAlias = vehicleAliasSet.toArray(new String[0]);
+                //vehiclesModel = vehicleSetModel.toArray(new String[0]);
+
+                spinnerInit(vehicleAlias);
+                //modelSpinnerInit(vehiclesModel);
+            }
+        };
+
+        Handler h = new Handler();
+        h.postDelayed(r, 500);
+    }
+
+
+    public void spinnerInit(String[] vehicleAlias) {
+
+        Spinner selectAlias = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicleAlias);
+        selectAlias.setAdapter(adapter); // call the adapter to the spinner
+        selectAlias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            // Gets called when an item has been selected
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+                alias = parent.getItemAtPosition(pos).toString();
+
+                for(int i = 0; i<userVehicleList.length; i++) {
+                    if(alias.equals(userVehicleList[i].getVehicle_alias())) {
+                        VehicleID = userVehicleList[i].getVehicle_id();
+                    }
+                }
+
+            }
+
+            // Gets called when nothing has been selected (not being used, but has to be implemented)
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
     }
 
     public void seekBarInit() {
@@ -105,35 +162,17 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
     }
 
-    // Gets called when an item has been selected
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-        String make = (String) parent.getItemAtPosition(pos); // Get the content of selected item in the spinner
-
-    }
-
-    // Gets called when nothing has been selected (not being used, but has to be implemented)
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
 
     private void sendPostRequest() {
 
         int userID = Integer.parseInt(LoginActivity.userId);
-        int vehicleID = 1;
-
-        System.out.println("Testas:" + userID);
-
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 trip_ID = response;
-               //DEBUG: System.out.println("Testas 1:" + trip_ID);
-
             }
         }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
@@ -145,7 +184,7 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
                 Map<String, String> MyData = new HashMap<String, String>();
                 MyData.put("user_id", String.valueOf(userID));
-                MyData.put("user_vehicle_id", String.valueOf(vehicleID));
+                MyData.put("user_vehicle_id", String.valueOf(VehicleID));
                 MyData.put("fuel_at_start", String.valueOf(seekBar.getProgress()));
                 return MyData;
             }
@@ -161,7 +200,36 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
         requestQueue.add(stringRequest);
     }
 
+    private void sendGetRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
 
+        String url = "http://193.219.91.103:8666/user_vehicles?user_id=eq."+LoginActivity.userId;
 
+// Request a string response from the provided URL.
 
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                Gson gson = new Gson();
+                userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                return headers;
+            }
+        };
+
+        queue.add(jsonArrayRequest);
+    }
 }

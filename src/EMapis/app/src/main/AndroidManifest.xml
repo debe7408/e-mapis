@@ -17,6 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EMapis">
         <activity
+            android:name=".UserVehicleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".TripEndActivity"
             android:exported="false" />
         <activity
@@ -25,9 +31,6 @@
         <activity
             android:name=".VolleyActivity"
             android:exported="false" />
-        <activity
-            android:name=".LocationActivity"
-            android:exported="true" />
         <activity
             android:name=".RegisterActivity"
             android:exported="true" />

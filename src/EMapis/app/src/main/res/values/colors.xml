@@ -12,4 +12,5 @@
     <color name="backgroundColor">#FFFFFFFF</color>
     <color name="buttonColor">#7FE1AD</color>
     <color name="hintTextColor">#989EB1</color>
+    <color name="red">#B30808</color>
 </resources>

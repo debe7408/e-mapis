@@ -57,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        if (username.matches("") || password.matches("")) {
+
+        if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
             sendPostRequest(username, password);
@@ -121,7 +122,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         userId = response.replaceAll("[\"\\[\\].{}:user_id]", "");
-                        Log.d("bybis", userId);
                     }
                 }, new Response.ErrorListener() {
             @Override
