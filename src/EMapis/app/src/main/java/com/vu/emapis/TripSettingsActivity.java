@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,15 +33,15 @@ import java.util.Set;
 
 public class TripSettingsActivity extends AppCompatActivity {
 
-    private VehicleObject[] vehiclesList;
     private SeekBar seekBar;
     private TextView textView;
     private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
     public static String trip_ID;
 
 
-    private String make;
-    private String model;
+    private userVehicleObject[] userVehicleList;
+    private String alias;
+    private int VehicleID;
 
 
     @Override
@@ -60,20 +61,26 @@ public class TripSettingsActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+                if(userVehicleList.length == 0) {
+                    Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(TripSettingsActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
                // Set<String> vehicleSetModel = new HashSet<>();
-                Set<String> vehicleSetMake = new HashSet<>();
-                //String[] vehiclesModel;
-                String[] vehiclesMake;
+                Set<String> vehicleAliasSet = new HashSet<>();
+                String[] vehicleAlias;
 
 
-                for(int i=0; i< vehiclesList.length; i++) {
-                    vehicleSetMake.add(vehiclesList[i].getMake());
+                for(int i=0; i< userVehicleList.length; i++) {
+                    vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
                    // vehicleSetModel.add(vehiclesList[i].getModel());
                 }
-                vehiclesMake = vehicleSetMake.toArray(new String[0]);
+                vehicleAlias = vehicleAliasSet.toArray(new String[0]);
                 //vehiclesModel = vehicleSetModel.toArray(new String[0]);
 
-                spinnerInit(vehiclesMake);
+                spinnerInit(vehicleAlias);
                 //modelSpinnerInit(vehiclesModel);
             }
         };
@@ -82,49 +89,24 @@ public class TripSettingsActivity extends AppCompatActivity {
         h.postDelayed(r, 500);
     }
 
-    public void modelSpinnerInit(String[] vehiclesModel) {
 
-        Spinner selectModel = findViewById(R.id.vehicleMenu2);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehiclesModel);
-        selectModel.setAdapter(adapter);
-        selectModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                model = adapterView.getItemAtPosition(pos).toString();
-            }
+    public void spinnerInit(String[] vehicleAlias) {
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-    }
-
-    public void spinnerInit(String[] vehicles) {
-
-        Spinner selectMake = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicles);
-        selectMake.setAdapter(adapter); // call the adapter to the spinner
-        selectMake.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner selectAlias = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicleAlias);
+        selectAlias.setAdapter(adapter); // call the adapter to the spinner
+        selectAlias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             // Gets called when an item has been selected
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-                make = parent.getItemAtPosition(pos).toString();
+                alias = parent.getItemAtPosition(pos).toString();
 
-                Set<String> vehicleSetModel = new HashSet<>();
-                String[] vehiclesModel;
-
-                for(int i = 0; i<vehiclesList.length; i++) {
-
-                    if(vehiclesList[i].getMake().equals(make)) {
-                        vehicleSetModel.add(vehiclesList[i].getModel());
+                for(int i = 0; i<userVehicleList.length; i++) {
+                    if(alias.equals(userVehicleList[i].getVehicle_alias())) {
+                        VehicleID = userVehicleList[i].getVehicle_id();
                     }
                 }
-                vehiclesModel = vehicleSetModel.toArray(new String[0]);
-
-                modelSpinnerInit(vehiclesModel);
 
             }
 
@@ -185,18 +167,12 @@ public class TripSettingsActivity extends AppCompatActivity {
     private void sendPostRequest() {
 
         int userID = Integer.parseInt(LoginActivity.userId);
-        int vehicleID = 1;
-
-        System.out.println("Testas:" + userID);
-
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 trip_ID = response;
-               //DEBUG: System.out.println("Testas 1:" + trip_ID);
-
             }
         }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
@@ -208,7 +184,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
                 Map<String, String> MyData = new HashMap<String, String>();
                 MyData.put("user_id", String.valueOf(userID));
-                MyData.put("user_vehicle_id", String.valueOf(vehicleID));
+                MyData.put("user_vehicle_id", String.valueOf(VehicleID));
                 MyData.put("fuel_at_start", String.valueOf(seekBar.getProgress()));
                 return MyData;
             }
@@ -227,7 +203,7 @@ public class TripSettingsActivity extends AppCompatActivity {
     private void sendGetRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url = "http://193.219.91.103:8666/vehicles?select=*";
+        String url = "http://193.219.91.103:8666/user_vehicles?user_id=eq."+LoginActivity.userId;
 
 // Request a string response from the provided URL.
 
@@ -236,7 +212,7 @@ public class TripSettingsActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
 
                 Gson gson = new Gson();
-                vehiclesList = gson.fromJson(String.valueOf(response), VehicleObject[].class);
+                userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
 
             }
         }, new Response.ErrorListener() {

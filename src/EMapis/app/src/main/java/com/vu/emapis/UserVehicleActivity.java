@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -49,9 +50,15 @@ public class UserVehicleActivity extends AppCompatActivity {
         saveVehicleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String VehicleAlias = enterVehicleAlias.getText().toString();
-                sendPostRequest(VehicleAlias);
-                finish();
+
+                if(enterVehicleAlias.getText().toString().isEmpty()) {
+                    Toast.makeText(UserVehicleActivity.this, "Please your enter vehicle's alias", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(UserVehicleActivity.this, "Success! You can now start a trip", Toast.LENGTH_SHORT).show();
+                    String VehicleAlias = enterVehicleAlias.getText().toString();
+                    sendPostRequest(VehicleAlias);
+                    finish();
+                }
             }
         });
 
