@@ -1,7 +1,6 @@
 package com.vu.emapis;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -25,43 +24,60 @@ import com.google.gson.Gson;
 
 import org.json.JSONArray;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Array;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Set;
 
-public class TripSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener  {
+public class TripSettingsActivity extends AppCompatActivity {
 
-    private String[] vehicles;
     private VehicleObject[] vehiclesList;
+    private String[] temp = {"Hi", "Bye"};
     private SeekBar seekBar;
     private TextView textView;
     private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
     public static String trip_ID;
 
 
+    private String make;
+    private String model;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_settings);
-
-        sendGetRequest();
-
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
+
+
+
+        sendGetRequest();
 
         seekBarInit();
 
         sendPostRequest();
 
-
-
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                spinnerInit();
-                System.out.println("Test" + Arrays.toString(vehiclesList));
+
+               // Set<String> vehicleSetModel = new HashSet<>();
+                Set<String> vehicleSetMake = new HashSet<>();
+                //String[] vehiclesModel;
+                String[] vehiclesMake;
+
+
+                for(int i=0; i< vehiclesList.length; i++) {
+                    vehicleSetMake.add(vehiclesList[i].getMake());
+                   // vehicleSetModel.add(vehiclesList[i].getModel());
+                }
+                vehiclesMake = vehicleSetMake.toArray(new String[0]);
+                //vehiclesModel = vehicleSetModel.toArray(new String[0]);
+
+                spinnerInit(vehiclesMake);
+                //modelSpinnerInit(vehiclesModel);
             }
         };
 
@@ -69,18 +85,58 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
         h.postDelayed(r, 500);
     }
 
-    public void spinnerInit() {
-        Spinner selectVehicle = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
+    public void modelSpinnerInit(String[] vehiclesModel) {
 
+        Spinner selectModel = findViewById(R.id.vehicleMenu2);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehiclesModel);
+        selectModel.setAdapter(adapter);
+        selectModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                model = adapterView.getItemAtPosition(pos).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+    }
+
+    public void spinnerInit(String[] vehicles) {
+
+        Spinner selectMake = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicles);
-        /** Here we create a new ArrayAdapter, which supplies the spinner with the array.
-         * 1st argument -> the context in which this will be done.
-         * 2nd argument -> the layout resource that defines how the selected choice appears in the spinner.
-         * 3rd argument -> the String array we have defined earlier.
-         */
+        selectMake.setAdapter(adapter); // call the adapter to the spinner
+        selectMake.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            // Gets called when an item has been selected
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-        selectVehicle.setAdapter(adapter); // call the adapter to the spinner
-        selectVehicle.setOnItemSelectedListener(this);
+                make = parent.getItemAtPosition(pos).toString();
+
+                Set<String> vehicleSetModel = new HashSet<>();
+                String[] vehiclesModel;
+
+                for(int i = 0; i<vehiclesList.length; i++) {
+
+                    if(vehiclesList[i].getMake().equals(make)) {
+                        vehicleSetModel.add(vehiclesList[i].getModel());
+                    }
+                }
+                vehiclesModel = vehicleSetModel.toArray(new String[0]);
+
+                modelSpinnerInit(vehiclesModel);
+
+            }
+
+            // Gets called when nothing has been selected (not being used, but has to be implemented)
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
     }
 
     public void seekBarInit() {
@@ -127,19 +183,7 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
     }
 
-    // Gets called when an item has been selected
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-        String make = (String) parent.getItemAtPosition(pos); // Get the content of selected item in the spinner
-
-    }
-
-    // Gets called when nothing has been selected (not being used, but has to be implemented)
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
 
     private void sendPostRequest() {
 
@@ -197,13 +241,6 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
                 Gson gson = new Gson();
                 vehiclesList = gson.fromJson(String.valueOf(response), VehicleObject[].class);
 
-
-                vehicles = new String[response.length()];
-
-                for(int i=0; i< response.length(); i++) {
-
-                    vehicles[i] = response.optString(i).replace("{\"make\":\"", "").replace("\"}", "");
-                }
             }
         }, new Response.ErrorListener() {
 
@@ -222,8 +259,4 @@ public class TripSettingsActivity extends AppCompatActivity implements AdapterVi
 
         queue.add(jsonArrayRequest);
     }
-
-
-
-
 }

@@ -40,6 +40,28 @@
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="SpeakableTextPresentCheck" />
 
+
+    <Spinner
+        android:id="@+id/vehicleMenu2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="350dp"
+        android:background="@color/buttonColor"
+        android:backgroundTint="@color/buttonColor"
+        android:fadingEdge="horizontal"
+        android:minHeight="48dp"
+        android:popupBackground="@color/buttonColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vehicleSelectionText"
+        app:layout_constraintVertical_bias="0.524"
+        tools:ignore="SpeakableTextPresentCheck" />
+
     <SeekBar
         android:id="@+id/rechargedEnergyLevels"
         android:layout_width="350dp"

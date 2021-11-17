@@ -34,7 +34,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void LocationActivity(View view) {
-        Intent intent = new Intent(MainScreenActivity.this, LocationActivity.class);
+        Intent intent = new Intent(MainScreenActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
 

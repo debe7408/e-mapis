@@ -121,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         userId = response.replaceAll("[\"\\[\\].{}:user_id]", "");
-                        Log.d("bybis", userId);
                     }
                 }, new Response.ErrorListener() {
             @Override
