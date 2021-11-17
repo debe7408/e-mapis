@@ -33,7 +33,6 @@ import java.util.Set;
 public class TripSettingsActivity extends AppCompatActivity {
 
     private VehicleObject[] vehiclesList;
-    private String[] temp = {"Hi", "Bye"};
     private SeekBar seekBar;
     private TextView textView;
     private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
@@ -56,8 +55,6 @@ public class TripSettingsActivity extends AppCompatActivity {
         sendGetRequest();
 
         seekBarInit();
-
-        sendPostRequest();
 
         Runnable r = new Runnable() {
             @Override

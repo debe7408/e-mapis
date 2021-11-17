@@ -57,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        if (username.matches("") || password.matches("")) {
+
+        if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
             sendPostRequest(username, password);
