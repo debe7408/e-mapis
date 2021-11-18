@@ -3,8 +3,11 @@ package com.vu.emapis;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,10 +47,54 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login); // this activity is related to UI in a activity_login.xml file
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        isOnline();
+
+    }
+
+
+    public void isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+         if(networkInfo != null && networkInfo.isConnected()) {
+
+         }
+         else {
+             new AlertDialog.Builder(this)
+                     .setIcon(android.R.drawable.ic_dialog_alert)
+                     .setTitle("Connection issues")
+                     .setMessage("Please check your internet connection and retry")
+                     .setPositiveButton("Exit", new DialogInterface.OnClickListener()
+                     {
+                         @Override
+                         public void onClick(DialogInterface dialog, int which) {
+                             isOnline();
+                         }
+
+                     })
+                     .setNegativeButton("Return", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialogInterface, int i) {
+                             finish();
+                         }
+                     })
+                     .show();
+         }
+    }
+
 
     /** This method is called when the user clicks "LOGIN" button **/
     public void onClick(View view) {
+
+        isOnline();
 
         EditText txtUserName = findViewById(R.id.usernameTextField);
         EditText txtPassword = findViewById(R.id.passwordTextField);
@@ -145,6 +192,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onClickRegister(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

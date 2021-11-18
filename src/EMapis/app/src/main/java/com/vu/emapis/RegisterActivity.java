@@ -2,7 +2,12 @@ package com.vu.emapis;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -38,7 +43,35 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        isOnline();
+
+    }
+
+    public void isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected()) {
+
+        }
+        else {
+            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     public void onClick(View view) {
+
+        isOnline();
+
         EditText txtUserName = findViewById(R.id.registerUsernameText);
         EditText txtPassword = findViewById(R.id.registerPasswordText);
         EditText txtEmail = findViewById(R.id.registerEmailText);
@@ -51,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (username.matches("") || password.matches("") || email.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
-        } else if (userNameValid == false) {
+        } else if (!userNameValid) {
             Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain special characters", Toast.LENGTH_SHORT).show();
         } else {
 
@@ -60,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
             sendPostRequest(username, bcryptHashString, email);
 
             Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
     }
@@ -70,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
         Matcher m = p.matcher(username);
         boolean special = m.find();
 
-        if (special==true || (username.length() < 4 || username.length() > 20)) {
+        if (special || (username.length() < 4 || username.length() > 20)) {
             passed = false;
         }
 

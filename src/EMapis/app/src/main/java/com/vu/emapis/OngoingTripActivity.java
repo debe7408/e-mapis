@@ -3,9 +3,12 @@ package com.vu.emapis;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,6 +49,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.ConnectException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -124,11 +129,25 @@ public class OngoingTripActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isOnline();
         if(clicked) {
             resumeLocationUpdates();
             simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
             simpleChronometer.start();
             clicked = false;
+        }
+    }
+
+    public void isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected()) {
+
+        }
+        else {
+            Toast.makeText(this, "Your trip is not being recorded due to connection issues. Enable internet connection and try again!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -252,7 +271,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest() {
-        //String trip_id = "1";
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
@@ -268,15 +286,18 @@ public class OngoingTripActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postURL, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println(response);
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+
+                    //error.printStackTrace();
+                    isOnline();
             }
         }) {
             @Override

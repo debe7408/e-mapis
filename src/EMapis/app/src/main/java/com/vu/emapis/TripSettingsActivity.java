@@ -1,6 +1,11 @@
 package com.vu.emapis;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -61,7 +66,12 @@ public class TripSettingsActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+                if(userVehicleList == null) {
+                    isOnline();
+                }
+
                 if(userVehicleList.length == 0) {
+
                     Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(TripSettingsActivity.this, SettingsActivity.class);
                     startActivity(intent);
@@ -87,6 +97,23 @@ public class TripSettingsActivity extends AppCompatActivity {
 
         Handler h = new Handler();
         h.postDelayed(r, 500);
+    }
+
+    public void isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected()) {
+
+        }
+        else {
+            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
     }
 
 
@@ -144,6 +171,8 @@ public class TripSettingsActivity extends AppCompatActivity {
 
     // Gets called when the button "Start the trip" is pressed
     public void startTheTrip(View view) {
+
+        isOnline();
 
         sendPostRequest();
 
