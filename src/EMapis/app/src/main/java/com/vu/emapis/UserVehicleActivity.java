@@ -2,6 +2,10 @@ package com.vu.emapis;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -51,6 +55,8 @@ public class UserVehicleActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                isOnline();
+
                 if(enterVehicleAlias.getText().toString().isEmpty()) {
                     Toast.makeText(UserVehicleActivity.this, "Please your enter vehicle's alias", Toast.LENGTH_SHORT).show();
                 } else {
@@ -74,6 +80,10 @@ public class UserVehicleActivity extends AppCompatActivity {
                 //String[] vehiclesModel;
                 String[] vehiclesMake;
 
+                if(vehiclesList == null) {
+                    isOnline();
+                }
+
 
                 for(int i=0; i< vehiclesList.length; i++) {
                     vehicleSetMake.add(vehiclesList[i].getMake());
@@ -90,6 +100,29 @@ public class UserVehicleActivity extends AppCompatActivity {
         Handler h = new Handler();
         h.postDelayed(r, 500);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isOnline();
+    }
+
+    public void isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected()) {
+
+        }
+        else {
+            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
     }
 
 
