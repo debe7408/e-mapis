@@ -2,13 +2,12 @@ package com.vu.emapis;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,6 +18,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -36,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
 
     private String url ="http://193.219.91.103:8666/users";
+    public boolean userNameTaken = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void onClick(View view) {
+    public void onClick(View view) throws InterruptedException {
 
         isOnline();
 
@@ -80,23 +81,56 @@ public class RegisterActivity extends AppCompatActivity {
         String password = txtPassword.getText().toString();
         String email = txtEmail.getText().toString();
 
-        boolean userNameValid = checkUsername(username);
+        checkIfUserNameNotTaken(username, password, email);
+
+    }
+
+    public void actions(String username, String password, String email, boolean userNameValid) {
+
 
         if (username.matches("") || password.matches("") || email.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else if (!userNameValid) {
             Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain special characters", Toast.LENGTH_SHORT).show();
         } else {
+            Log.d("taken1", String.valueOf(userNameTaken));
+            if (userNameTaken) {
+                Toast.makeText(this, "Username taken, srry", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
 
-            String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+                sendPostRequest(username, bcryptHashString, email);
 
-            sendPostRequest(username, bcryptHashString, email);
-
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
+
     }
+
+    public void checkIfUserNameNotTaken(String username, String password, String email){
+        String getUrl = "http://193.219.91.103:8666/users?select=username&username=eq." + username;
+        sendGetRequest(getUrl, username, new VolleyCallback() {
+
+            @Override
+            public void onSuccess(String result) {
+
+                if (result.replaceAll("[\"\\[\\].{}: ]", "").equals("username" + username)) {
+                    userNameTaken = true;
+                } else {
+                    userNameTaken = false;
+                }
+
+                boolean userNameValid = checkUsername(username);
+
+                actions(username, password, email, userNameValid);
+            }
+
+        });
+    }
+
 
     public boolean checkUsername(String username) {
         boolean passed = true;
@@ -144,5 +178,36 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
+    }
+
+    public interface VolleyCallback{
+        void onSuccess(String result);
+    }
+
+    private void sendGetRequest(String url, String username, final VolleyCallback callback) {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        callback.onSuccess(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                return headers;
+            }
+        };
+
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 }
