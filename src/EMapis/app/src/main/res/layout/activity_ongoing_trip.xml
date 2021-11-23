@@ -64,11 +64,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
+    <SeekBar
+        android:id="@+id/rechargedEnergyLevels"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:layout_marginBottom="40dp"
+        android:max="100"
+        android:progress="50"
+        app:layout_constraintBottom_toTopOf="@+id/btn_stop_trip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/energyLevelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text=""
+        android:textColor="@color/textColor"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/rechargedEnergyLevels"
+        app:layout_constraintEnd_toEndOf="@+id/rechargedEnergyLevels"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/rechargedEnergyLevels" />
+
+    <Button
+        android:id="@+id/btn_update_energy_level"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="30dp"
+        android:text="Update"
+        android:onClick="updateEnergyLevel"
+        app:layout_constraintBottom_toTopOf="@+id/btn_stop_trip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/btn_stop_trip"
         android:layout_width="360dp"
         android:layout_height="57dp"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="160dp"
         android:backgroundTint="#E65353"
         android:text="Stop the trip"
         android:onClick="endTripOnClick"

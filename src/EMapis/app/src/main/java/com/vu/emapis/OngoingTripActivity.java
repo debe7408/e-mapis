@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,11 +104,17 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public static String trip_ID;
 
+    private SeekBar seekBar;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
+        seekBar = findViewById(R.id.rechargedEnergyLevels);
+        textView = findViewById(R.id.energyLevelText);
+
+        seekBarInit();
 
         ButterKnife.bind(this);
 
@@ -347,5 +354,40 @@ public class OngoingTripActivity extends AppCompatActivity {
         intent.putExtra(trip_ID, trip_ID);
         startActivity(intent);
         finish();
+    }
+
+    public void seekBarInit() {
+        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            int progressValue = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                progressValue = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                textView.setText("Energy levels: "+progressValue + "%");
+            }
+        });
+    }
+
+    public void updateEnergyLevel(){
+
+        TripSettingsActivity online = new TripSettingsActivity();
+        online.isOnline();
+
+        //post request
+
+        //point id reikia priskirt (get request?)
+
     }
 }
