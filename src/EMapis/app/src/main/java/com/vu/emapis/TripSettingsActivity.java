@@ -232,7 +232,7 @@ public class TripSettingsActivity extends AppCompatActivity {
     private void sendGetRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url = "http://193.219.91.103:8666/user_vehicles?user_id=eq."+LoginActivity.userId;
+        String url = "http://193.219.91.103:8666/user_vehicles?user_id=eq." + LoginActivity.userId;
 
 // Request a string response from the provided URL.
 
