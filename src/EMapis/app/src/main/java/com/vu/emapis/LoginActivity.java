@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
-    private String url ="http://193.219.91.103:8666/rpc/get_pw";
+    private String url ="http://193.219.91.103:4558/rpc/find_password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             sendPostRequest(username, password);
         }
 
-        String getUrl = "http://193.219.91.103:8666/users?select=user_id&username=eq." + username;
+        String getUrl = "http://193.219.91.103:4558/users?select=user_id&username=eq." + username;
         sendGetRequest(getUrl);
 
 
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
