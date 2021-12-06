@@ -92,8 +92,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     // postURL
-    private final String url = "http://193.219.91.103:8666/rpc/point_insert";
-    private final String insertInputURL = "http://193.219.91.103:8666/rpc/new_inputs";
+    private final String url = "http://193.219.91.103:4558/rpc/point_insert";
+    private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs";
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -315,7 +315,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
@@ -432,7 +432,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };

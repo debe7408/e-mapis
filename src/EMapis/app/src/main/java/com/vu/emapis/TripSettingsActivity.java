@@ -40,7 +40,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
     private SeekBar seekBar;
     private TextView textView;
-    private final String postURL = "http://193.219.91.103:8666/rpc/new_trip";
+    private final String postURL = "http://193.219.91.103:4558/rpc/new_trip";
     public static String trip_ID;
 
 
@@ -221,7 +221,7 @@ public class TripSettingsActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
@@ -232,7 +232,7 @@ public class TripSettingsActivity extends AppCompatActivity {
     private void sendGetRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url = "http://193.219.91.103:8666/user_vehicles?user_id=eq." + LoginActivity.userId;
+        String url = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
 
 // Request a string response from the provided URL.
 
@@ -254,7 +254,7 @@ public class TripSettingsActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
