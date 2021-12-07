@@ -18,6 +18,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         Button addNewVehicleButton = findViewById(R.id.vehicleAddButton);
 
+        Button removeVehicleButton = findViewById(R.id.vehicleRemoveButton);
+
 
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +39,14 @@ public class SettingsActivity extends AppCompatActivity {
                 Intent intent = new Intent(SettingsActivity.this, UserVehicleActivity.class);
                 startActivity(intent);
 
+            }
+        });
+
+        removeVehicleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, UserRemoveVehicleActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -17,6 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EMapis">
         <activity
+            android:name=".UserRemoveVehicleActivity"
+            android:exported="false"
+            android:label="@string/title_activity_user_remove_vehicle"
+            android:theme="@style/Theme.EMapis.NoActionBar" />
+        <activity
             android:name=".UserVehicleActivity"
             android:exported="false" />
         <activity

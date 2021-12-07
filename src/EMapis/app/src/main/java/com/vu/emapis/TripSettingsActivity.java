@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -229,7 +230,7 @@ public class TripSettingsActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void sendGetRequest() {
+    public void sendGetRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String url = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
@@ -242,6 +243,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
                 Gson gson = new Gson();
                 userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
+                Log.d("list-trip-settings", String.valueOf(response));
 
             }
         }, new Response.ErrorListener() {
