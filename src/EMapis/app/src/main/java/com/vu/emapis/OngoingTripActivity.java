@@ -48,11 +48,13 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.ConnectException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,8 +93,12 @@ public class OngoingTripActivity extends AppCompatActivity {
     // fastest updates interval - 1 sec
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
+    double[] pointArray = new double[60];
+    int global_index = 0;
+
     // postURL
-    private final String url = "http://193.219.91.103:4558/rpc/point_insert";
+    private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/point_insert_array";
+    private final String firstPointURL =  "http://193.219.91.103:4558/rpc/first_point_insert";
     private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs";
 
     // location related apis
@@ -212,8 +218,23 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void updateLocation() {
+
         if (mCurrentLocation != null) {
-            sendPostRequest(); //TODO UNCOMMENT THIS TO SEND X,Y,Z AUTOMATICALLY
+
+            pointArray[global_index] = mCurrentLocation.getLatitude();
+            global_index++;
+            pointArray[global_index] = mCurrentLocation.getLongitude();
+            global_index++;
+            pointArray[global_index] = mCurrentLocation.getAltitude();
+            global_index++;
+
+            Log.d("global_index", Integer.toString(global_index));
+
+            if (global_index==60) {
+                Log.d("array", Arrays.toString(pointArray));
+                sendPostRequest();
+                global_index=0;
+            }
         }
     }
 
@@ -227,7 +248,6 @@ public class OngoingTripActivity extends AppCompatActivity {
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         mRequestingLocationUpdates = true;
                         startLocationUpdates();
-
                     }
 
                     @Override
@@ -287,19 +307,25 @@ public class OngoingTripActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
         JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
+        JSONArray points = new JSONArray();
         try {
 
             postData.put("trip_id", Integer.parseInt(trip_ID));
-            postData.put("x", mCurrentLocation.getLatitude());
-            postData.put("y", mCurrentLocation.getLongitude());
-            postData.put("z", mCurrentLocation.getAltitude());
+
+            for (int i = 0; i < 60; i++) {
+                points.put(pointArray[i]);
+            }
+
+            postData.put("points", points);
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, pointBlockUrl, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
