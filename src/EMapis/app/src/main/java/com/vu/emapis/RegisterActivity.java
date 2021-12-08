@@ -35,7 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
 
-    private String url ="http://193.219.91.103:8666/users";
+    private String url ="http://193.219.91.103:4558/rpc/new_user";
     public boolean userNameTaken = false;
 
     @Override
@@ -111,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void checkIfUserNameNotTaken(String username, String password, String email){
-        String getUrl = "http://193.219.91.103:8666/users?select=username&username=eq." + username;
+        String getUrl = "http://193.219.91.103:4558/users?select=username&username=eq." + username;
         sendGetRequest(getUrl, username, new VolleyCallback() {
 
             @Override
@@ -172,7 +172,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
@@ -202,7 +202,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };

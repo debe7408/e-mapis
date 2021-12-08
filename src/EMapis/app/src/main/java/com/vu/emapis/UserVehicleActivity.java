@@ -98,7 +98,7 @@ public class UserVehicleActivity extends AppCompatActivity {
         };
 
         Handler h = new Handler();
-        h.postDelayed(r, 500);
+        h.postDelayed(r, 1000);
 
     }
 
@@ -128,7 +128,7 @@ public class UserVehicleActivity extends AppCompatActivity {
 
     private void sendPostRequest(String VehicleAlias) {
 
-        String url = "http://193.219.91.103:8666/rpc/new_user_vehicle";
+        String url = "http://193.219.91.103:4558/rpc/new_user_vehicle";
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -155,7 +155,7 @@ public class UserVehicleActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
@@ -166,7 +166,7 @@ public class UserVehicleActivity extends AppCompatActivity {
     private void sendGetRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url = "http://193.219.91.103:8666/vehicles?select=*";
+        String url = "http://193.219.91.103:4558/vehicles?select=*";
 
 // Request a string response from the provided URL.
 
@@ -188,7 +188,7 @@ public class UserVehicleActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidG9kb191c2VyIn0.kTNyXxM8oq1xhVwNznb08dlSxIjq1F023zeTWyKNcNY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
