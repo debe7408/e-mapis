@@ -98,7 +98,7 @@ public class UserVehicleActivity extends AppCompatActivity {
         };
 
         Handler h = new Handler();
-        h.postDelayed(r, 1000);
+        h.postDelayed(r, 1500);
 
     }
 

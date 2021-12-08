@@ -96,6 +96,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     int global_index = 0;
     private boolean passed = false;
 
+    boolean userInputed = false;
+
     // postURL
     private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/point_insert_array";
     private final String firstPointURL =  "http://193.219.91.103:4558/rpc/first_point_insert";
@@ -453,7 +455,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
             postData.put("trip_id", Integer.parseInt(trip_ID));
 
-            for (int i = 0; i < 60; i++) {
+            for (int i = 0; i < pointArray.length; i++) {
                 points.put(pointArray[i]);
             }
 
@@ -469,7 +471,10 @@ public class OngoingTripActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, pointBlockUrl, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
+                if (userInputed) {
+                    sendUserInput();
+                    userInputed = false;
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -553,17 +558,16 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     public void updateEnergyLevel(View view){
-
+        userInputed = true;
         stopLocationUpdates();
-        sendUserInput();
-        resumeLocationUpdates();
+        sendPointBlock();
+        global_index=0;
 
         //post request
 
         //point id reikia priskirt (get request?)
 
         //sendUserInput();
-
 
     }
 
@@ -576,7 +580,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
             postData.put("user_id", LoginActivity.userId);
             postData.put("trip_id", Integer.parseInt(trip_ID));
-            postData.put("input_value", "100");
+            postData.put("input_value", String.valueOf(seekBar.getProgress()));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -586,7 +590,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, insertInputURL, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
+                resumeLocationUpdates();
             }
         }, new Response.ErrorListener() {
             @Override
