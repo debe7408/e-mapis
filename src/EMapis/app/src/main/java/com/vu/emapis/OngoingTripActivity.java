@@ -25,7 +25,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -52,7 +51,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.ConnectException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -91,10 +89,12 @@ public class OngoingTripActivity extends AppCompatActivity {
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
     // fastest updates interval - 1 sec
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
 
     double[] pointArray = new double[60];
+    double[] firstPointArray = new double[9];
     int global_index = 0;
+    private boolean passed = false;
 
     boolean userInputed = false;
 
@@ -127,9 +127,11 @@ public class OngoingTripActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
 
-        seekBarInit();
+
 
         ButterKnife.bind(this);
+
+        seekBarInit();
 
         simpleChronometer = findViewById(R.id.simpleChronometer);
         simpleChronometer.start();
@@ -221,8 +223,25 @@ public class OngoingTripActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void updateLocation() {
 
-        if (mCurrentLocation != null) {
+        if ((mCurrentLocation != null) && (!passed)) {
 
+            firstPointArray[global_index] = mCurrentLocation.getLatitude();
+            global_index++;
+            firstPointArray[global_index] = mCurrentLocation.getLongitude();
+            global_index++;
+            firstPointArray[global_index] = mCurrentLocation.getAltitude();
+            global_index++;
+
+            Log.d("global_index", Integer.toString(global_index));
+
+            if (global_index==9) {
+                Log.d("array", Arrays.toString(firstPointArray));
+
+                sendFirstPointPostRequest();
+                //sendPostRequest();
+                global_index=0;
+            }
+        } else if (mCurrentLocation != null) {
             pointArray[global_index] = mCurrentLocation.getLatitude();
             global_index++;
             pointArray[global_index] = mCurrentLocation.getLongitude();
@@ -234,7 +253,8 @@ public class OngoingTripActivity extends AppCompatActivity {
 
             if (global_index==60) {
                 Log.d("array", Arrays.toString(pointArray));
-                sendPointBlock();
+
+                sendPostRequest();
                 global_index=0;
             }
         }
@@ -304,7 +324,128 @@ public class OngoingTripActivity extends AppCompatActivity {
         startLocationUpdates();
     }
 
-    private void sendPointBlock() {
+
+
+//    private void sendFirstPointPostRequest(String testas) {
+//
+//        RequestQueue queue = Volley.newRequestQueue(this);
+//
+//
+//        JSONArray jsonArray = new JSONArray();
+//
+//        for(int i=0; i<9; i++) {
+//            try {
+//                jsonArray.put(pointArray[i]);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        Log.d("Arejus,", jsonArray.toString());
+//
+//
+//            StringRequest stringRequest = new StringRequest(Request.Method.POST, firstPointURL, new Response.Listener<String>() {
+//                @Override
+//                public void onResponse(String response) {
+//
+//                    Log.d("Response", response);
+//
+//                }
+//            }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//
+//                    error.printStackTrace();
+//                    isOnline();
+//                }
+//            }) {
+//                protected Map<String, String> getParams() {
+//
+//                    Map<String, String[]> MyData = new HashMap<String, String[]>();
+//
+//                    MyData.put("trip_id", trip_ID);
+//                    MyData.put("points", jsonArray);
+//
+//                    return MyData;
+//                }
+//
+//                @Override
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    Map<String, String> headers = new HashMap<>();
+//                    //headers.put("Content-Type", "application/x-www-form-urlencoded");
+//                    headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+//                    return headers;
+//                }
+//            };
+//
+//            queue.add(stringRequest);
+//    }
+
+
+
+    private void sendFirstPointPostRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
+
+        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
+        JSONArray points = new JSONArray();
+        try {
+
+            postData.put("trip_id", Integer.parseInt(trip_ID));
+
+            for (int i = 0; i < 9; i++) {
+                points.put(firstPointArray[i]);
+            }
+
+            postData.put("points", points);
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, firstPointURL, postData, new Response.Listener<JSONObject>() {
+
+
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+                Log.d("Response", response.toString());
+
+                Log.d("Response", "Sw");
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                error.printStackTrace();
+                isOnline();
+
+                passed = true;
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                return headers;
+            }
+        };
+
+        //jsonObjectRequest.getRetryPolicy();
+
+        queue.add(jsonObjectRequest);
+    }
+
+
+    private void sendPostRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
@@ -339,7 +480,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                    //error.printStackTrace();
+                    error.printStackTrace();
                     isOnline();
             }
         }) {
