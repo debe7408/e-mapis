@@ -17,6 +17,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EMapis">
         <activity
+            android:name=".PopUpActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.CustomTheme"/>
+        <activity
             android:name=".UserRemoveVehicleActivity"
             android:exported="false"
             android:label="@string/title_activity_user_remove_vehicle"
