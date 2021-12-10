@@ -39,10 +39,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import butterknife.BindView;
+
 public class PopUpActivity extends AppCompatActivity {
 
     private SeekBar seekBar;
     private TextView textView;
+
+    public static int seekBarValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,33 @@ public class PopUpActivity extends AppCompatActivity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int) (width*.8), (int) (height*0.7));
+
+    }
+
+    public void updateEnergyLevelPopUp(View view){
+        Log.d(".getProgress", String.valueOf(seekBar.getProgress()));
+        Log.d("seekbarvalue", String.valueOf(seekBarValue));
+
+        seekBarValue = OngoingTripActivity.seekBarValue;
+        Log.d("seekbarvalue", String.valueOf(seekBarValue));
+
+        if (seekBarValue >= seekBar.getProgress()){
+            // sendUserInput(); TODO UNCOMMENT WHEN DB FUNCTIONING
+            seekBarValue = seekBar.getProgress();
+            Intent intent = new Intent(this, RechargingActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            Toast.makeText(PopUpActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
+        }
+
+        /*OngoingTripActivity ongoingTripActivity = new OngoingTripActivity(); TODO UNCOMMENT WHEN DB FUNCTIONING
+        ongoingTripActivity.sendUserInput();*/
+
+        //post request
+
+        //point id reikia priskirt (get request?)
 
     }
 

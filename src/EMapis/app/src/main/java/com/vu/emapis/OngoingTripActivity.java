@@ -78,9 +78,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     @BindView(R.id.btn_recharge)
     Button btnRecharge;
 
-    @BindView(R.id.btn_update_energy_level)
-    Button btnUpdateEnergy;
-
     // location last updated time
     private String mLastUpdateTime;
 
@@ -98,7 +95,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     boolean userInputted = false;
 
-    private static int seekBarValue = TripSettingsActivity.seekBarValue;
+    public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
     // postURL
     private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/point_insert_array";
@@ -128,8 +125,6 @@ public class OngoingTripActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ongoing_trip);
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
-
-
 
         ButterKnife.bind(this);
 
@@ -474,14 +469,9 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 if (userInputted) {
-                    if (seekBarValue >= seekBar.getProgress()){
-                        sendUserInput();
+                        // sendUserInput(); TODO UNCOMMENT WHEN DB FUNCTIONING
                         userInputted = false;
                         seekBarValue = seekBar.getProgress();
-                    }
-                    else {
-                        Toast.makeText(OngoingTripActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
-                    }
                 }
             }
         }, new Response.ErrorListener() {
@@ -504,13 +494,16 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     public void rechargeOnClick(View view) {
-        Intent intent = new Intent(this, PopUpActivity.class);
 
         stopLocationUpdates();
+        sendPointBlock();
+        global_index=0;
+
         lastPause = SystemClock.elapsedRealtime();
         simpleChronometer.stop();
         clicked = true;
 
+        Intent intent = new Intent(this, PopUpActivity.class);
         startActivity(intent);
     }
 
@@ -523,6 +516,10 @@ public class OngoingTripActivity extends AppCompatActivity {
             tripStatus.setText("Trip is paused");
             btnPauseTrip.setText("Resume the trip");
             clicked = true;
+
+            sendPointBlock();
+            global_index=0;
+
         } else {
             resumeLocationUpdates();
             simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
@@ -570,19 +567,24 @@ public class OngoingTripActivity extends AppCompatActivity {
         Log.d("seekBarValue", String.valueOf(seekBarValue));
         Log.d(".getProgress", String.valueOf(seekBar.getProgress()));
 
-        stopLocationUpdates();
-        sendPointBlock();
-        global_index=0;
+        if (seekBarValue >= seekBar.getProgress()){
+            stopLocationUpdates();
+            // sendPointBlock(); TODO UNCOMMENT WHEN DB FUNCTIONING
+            global_index=0;
+        }
+        else {
+            Toast.makeText(OngoingTripActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
+        }
 
         //post request
 
         //point id reikia priskirt (get request?)
 
-        //sendUserInput();
+        //sendUserInput(); TODO UNCOMMENT WHEN DB FUNCTIONING
 
     }
 
-    private void sendUserInput() {
+    public void sendUserInput() {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 

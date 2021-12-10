@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,6 +30,8 @@ public class TripEndActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView textView;
     private String trip_ID;
+
+    public static int seekBarValue = OngoingTripActivity.seekBarValue;
 
     String postURL = "http://193.219.91.103:8666/rpc/end_trip";
 
@@ -74,13 +77,20 @@ public class TripEndActivity extends AppCompatActivity {
     }
 
     public void showStatistics(View view) {
-        sendPostRequest();
-        Intent intent = new Intent(TripEndActivity.this, VolleyActivity.class);
-        startActivity(intent);
+
+        if (seekBarValue >= seekBar.getProgress()){
+            // sendUserInput(); TODO UNCOMMENT WHEN DB FUNCTIONING
+            Intent intent = new Intent(TripEndActivity.this, VolleyActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(TripEndActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
+        }
+        //sendPostRequest(); TODO NOT NEEDED?
     }
 
 
-    private void sendPostRequest() {
+    /*private void sendPostRequest() {
 
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -112,5 +122,5 @@ public class TripEndActivity extends AppCompatActivity {
 
         requestQueue.add(stringRequest);
 
-    }
+    }*/
 }
