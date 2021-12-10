@@ -43,6 +43,7 @@ public class TripSettingsActivity extends AppCompatActivity {
     private TextView textView;
     private final String postURL = "http://193.219.91.103:4558/rpc/new_trip";
     public static String trip_ID;
+    public static int seekBarValue;
 
 
     private userVehicleObject[] userVehicleList;
@@ -176,6 +177,8 @@ public class TripSettingsActivity extends AppCompatActivity {
         isOnline();
 
         sendPostRequest();
+
+        seekBarValue = seekBar.getProgress();
 
         Runnable r = new Runnable() {
             @Override
