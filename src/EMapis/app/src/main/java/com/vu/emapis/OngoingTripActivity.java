@@ -422,7 +422,9 @@ public class OngoingTripActivity extends AppCompatActivity {
                 error.printStackTrace();
                 isOnline();
 
-                passed = true;
+                // TODO uncomment line below, when the sendPointBlock works fine, because it crashes our API.
+                //  FOR NOW IT'S GOING TO ONLY BE SENDING FIRST 3 POINTS, BUT IT'S GOOD FOR TESTING.
+                //passed = true;
 
             }
         }) {
@@ -496,7 +498,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     public void rechargeOnClick(View view) {
 
         stopLocationUpdates();
-        sendPointBlock();
+        //sendPointBlock();
         global_index=0;
 
         lastPause = SystemClock.elapsedRealtime();
@@ -517,7 +519,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             btnPauseTrip.setText("Resume the trip");
             clicked = true;
 
-            sendPointBlock();
+            // sendPointBlock();
             global_index=0;
 
         } else {
