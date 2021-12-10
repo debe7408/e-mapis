@@ -100,7 +100,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     // postURL
     private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/point_insert_array";
-    private final String firstPointURL =  "http://193.219.91.103:4558/rpc/first_point_insert";
+    private final String firstPointURL =  "http://193.219.91.103:4558/rpc/first_point_insert_json";
     private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs";
 
     // location related apis
@@ -417,6 +417,8 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 Log.d("Response", "Sw");
 
+                passed = true;
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -425,7 +427,7 @@ public class OngoingTripActivity extends AppCompatActivity {
                 error.printStackTrace();
                 isOnline();
 
-                passed = true;
+
 
             }
         }) {
@@ -560,7 +562,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     public void updateEnergyLevel(View view){
         userInputed = true;
         stopLocationUpdates();
-        sendPointBlock();
+        sendPostRequest();
         global_index=0;
 
         //post request
@@ -596,7 +598,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                //error.printStackTrace();
+                error.printStackTrace();
                 isOnline();
             }
         }) {

@@ -97,7 +97,7 @@ public class TripSettingsActivity extends AppCompatActivity {
         };
 
         Handler h = new Handler();
-        h.postDelayed(r, 500);
+        h.postDelayed(r, 1000);
     }
 
     public void isOnline() {
