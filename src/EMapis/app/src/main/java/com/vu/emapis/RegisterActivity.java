@@ -1,7 +1,5 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -10,7 +8,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -38,17 +39,28 @@ public class RegisterActivity extends AppCompatActivity {
     private String url ="http://193.219.91.103:4558/rpc/new_user";
     public boolean userNameTaken = false;
 
+    ProgressBar progressBar;
+
+
+    public interface VolleyCallback{
+        void onSuccess(String result);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        progressBar = findViewById(R.id.loadingBar);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        isOnline();
+        //isOnline();
 
     }
 
@@ -69,9 +81,11 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void onClick(View view) throws InterruptedException {
+    public void onClickRegister(View view) throws InterruptedException {
 
-        isOnline();
+        //isOnline();
+
+        progressBar.setVisibility(View.VISIBLE);
 
         EditText txtUserName = findViewById(R.id.registerUsernameText);
         EditText txtPassword = findViewById(R.id.registerPasswordText);
@@ -80,6 +94,8 @@ public class RegisterActivity extends AppCompatActivity {
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
         String email = txtEmail.getText().toString();
+
+
 
         checkIfUserNameNotTaken(username, password, email);
 
@@ -111,6 +127,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void checkIfUserNameNotTaken(String username, String password, String email){
+
+
         String getUrl = "http://193.219.91.103:4558/users?select=username&username=eq." + username;
         sendGetRequest(getUrl, username, new VolleyCallback() {
 
@@ -178,10 +196,15 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
-    }
 
-    public interface VolleyCallback{
-        void onSuccess(String result);
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private void sendGetRequest(String url, String username, final VolleyCallback callback) {
@@ -209,5 +232,15 @@ public class RegisterActivity extends AppCompatActivity {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
     }
 }

@@ -7,6 +7,18 @@
     android:background="@color/backgroundColor"
     tools:context=".MainScreenActivity">
 
+    <TextView
+        android:id="@+id/vehicleSelectionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Settings Menu"
+        android:textColor="@color/textColor"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/signOutButton"
         android:layout_width="wrap_content"
@@ -47,4 +59,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.6" />
+
+    <Button
+        android:id="@+id/returnToMainButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:textColor="@color/textColor"
+        android:backgroundTint="@color/buttonColor"
+        app:layout_constraintBottom_toBottomOf="@+id/signOutButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/signOutButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

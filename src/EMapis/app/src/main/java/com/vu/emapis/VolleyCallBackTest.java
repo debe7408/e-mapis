@@ -61,7 +61,6 @@ public class VolleyCallBackTest extends AppCompatActivity {
                         textView.setText("Something went wrong :(");
                     }
                 });
-
             }
         });
 

@@ -98,8 +98,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
     // postURL
-    private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/point_insert_array";
-    private final String firstPointURL =  "http://193.219.91.103:4558/rpc/first_point_insert";
+    private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/_emapis_block_point_insert";
+    private final String firstPointURL =  "http://193.219.91.103:4558/rpc/_emapis_first_point_insert";
     private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs";
 
     // location related apis
@@ -322,64 +322,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
 
-
-//    private void sendFirstPointPostRequest(String testas) {
-//
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//
-//
-//        JSONArray jsonArray = new JSONArray();
-//
-//        for(int i=0; i<9; i++) {
-//            try {
-//                jsonArray.put(pointArray[i]);
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        Log.d("Arejus,", jsonArray.toString());
-//
-//
-//            StringRequest stringRequest = new StringRequest(Request.Method.POST, firstPointURL, new Response.Listener<String>() {
-//                @Override
-//                public void onResponse(String response) {
-//
-//                    Log.d("Response", response);
-//
-//                }
-//            }, new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//
-//                    error.printStackTrace();
-//                    isOnline();
-//                }
-//            }) {
-//                protected Map<String, String> getParams() {
-//
-//                    Map<String, String[]> MyData = new HashMap<String, String[]>();
-//
-//                    MyData.put("trip_id", trip_ID);
-//                    MyData.put("points", jsonArray);
-//
-//                    return MyData;
-//                }
-//
-//                @Override
-//                public Map<String, String> getHeaders() throws AuthFailureError {
-//                    Map<String, String> headers = new HashMap<>();
-//                    //headers.put("Content-Type", "application/x-www-form-urlencoded");
-//                    headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-//                    return headers;
-//                }
-//            };
-//
-//            queue.add(stringRequest);
-//    }
-
-
-
     private void sendFirstPointPostRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
@@ -414,6 +356,8 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 Log.d("Response", "Sw");
 
+                passed = true;
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -424,7 +368,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 // TODO uncomment line below, when the sendPointBlock works fine, because it crashes our API.
                 //  FOR NOW IT'S GOING TO ONLY BE SENDING FIRST 3 POINTS, BUT IT'S GOOD FOR TESTING.
-                //passed = true;
+                passed = true;
 
             }
         }) {
