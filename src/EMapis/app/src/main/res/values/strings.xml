@@ -19,7 +19,6 @@
     <string name="title_activity_user_remove_vehicle">UserRemoveVehicleActivity</string>
 
 
-    
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
     </style>

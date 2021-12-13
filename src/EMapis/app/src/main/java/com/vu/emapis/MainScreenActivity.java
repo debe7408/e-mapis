@@ -38,5 +38,8 @@ public class MainScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    public void DeveloperSettingsAcitivity(View view) {
+        Intent intent = new Intent(MainScreenActivity.this, DeveloperSettingsActivity.class);
+        startActivity(intent);
+    }
 }
