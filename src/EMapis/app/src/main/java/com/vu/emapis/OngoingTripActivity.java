@@ -51,6 +51,8 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -85,20 +87,18 @@ public class OngoingTripActivity extends AppCompatActivity {
     // location updates interval - 5 sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
-    // fastest updates interval - 1 sec
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
+    // fastest updates interval - 4 sec
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 4000;
 
-    double[] pointArray = new double[60];
-    double[] firstPointArray = new double[9];
+    double[] pointArray = new double[63 ];
     int global_index = 0;
-    private boolean passed = false;
+    private boolean passed = true;  // TODO Might delete this since we only use 1 function to send data
 
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
-    // postURL
-    private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/_emapis_block_point_insert";
-    private final String firstPointURL =  "http://193.219.91.103:4558/rpc/_emapis_first_point_insert";
     private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs"; //TODO FIX URL AFTER EVALUATING WHAT WE WANT TO DO
+    private final String sendingDataURL = "http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert";
+
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -113,10 +113,14 @@ public class OngoingTripActivity extends AppCompatActivity {
     private View view;
 
     public static String trip_ID;
+    public BigDecimal finalSend = BigDecimal.valueOf(0);
 
     private SeekBar seekBar;
     private TextView textView;
     private Chronometer simpleChronometer;
+    private TextView tripLenghtTextView;
+
+
 
 
     // VolleyCallback interface
@@ -142,6 +146,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
+        tripLenghtTextView = findViewById(R.id.textView4);
 
         ButterKnife.bind(this);
 
@@ -153,7 +158,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         trip_ID = intent.getStringExtra(TripSettingsActivity.trip_ID);
-        // DEBUG: System.out.println("Testas =" + trip_ID);
+        Log.d("Testas =", trip_ID);
 
         initLib();
         startLocationService();
@@ -163,25 +168,11 @@ public class OngoingTripActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        isOnline();
         if(clicked) {
             resumeLocationUpdates();
             simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
             simpleChronometer.start();
             clicked = false;
-        }
-    }
-
-    public void isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected()) {
-
-        }
-        else {
-            Toast.makeText(this, "Your trip is not being recorded due to connection issues. Enable internet connection and try again!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -235,47 +226,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void updateLocation() {
 
-        if ((mCurrentLocation != null) && (!passed)) {
 
-            firstPointArray[global_index] = mCurrentLocation.getLatitude();
-            global_index++;
-            firstPointArray[global_index] = mCurrentLocation.getLongitude();
-            global_index++;
-            firstPointArray[global_index] = mCurrentLocation.getAltitude();
-            global_index++;
-
-            Log.d("global_index", Integer.toString(global_index));
-
-            if (global_index==9) {
-
-                // Replace [ ] in an array with { }, because database does not accept array with [ ].
-                String dataPost = (Arrays.toString(firstPointArray).replace("[", "{")).replace("]", "}");
-                Log.d("Array1: ", dataPost);
-
-                sendFirstPointPost(firstPointURL, dataPost, new VolleyCallbackGet() {
-                    @Override
-                    public void onSuccess(String result) {
-
-
-                        //TODO if result is 1, passed = true, else = false.
-
-                        global_index=0;
-                        passed=true;
-                        Log.d("SemiFinal ", result);
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                        Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
-                        global_index=0;
-
-                    }
-                });
-
-            }
-        } else if (mCurrentLocation != null) {
+        if (mCurrentLocation != null) {
 
             pointArray[global_index] = mCurrentLocation.getLatitude();
             global_index++;
@@ -286,29 +238,30 @@ public class OngoingTripActivity extends AppCompatActivity {
 
             Log.d("global_index", Integer.toString(global_index));
 
-            if (global_index==60) {
+            if (global_index == 60) {
 
                 String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
                 Log.d("Array2: ", dataPost);
 
-                sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+                sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
                     @Override
                     public void onSuccess(String result) {
-                        global_index=0;
+                        global_index = 0;
                         Log.d("Final", result);
-                        global_index=0;
+                        global_index = 0;
                     }
 
                     @Override
                     public void onError(String error) {
                         Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
-                        global_index=0;
+                        global_index = 0;
                     }
                 });
 
             }
         }
     }
+
 
     public void startLocationService() {
 
@@ -320,6 +273,8 @@ public class OngoingTripActivity extends AppCompatActivity {
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         mRequestingLocationUpdates = true;
                         startLocationUpdates();
+
+                        // TODO before the user accepts permissions, do not count time etc.
                     }
 
                     @Override
@@ -374,51 +329,6 @@ public class OngoingTripActivity extends AppCompatActivity {
         startLocationUpdates();
     }
 
-
-    private void sendFirstPointPost(String url, String dataPost, final VolleyCallbackGet callbackPost) {
-
-
-
-        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-
-                callbackPost.onSuccess(response);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                callbackPost.onError(error.toString());
-
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-
-                Map<String, String> MyData = new HashMap<String, String>();
-                MyData.put("trip_id", trip_ID);
-                MyData.put("points", dataPost);
-
-                return MyData;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        queue.add(stringRequest);
-
-    }
-
     private void sendArrayPointPost(String url, String dataPost, final VolleyCallbackGet callbackPost2) {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
@@ -428,7 +338,22 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
-                callbackPost2.onSuccess(response);
+                String distance = response.replace("\"", "");
+                BigDecimal bigDecimal = new BigDecimal(Double.valueOf(distance));
+                BigDecimal divisor = new BigDecimal(1000);
+
+                bigDecimal = bigDecimal.divide(divisor);
+                bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_UP);
+
+                finalSend = finalSend.add(bigDecimal);
+
+                distance = finalSend.toString();
+
+                tripLenghtTextView.setText(distance.concat(" km"));
+
+                // Arrays.fill(pointArray, 0.0); Need to test
+                callbackPost2.onSuccess(distance);
+
 
             }
         }, new Response.ErrorListener() {
@@ -470,7 +395,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
         Log.d("Recharge send data: ", dataPost);
 
-        sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+        sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
             @Override
             public void onSuccess(String result) {
                 global_index=0;
@@ -507,7 +432,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("Pause trip send data: ", dataPost);
 
             // Send data
-            sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+            sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
                 @Override
                 public void onSuccess(String result) {
                     global_index=0;
@@ -538,7 +463,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
         Log.d("End trip send data: ", dataPost);
         // Send data
-        sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+        sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
             @Override
             public void onSuccess(String result) {
                 global_index=0;
@@ -594,7 +519,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("charge send data: ", dataPost);
 
             // Send data
-            sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+            sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
                 @Override
                 public void onSuccess(String result) {
                     global_index=0;
@@ -643,8 +568,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                //error.printStackTrace();
-                isOnline();
+                error.printStackTrace();
             }
         }) {
             @Override
