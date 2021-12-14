@@ -1,30 +1,23 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,9 +26,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginActivity extends AppCompatActivity {
 
-
     public static String userId;
-
     public static String getUserId() {
         return userId;
     }
@@ -43,58 +34,25 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
     private String url ="http://193.219.91.103:4558/rpc/find_password";
 
+    // VolleyCallback interface
+    public interface VolleyCallbackGet {
+        void onSuccess(String result);
+        void onError(String error);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login); // this activity is related to UI in a activity_login.xml file
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        isOnline();
-
     }
-
-
-    public void isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-         if(networkInfo != null && networkInfo.isConnected()) {
-
-         }
-         else {
-             new AlertDialog.Builder(this)
-                     .setIcon(android.R.drawable.ic_dialog_alert)
-                     .setTitle("Connection issues")
-                     .setMessage("Please check your internet connection and retry")
-                     .setPositiveButton("Exit", new DialogInterface.OnClickListener()
-                     {
-                         @Override
-                         public void onClick(DialogInterface dialog, int which) {
-                             isOnline();
-                         }
-
-                     })
-                     .setNegativeButton("Return", new DialogInterface.OnClickListener() {
-                         @Override
-                         public void onClick(DialogInterface dialogInterface, int i) {
-                             finish();
-                         }
-                     })
-                     .show();
-         }
-    }
-
 
     /** This method is called when the user clicks "LOGIN" button **/
-    public void onClick(View view) {
-
-        isOnline();
+    public void onClickLoginButton(View view) {
 
         EditText txtUserName = findViewById(R.id.usernameTextField);
         EditText txtPassword = findViewById(R.id.passwordTextField);
@@ -102,13 +60,34 @@ public class LoginActivity extends AppCompatActivity {
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
 
-
-
-
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
-            sendPostRequest(username, password);
+            sendPostRequest(username, password, new VolleyCallbackGet() {
+                @Override
+                public void onSuccess(String response) {
+
+                    String hashedPassword = response;
+                    hashedPassword = hashedPassword.replace("\"", "");
+
+                    BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hashedPassword);
+                    Log.d("result", result.toString());
+                    if (result.verified) {
+                        Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
+                        intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
+                        startActivity(intent); // Starts the new activity
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Password or username incorrect", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+
+                    Toast.makeText(LoginActivity.this, "Connection issues!", Toast.LENGTH_SHORT).show();
+
+                }
+            });
         }
 
         String getUrl = "http://193.219.91.103:4558/users?select=user_id&username=eq." + username;
@@ -117,29 +96,22 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void sendPostRequest(String username, String password) {
+    private void sendPostRequest(String username, String password, final VolleyCallbackGet callback) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                String hashedPassword = response;
-                hashedPassword = hashedPassword.replace("\"", "");
 
-                BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hashedPassword);
-                Log.d("result", result.toString());
-                if (result.verified) {
-                    Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
-                    intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
-                    startActivity(intent); // Starts the new activity
-                } else {
-                    Toast.makeText(LoginActivity.this, "Password or username incorrect", Toast.LENGTH_SHORT).show();
-                }
+                callback.onSuccess(response);
+
             }
         }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                callback.onError(error.toString());
+
             }
         }) {
             protected Map<String, String> getParams() {
@@ -169,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         userId = response.replaceAll("[\"\\[\\].{}:user_id]", "");
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -188,8 +161,6 @@ public class LoginActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-
-
     public void onClickRegister(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -201,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Exiting")
-                .setMessage("Are you sure you want to exit?")
+                .setMessage("Are you sure you want to quit?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
                     @Override

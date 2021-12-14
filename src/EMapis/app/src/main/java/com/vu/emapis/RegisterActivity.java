@@ -1,9 +1,6 @@
 package com.vu.emapis;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public interface VolleyCallback{
         void onSuccess(String result);
+        void onError(String error);
     }
 
 
@@ -60,30 +58,9 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        //isOnline();
-
-    }
-
-    public void isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected()) {
-
-        }
-        else {
-            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        }
     }
 
     public void onClickRegister(View view) throws InterruptedException {
-
-        //isOnline();
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -95,14 +72,11 @@ public class RegisterActivity extends AppCompatActivity {
         String password = txtPassword.getText().toString();
         String email = txtEmail.getText().toString();
 
-
-
         checkIfUserNameNotTaken(username, password, email);
 
     }
 
     public void actions(String username, String password, String email, boolean userNameValid) {
-
 
         if (username.matches("") || password.matches("") || email.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
@@ -128,7 +102,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void checkIfUserNameNotTaken(String username, String password, String email){
 
-
         String getUrl = "http://193.219.91.103:4558/users?select=username&username=eq." + username;
         sendGetRequest(getUrl, username, new VolleyCallback() {
 
@@ -144,6 +117,11 @@ public class RegisterActivity extends AppCompatActivity {
                 boolean userNameValid = checkUsername(username);
 
                 actions(username, password, email, userNameValid);
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(RegisterActivity.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -220,6 +198,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                callback.onError(error.toString());
+                error.printStackTrace();
             }
         }){
             @Override
