@@ -1,17 +1,13 @@
 package com.vu.emapis;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,7 +27,6 @@ import com.google.gson.Gson;
 
 import org.json.JSONArray;
 
-import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,87 +36,85 @@ public class TripSettingsActivity extends AppCompatActivity {
 
     private SeekBar seekBar;
     private TextView textView;
-    private final String postURL = "http://193.219.91.103:4558/rpc/new_trip";
-    public static String trip_ID;
-    public static int seekBarValue;
+    public ProgressBar progressBar;
+    public Button startButton;
 
 
     private userVehicleObject[] userVehicleList;
     private String alias;
     private int VehicleID;
+    public static String trip_ID;
+    public static int seekBarValue;
+
+    // VolleyCallback interface
+    public interface VolleyCallbackGet {
+        void onSuccess(String result);
+        void onError(String error);
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_settings);
+
+        // Define widgets
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
+        progressBar = findViewById(R.id.loadingBar);
+        startButton = findViewById(R.id.button4);
 
 
+        String getUrl = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
+        progressBar.setVisibility(View.VISIBLE);
+        sendGetRequest(getUrl, new VolleyCallbackGet() {
 
-        sendGetRequest();
-
-        seekBarInit();
-
-        Runnable r = new Runnable() {
             @Override
-            public void run() {
-
-                if(userVehicleList == null) {
-                    isOnline();
-                }
+            public void onSuccess(String result) {
 
                 if(userVehicleList.length == 0) {
 
-                    Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(TripSettingsActivity.this, SettingsActivity.class);
                     startActivity(intent);
                     finish();
+                } else {
+
+                    startButton.setVisibility(View.VISIBLE);
+
+                    Toast.makeText(TripSettingsActivity.this, "Data retrieved!", Toast.LENGTH_SHORT).show();
+
+
+                    Set<String> vehicleAliasSet = new HashSet<>();
+                    String[] vehicleAlias;
+
+
+                    for(int i=0; i< userVehicleList.length; i++) {
+                        vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
+                    }
+                    vehicleAlias = vehicleAliasSet.toArray(new String[0]);
+
+
+                    seekBarInit();
+                    spinnerInit(vehicleAlias);
                 }
-
-               // Set<String> vehicleSetModel = new HashSet<>();
-                Set<String> vehicleAliasSet = new HashSet<>();
-                String[] vehicleAlias;
-
-
-                for(int i=0; i< userVehicleList.length; i++) {
-                    vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
-                   // vehicleSetModel.add(vehiclesList[i].getModel());
-                }
-                vehicleAlias = vehicleAliasSet.toArray(new String[0]);
-                //vehiclesModel = vehicleSetModel.toArray(new String[0]);
-
-                spinnerInit(vehicleAlias);
-                //modelSpinnerInit(vehiclesModel);
             }
-        };
 
-        Handler h = new Handler();
-        h.postDelayed(r, 1000);
+            @Override
+            public void onError(String error) {
+
+                Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading :(", Toast.LENGTH_SHORT).show();
+                finish();
+
+            }
+        });
     }
-
-    public void isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected()) {
-
-        }
-        else {
-            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        }
-    }
-
 
     public void spinnerInit(String[] vehicleAlias) {
 
         Spinner selectAlias = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
+        selectAlias.setVisibility(View.VISIBLE);
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicleAlias);
         selectAlias.setAdapter(adapter); // call the adapter to the spinner
         selectAlias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -150,6 +143,7 @@ public class TripSettingsActivity extends AppCompatActivity {
     public void seekBarInit() {
         textView.setText("Energy levels: "+seekBar.getProgress() + "%");
 
+        seekBar.setVisibility(View.VISIBLE);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             int progressValue = 0;
@@ -174,30 +168,33 @@ public class TripSettingsActivity extends AppCompatActivity {
     // Gets called when the button "Start the trip" is pressed
     public void startTheTrip(View view) {
 
-        isOnline();
 
-        sendPostRequest();
+        progressBar.setVisibility(View.VISIBLE);
 
-        seekBarValue = seekBar.getProgress();
-
-        Runnable r = new Runnable() {
+        String postURL = "http://193.219.91.103:4558/rpc/new_trip";
+        sendPostRequest(postURL, new VolleyCallbackGet() {
             @Override
-            public void run(){
+            public void onSuccess(String result) {
+                trip_ID = result;
+                seekBarValue = seekBar.getProgress();
+
                 Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
                 intent.putExtra(trip_ID, trip_ID);
                 startActivity(intent);
                 finish();
+
             }
-        };
 
-        Handler h = new Handler();
-        h.postDelayed(r, 500); // <-- the "1000" is the delay time in miliseconds.
+            @Override
+            public void onError(String error) {
 
+                Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting trip", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
-
-
-    private void sendPostRequest() {
+    private void sendPostRequest(String postURL, VolleyCallbackGet callbackPost) {
 
         int userID = Integer.parseInt(LoginActivity.userId);
 
@@ -205,11 +202,15 @@ public class TripSettingsActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                trip_ID = response;
+
+                // trip_ID = response;
+                callbackPost.onSuccess(response);
             }
         }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                callbackPost.onError(error.toString());
                 error.printStackTrace();
             }
         }) {
@@ -231,14 +232,20 @@ public class TripSettingsActivity extends AppCompatActivity {
         };
 
         requestQueue.add(stringRequest);
+        requestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
     }
 
-    public void sendGetRequest() {
+    public void sendGetRequest(String url, VolleyCallbackGet callbackGet) {
+
         RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
-
-// Request a string response from the provided URL.
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -248,12 +255,15 @@ public class TripSettingsActivity extends AppCompatActivity {
                 userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
                 Log.d("list-trip-settings", String.valueOf(response));
 
+                callbackGet.onSuccess("");
+
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                callbackGet.onError(error.toString());
             }
         }) {
             @Override
@@ -265,5 +275,13 @@ public class TripSettingsActivity extends AppCompatActivity {
         };
 
         queue.add(jsonArrayRequest);
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 }

@@ -235,6 +235,5 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

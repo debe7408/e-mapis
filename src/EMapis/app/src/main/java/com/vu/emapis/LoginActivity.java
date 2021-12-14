@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
     private String url ="http://193.219.91.103:4558/rpc/find_password";
 
+    public ProgressBar progressBar;
+
     // VolleyCallback interface
     public interface VolleyCallbackGet {
         void onSuccess(String result);
@@ -44,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login); // this activity is related to UI in a activity_login.xml file
+
+        //Define widgets
+
+        progressBar = findViewById(R.id.loadingBar);
+
     }
 
     @Override
@@ -63,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             sendPostRequest(username, password, new VolleyCallbackGet() {
                 @Override
                 public void onSuccess(String response) {
@@ -130,6 +139,14 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         requestQueue.add(stringRequest);
+        requestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
     }
 
