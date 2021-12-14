@@ -30,6 +30,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -47,7 +48,6 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +62,7 @@ import butterknife.ButterKnife;
 
 public class OngoingTripActivity extends AppCompatActivity {
 
-    Chronometer simpleChronometer;
+
     boolean clicked = false;
     private long lastPause;
 
@@ -118,11 +118,30 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     private SeekBar seekBar;
     private TextView textView;
+    private Chronometer simpleChronometer;
+
+
+    // VolleyCallback interface
+    public interface VolleyCallbackGet {
+        void onSuccess(String result);
+        void onError(String error);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
+        //TODO:
+        // Implement Async
+        // Implement an interface that reacts if the user has allowed the app to access permissions
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
+
+        // Define widgets
+
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
 
@@ -140,8 +159,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         initLib();
         startLocationService();
-
-
 
     }
 
@@ -232,13 +249,36 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("global_index", Integer.toString(global_index));
 
             if (global_index==9) {
-                Log.d("array", Arrays.toString(firstPointArray));
 
-                sendFirstPointPostRequest();
-                //sendPostRequest();
-                global_index=0;
+                // Replace [ ] in an array with { }, because database does not accept array with [ ].
+                String dataPost = (Arrays.toString(firstPointArray).replace("[", "{")).replace("]", "}");
+                Log.d("Array1: ", dataPost);
+
+                sendFirstPointPost(firstPointURL, dataPost, new VolleyCallbackGet() {
+                    @Override
+                    public void onSuccess(String result) {
+
+
+                        //TODO if result is 1, passed = true, else = false.
+
+                        global_index=0;
+                        passed=true;
+                        Log.d("SemiFinal ", result);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                        Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                        global_index=0;
+
+                    }
+                });
+
             }
         } else if (mCurrentLocation != null) {
+
             pointArray[global_index] = mCurrentLocation.getLatitude();
             global_index++;
             pointArray[global_index] = mCurrentLocation.getLongitude();
@@ -249,10 +289,25 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("global_index", Integer.toString(global_index));
 
             if (global_index==60) {
-                Log.d("array", Arrays.toString(pointArray));
 
-                sendPointBlock();
-                global_index=0;
+                String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+                Log.d("Array2: ", dataPost);
+
+                sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+                    @Override
+                    public void onSuccess(String result) {
+                        global_index=0;
+                        Log.d("Final", result);
+                        global_index=0;
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                        global_index=0;
+                    }
+                });
+
             }
         }
     }
@@ -322,112 +377,81 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
 
-    private void sendFirstPointPostRequest() {
+    private void sendFirstPointPost(String url, String dataPost, final VolleyCallbackGet callbackPost) {
+
+
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
-        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
-        JSONArray points = new JSONArray();
-        try {
-
-            postData.put("trip_id", Integer.parseInt(trip_ID));
-
-            for (int i = 0; i < 9; i++) {
-                points.put(firstPointArray[i]);
-            }
-
-            postData.put("points", points);
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, firstPointURL, postData, new Response.Listener<JSONObject>() {
-
-
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
 
-                Log.d("Response", response.toString());
-
-                Log.d("Response", "Sw");
-
-                passed = true;
+                callbackPost.onSuccess(response);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 error.printStackTrace();
-                isOnline();
+                callbackPost.onError(error.toString());
 
-                // TODO uncomment line below, when the sendPointBlock works fine, because it crashes our API.
-                //  FOR NOW IT'S GOING TO ONLY BE SENDING FIRST 3 POINTS, BUT IT'S GOOD FOR TESTING.
-                passed = true;
 
             }
         }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("trip_id", trip_ID);
+                MyData.put("points", dataPost);
+
+                return MyData;
+            }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
                 headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
                 return headers;
             }
         };
 
-        //jsonObjectRequest.getRetryPolicy();
+        queue.add(stringRequest);
 
-        queue.add(jsonObjectRequest);
     }
 
-
-    private void sendPointBlock() {
+    private void sendArrayPointPost(String url, String dataPost, final VolleyCallbackGet callbackPost2) {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
-        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
-        JSONArray points = new JSONArray();
-        try {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
-            postData.put("trip_id", Integer.parseInt(trip_ID));
-
-            for (int i = 0; i < pointArray.length; i++) {
-                points.put(pointArray[i]);
-            }
-
-            postData.put("points", points);
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, pointBlockUrl, postData, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
-                if (userInputted) {
-                        // sendUserInput(); TODO UNCOMMENT WHEN DB FUNCTIONING
-                        userInputted = false;
-                        seekBarValue = seekBar.getProgress();
-                }
+            public void onResponse(String response) {
+
+                callbackPost2.onSuccess(response);
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                callbackPost2.onError(error.toString());
 
-                    error.printStackTrace();
-                    isOnline();
+
             }
         }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+
+                MyData.put("trip_id", trip_ID);
+                MyData.put("points", dataPost);
+
+                return MyData;
+            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -436,14 +460,32 @@ public class OngoingTripActivity extends AppCompatActivity {
             }
         };
 
-        queue.add(jsonObjectRequest);
+        queue.add(stringRequest);
+
     }
 
     public void rechargeOnClick(View view) {
 
         stopLocationUpdates();
-        //sendPointBlock();
-        global_index=0;
+
+        // Send data
+        String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+        Log.d("Recharge send data: ", dataPost);
+
+        sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+            @Override
+            public void onSuccess(String result) {
+                global_index=0;
+                Log.d("Final", result);
+                global_index=0;
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                global_index=0;
+            }
+        });
 
         lastPause = SystemClock.elapsedRealtime();
         simpleChronometer.stop();
@@ -463,8 +505,24 @@ public class OngoingTripActivity extends AppCompatActivity {
             btnPauseTrip.setText("Resume the trip");
             clicked = true;
 
-            // sendPointBlock();
-            global_index=0;
+            String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+            Log.d("Pause trip send data: ", dataPost);
+
+            // Send data
+            sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+                @Override
+                public void onSuccess(String result) {
+                    global_index=0;
+                    Log.d("Final", result);
+                    global_index=0;
+                }
+
+                @Override
+                public void onError(String error) {
+                    Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                    global_index=0;
+                }
+            });
 
         } else {
             resumeLocationUpdates();
@@ -478,6 +536,25 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public void endTripOnClick(View view) {
         stopLocationUpdates();
+
+        String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+        Log.d("End trip send data: ", dataPost);
+        // Send data
+        sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+            @Override
+            public void onSuccess(String result) {
+                global_index=0;
+                Log.d("Final", result);
+                global_index=0;
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                global_index=0;
+            }
+        });
+
         Intent intent = new Intent(this, TripEndActivity.class);
         intent.putExtra(trip_ID, trip_ID);
         startActivity(intent);
@@ -508,14 +585,34 @@ public class OngoingTripActivity extends AppCompatActivity {
         });
     }
 
-    public void updateEnergyLevel(View view){
+    public void updateEnergyLevelButton(View view){
         userInputted = true;
         Log.d("seekBarValue", String.valueOf(seekBarValue));
         Log.d(".getProgress", String.valueOf(seekBar.getProgress()));
 
         if (seekBarValue >= seekBar.getProgress()){
             stopLocationUpdates();
-            // sendPointBlock(); TODO UNCOMMENT WHEN DB FUNCTIONING
+
+            String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+            Log.d("charge send data: ", dataPost);
+
+            // Send data
+            sendArrayPointPost(pointBlockUrl, dataPost, new VolleyCallbackGet() {
+                @Override
+                public void onSuccess(String result) {
+                    global_index=0;
+                    Log.d("Final", result);
+                    global_index=0;
+                }
+
+                @Override
+                public void onError(String error) {
+                    Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                    global_index=0;
+                }
+            });
+
+
             global_index=0;
         }
         else {

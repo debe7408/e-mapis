@@ -97,7 +97,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
         android:text="Update"
-        android:onClick="updateEnergyLevel"
+        android:onClick="updateEnergyLevelButton"
         app:layout_constraintBottom_toTopOf="@+id/btn_stop_trip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
