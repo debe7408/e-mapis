@@ -194,6 +194,8 @@ public class TripSettingsActivity extends AppCompatActivity {
         });
     }
 
+    // TODO CREATE sendUserInput METHOD FOR THE FIRST ENERGY LEVEL INPUT
+
     private void sendPostRequest(String postURL, VolleyCallbackGet callbackPost) {
 
         int userID = Integer.parseInt(LoginActivity.userId);

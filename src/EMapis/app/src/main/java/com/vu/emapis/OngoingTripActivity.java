@@ -93,14 +93,12 @@ public class OngoingTripActivity extends AppCompatActivity {
     int global_index = 0;
     private boolean passed = false;
 
-    boolean userInputted = false;
-
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
     // postURL
     private final String pointBlockUrl = "http://193.219.91.103:4558/rpc/_emapis_block_point_insert";
     private final String firstPointURL =  "http://193.219.91.103:4558/rpc/_emapis_first_point_insert";
-    private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs";
+    private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs"; //TODO FIX URL AFTER EVALUATING WHAT WE WANT TO DO
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -586,7 +584,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     public void updateEnergyLevelButton(View view){
-        userInputted = true;
         Log.d("seekBarValue", String.valueOf(seekBarValue));
         Log.d(".getProgress", String.valueOf(seekBar.getProgress()));
 
@@ -602,7 +599,8 @@ public class OngoingTripActivity extends AppCompatActivity {
                 public void onSuccess(String result) {
                     global_index=0;
                     Log.d("Final", result);
-                    global_index=0;
+                    seekBarValue = seekBar.getProgress();
+                    // sendUserInput(); TODO ---------------- CREATE CALLBACK ----------- LEAVE POST COMMENTED FOR NOW
                 }
 
                 @Override
@@ -618,13 +616,6 @@ public class OngoingTripActivity extends AppCompatActivity {
         else {
             Toast.makeText(OngoingTripActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
         }
-
-        //post request
-
-        //point id reikia priskirt (get request?)
-
-        //sendUserInput(); TODO UNCOMMENT WHEN DB FUNCTIONING
-
     }
 
     public void sendUserInput() {
@@ -633,7 +624,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
         try {
-
+            // TODO THINK OF WHAT WE WANT TO POST
             postData.put("user_id", LoginActivity.userId);
             postData.put("trip_id", Integer.parseInt(trip_ID));
             postData.put("input_value", String.valueOf(seekBar.getProgress()));
