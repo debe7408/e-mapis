@@ -351,7 +351,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 tripLenghtTextView.setText(distance.concat(" km"));
 
-                // Arrays.fill(pointArray, 0.0); Need to test
+                Arrays.fill(pointArray, 0.0);
                 callbackPost2.onSuccess(distance);
 
 
