@@ -97,6 +97,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="84dp"
         android:backgroundTint="@color/buttonColor"
+        android:visibility="invisible"
         android:onClick="DeveloperSettingsAcitivity"
         android:text="Developer Settings"
         android:textColor="@color/textColor"
