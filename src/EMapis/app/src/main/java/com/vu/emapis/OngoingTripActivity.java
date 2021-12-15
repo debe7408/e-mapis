@@ -96,7 +96,9 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
-    private final String insertInputURL = "http://193.219.91.103:4558/rpc/new_inputs"; //TODO FIX URL AFTER EVALUATING WHAT WE WANT TO DO
+    public static boolean firstPointSent = false;
+
+    private final String insertInputURL = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //TODO FIX URL AFTER EVALUATING WHAT WE WANT TO DO
     private final String sendingDataURL = "http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert";
 
 
@@ -259,6 +261,38 @@ public class OngoingTripActivity extends AppCompatActivity {
                 });
 
             }
+
+            if(!firstPointSent){
+                String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+                Log.d("Array2: ", dataPost);
+
+                sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+                    @Override
+                    public void onSuccess(String result) {
+                        global_index = 0;
+                        sendUserInput("first_input", TripSettingsActivity.firstInput, new VolleyCallbackGet(){
+
+                            @Override
+                            public void onSuccess(String result) {
+                                resumeLocationUpdates();
+                            }
+
+                            @Override
+                            public void onError(String error) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                        global_index = 0;
+                    }
+                });
+
+                firstPointSent = true;
+            }
         }
     }
 
@@ -325,7 +359,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
     }
 
-    protected void resumeLocationUpdates() {
+    public void resumeLocationUpdates() {
         startLocationUpdates();
     }
 
@@ -525,7 +559,18 @@ public class OngoingTripActivity extends AppCompatActivity {
                     global_index=0;
                     Log.d("Final", result);
                     seekBarValue = seekBar.getProgress();
-                    // sendUserInput(); TODO ---------------- CREATE CALLBACK ----------- LEAVE POST COMMENTED FOR NOW
+                    sendUserInput("user_update", seekBar.getProgress(), new VolleyCallbackGet(){
+
+                        @Override
+                        public void onSuccess(String result) {
+                            resumeLocationUpdates();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
                 }
 
                 @Override
@@ -543,34 +588,38 @@ public class OngoingTripActivity extends AppCompatActivity {
         }
     }
 
-    public void sendUserInput() {
+    public void sendUserInput(String inputKey, Integer inputValue, final VolleyCallbackGet callbackPost2) {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
-        JSONObject postData = new JSONObject(); // Creating JSON object with data that will be sent via POST request.
-        try {
-            // TODO THINK OF WHAT WE WANT TO POST
-            postData.put("user_id", LoginActivity.userId);
-            postData.put("trip_id", Integer.parseInt(trip_ID));
-            postData.put("input_value", String.valueOf(seekBar.getProgress()));
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, insertInputURL, new Response.Listener<String>() {
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, insertInputURL, postData, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
-                resumeLocationUpdates();
+            public void onResponse(String response) {
+                callbackPost2.onSuccess(response);
+
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 error.printStackTrace();
+                callbackPost2.onError(error.toString());
+
+
             }
         }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+
+                MyData.put("trip_id", trip_ID);
+                MyData.put("input_key", inputKey);
+                MyData.put("input_value", String.valueOf(inputValue));
+
+                return MyData;
+            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -579,6 +628,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             }
         };
 
-        queue.add(jsonObjectRequest);
+        queue.add(stringRequest);
+
     }
 }

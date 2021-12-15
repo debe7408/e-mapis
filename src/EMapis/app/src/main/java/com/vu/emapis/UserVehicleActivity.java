@@ -99,11 +99,10 @@ public class UserVehicleActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                progressBar.setVisibility(View.VISIBLE);
-
                 if(enterVehicleAlias.getText().toString().isEmpty()) {
                     Toast.makeText(UserVehicleActivity.this, "Please your enter vehicle's alias", Toast.LENGTH_SHORT).show();
                 } else {
+                    progressBar.setVisibility(View.VISIBLE);
                     Toast.makeText(UserVehicleActivity.this, "Success! You can now start a trip", Toast.LENGTH_SHORT).show();
                     String VehicleAlias = enterVehicleAlias.getText().toString();
                     sendPostRequest(VehicleAlias);

@@ -45,6 +45,7 @@ public class TripSettingsActivity extends AppCompatActivity {
     private int VehicleID;
     public static String trip_ID;
     public static int seekBarValue;
+    public static int firstInput;
 
     // VolleyCallback interface
     public interface VolleyCallbackGet {
@@ -168,30 +169,32 @@ public class TripSettingsActivity extends AppCompatActivity {
     // Gets called when the button "Start the trip" is pressed
     public void startTheTrip(View view) {
 
+        if (seekBar.getProgress() == 0) {
+            Toast.makeText(TripSettingsActivity.this, "If the energy level in your vehicle is really 0, please recharge it!", Toast.LENGTH_SHORT).show();
+        } else {
+            String postURL = "http://193.219.91.103:4558/rpc/_emapis_new_trip";
+            sendPostRequest(postURL, new VolleyCallbackGet() {
+                @Override
+                public void onSuccess(String result) {
+                    trip_ID = result;
+                    seekBarValue = seekBar.getProgress();
+                    firstInput = seekBarValue;
 
-        progressBar.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+                    intent.putExtra(trip_ID, trip_ID);
+                    startActivity(intent);
+                    finish();
 
-        String postURL = "http://193.219.91.103:4558/rpc/new_trip";
-        sendPostRequest(postURL, new VolleyCallbackGet() {
-            @Override
-            public void onSuccess(String result) {
-                trip_ID = result;
-                seekBarValue = seekBar.getProgress();
+                }
 
-                Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
-                intent.putExtra(trip_ID, trip_ID);
-                startActivity(intent);
-                finish();
+                @Override
+                public void onError(String error) {
 
-            }
+                    Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting trip", Toast.LENGTH_SHORT).show();
 
-            @Override
-            public void onError(String error) {
-
-                Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting trip", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+                }
+            });
+        }
     }
 
     // TODO CREATE sendUserInput METHOD FOR THE FIRST ENERGY LEVEL INPUT
@@ -221,7 +224,6 @@ public class TripSettingsActivity extends AppCompatActivity {
                 Map<String, String> MyData = new HashMap<String, String>();
                 MyData.put("user_id", String.valueOf(userID));
                 MyData.put("user_vehicle_id", String.valueOf(VehicleID));
-                MyData.put("fuel_at_start", String.valueOf(seekBar.getProgress()));
                 return MyData;
             }
 
