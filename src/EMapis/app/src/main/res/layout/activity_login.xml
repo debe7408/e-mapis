@@ -15,7 +15,8 @@
         android:autofillHints="username"
         android:ems="10"
         android:hint="@string/edit_username"
-        android:inputType="textPersonName"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+        android:inputType="textFilter"
         android:textColor="@color/textColor"
         android:textColorHint="@color/hintTextColor"
         app:layout_constraintEnd_toEndOf="@+id/textView"
@@ -43,6 +44,7 @@
         android:ems="10"
         android:hint="@string/edit_password"
         android:importantForAutofill="no"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!#$%'()*+,-./:;=>?@[\]^_`{|}~"
         android:inputType="textPassword"
         android:textColor="@color/textColor"
         android:textColorHint="@color/hintTextColor"
@@ -74,6 +76,22 @@
         android:textColor="@color/textColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/buttonToQuit"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/red"
+        android:onClick="onClickQuitApp"
+        android:text="Quit"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonToRegister" />
 
     <TextView
         android:id="@+id/textView"

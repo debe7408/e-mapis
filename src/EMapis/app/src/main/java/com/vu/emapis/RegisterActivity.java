@@ -2,6 +2,8 @@ package com.vu.emapis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -37,6 +39,9 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean userNameTaken = false;
 
     ProgressBar progressBar;
+    EditText txtEmail;
+
+
 
 
     public interface VolleyCallback{
@@ -66,14 +71,47 @@ public class RegisterActivity extends AppCompatActivity {
 
         EditText txtUserName = findViewById(R.id.registerUsernameText);
         EditText txtPassword = findViewById(R.id.registerPasswordText);
-        EditText txtEmail = findViewById(R.id.registerEmailText);
+        txtEmail = findViewById(R.id.registerEmailText);
 
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
         String email = txtEmail.getText().toString();
+        //String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
+        //emailValidation(email, emailPattern);
+
+
 
         checkIfUserNameNotTaken(username, password, email);
 
+    }
+
+    /*public void emailValidation(String email, String emailPattern) {
+
+        txtEmail.addTextChangedListener( new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+
+                if (email.matches(emailPattern) && s.length() > 0)
+                {
+                    Toast.makeText(getApplicationContext(),"valid email address",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Invalid email address",Toast.LENGTH_SHORT).show();
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // other stuffs
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // other stuffs
+            } );
+        }
+    }*/
+
+
+    public void onClickGoBack(View view) {
+        finish();
     }
 
     public void actions(String username, String password, String email, boolean userNameValid) {
@@ -81,11 +119,11 @@ public class RegisterActivity extends AppCompatActivity {
         if (username.matches("") || password.matches("") || email.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else if (!userNameValid) {
-            Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain special characters", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain any special characters", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("taken1", String.valueOf(userNameTaken));
             if (userNameTaken) {
-                Toast.makeText(this, "Username taken, srry", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "The username is already taken :(", Toast.LENGTH_SHORT).show();
             }
             else {
                 String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
