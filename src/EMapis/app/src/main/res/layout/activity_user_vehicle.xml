@@ -78,6 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
         android:inputType="text"
         android:textColorHint="@color/hintTextColor"
         android:textColor="@color/textColor"
@@ -85,6 +86,17 @@
         app:layout_constraintBottom_toTopOf="@+id/saveVehicleButton"
         app:layout_constraintEnd_toEndOf="@+id/vehicleMenu2"
         app:layout_constraintStart_toStartOf="@+id/vehicleMenu2"
+        app:layout_constraintTop_toBottomOf="@+id/vehicleMenu2" />
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="144dp"
+        android:layout_height="146dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/enterVehicleAlias"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vehicleMenu2" />
 
 

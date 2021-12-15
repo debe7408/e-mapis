@@ -14,13 +14,19 @@ public class MainScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        // Get the Intent that started this activity and extract the string
-        Intent intent = getIntent();
-        String message = "Hi, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!" + " user_id: " + LoginActivity.userId;
 
-        // Capture the layout's TextView and set the string as its text
+        // Delcare widgets
         TextView textView = findViewById(R.id.statText);
-        textView.setText(message);
+
+        // Check if we have any extras from the last activity.
+        // Expected: user's name. If there's nothing, return a default value
+        Intent intent = getIntent();
+        if(intent.hasExtra(LoginActivity.EXTRA_MESSAGE)) {
+            String message = "Hey there, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!";
+            textView.setText(message);
+        } else {
+            textView.setText("Hey there!");
+        }
     }
 
     public void showStatistics(View view) {
@@ -38,5 +44,8 @@ public class MainScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    public void DeveloperSettingsAcitivity(View view) {
+        Intent intent = new Intent(MainScreenActivity.this, DeveloperSettingsActivity.class);
+        startActivity(intent);
+    }
 }

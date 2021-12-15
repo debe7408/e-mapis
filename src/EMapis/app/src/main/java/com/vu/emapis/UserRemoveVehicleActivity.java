@@ -1,22 +1,16 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.SeekBar;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -25,7 +19,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
@@ -44,27 +37,92 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
     private String alias;
     private int UserVehicleID;
 
-    private final String removeUrl = "http://193.219.91.103:4558/rpc/remove_user_vehicle";
+    public ProgressBar progressBar;
 
+
+    // VolleyCallback interface
+    public interface VolleyCallbackGet {
+        void onSuccess(String result);
+        void onError(String error);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_remove_vehicle);
-        Button removeVehicle = findViewById(R.id.vehicleDeleteButton);
 
-        removeVehicle.setOnClickListener(new View.OnClickListener() {
+        // Declare widgets
+        Button removeVehicle = findViewById(R.id.vehicleDeleteButton);
+        ProgressBar progressBar = findViewById(R.id.loadingBar);
+
+        // Get request URL
+        String getURL = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
+
+        // Send getRequest to retrieve user vehicles
+        sendGetRequest(getURL, new VolleyCallbackGet() {
+
+            // On successful data retrieval:
             @Override
-            public void onClick(View view) {
-                sendRemoveRequest();
-                sendGetRequest();
-                runnable();
+            public void onSuccess(String result) {
+
+                Log.d("Success:","Data retrieved!");
+
+                Set<String> vehicleAliasSet = new HashSet<>();
+                String[] vehicleAlias;
+
+                for(int i=0; i< userVehicleList.length; i++) {
+                    vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
+                }
+                vehicleAlias = vehicleAliasSet.toArray(new String[0]);
+
+                spinnerInit(vehicleAlias);
+
+            }
+
+            // On unsuccessful data retrieval:
+            @Override
+            public void onError(String error) {
+
+                Toast.makeText(UserRemoveVehicleActivity.this, "Something went wrong :( Check your internet connection", Toast.LENGTH_LONG).show();
+
+                finish();
+
             }
         });
 
 
-        sendGetRequest();
-        runnable();
+        // Remove vehicle button listener
+        removeVehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Enable progressBar while loading
+                progressBar.setVisibility(View.VISIBLE);
+
+                String removeUrl = "http://193.219.91.103:4558/rpc/remove_user_vehicle";
+                sendRemoveRequest(removeUrl, new VolleyCallbackGet() {
+                    @Override
+                    public void onSuccess(String result) {
+
+                        Toast.makeText(UserRemoveVehicleActivity.this, "Vehicle removed!", Toast.LENGTH_SHORT).show();
+
+                        // Reload activity
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(getIntent());
+                        overridePendingTransition(0, 0);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                        Toast.makeText(UserRemoveVehicleActivity.this, "Something went wrong:(", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        });
     }
 
     public void spinnerInit(String[] vehicleAlias) {
@@ -95,12 +153,8 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         });
     }
 
-    public void sendGetRequest() {
+    public void sendGetRequest(String url, final VolleyCallbackGet callback) {
         RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
-
-// Request a string response from the provided URL.
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -110,12 +164,15 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                 userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
                 Log.d("list", String.valueOf(userVehicleList));
 
+                callback.onSuccess(response.toString());
+
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                callback.onError(error.toString());
             }
         }) {
             @Override
@@ -129,8 +186,7 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         queue.add(jsonArrayRequest);
     }
 
-
-    private void sendRemoveRequest() {
+    private void sendRemoveRequest(String url, final VolleyCallbackGet callback) {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
@@ -145,16 +201,19 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         }
 
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, removeUrl, postData, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+
+                callback.onSuccess(response.toString());
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                //error.printStackTrace();
+                callback.onSuccess(""); // Volley returns error due to blank space conversion to JSON. we ignore this
+                error.printStackTrace();
 
             }
         }) {
@@ -167,38 +226,14 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
-    }
 
-    private void runnable() {
-        Runnable r = new Runnable() {
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
             @Override
-            public void run() {
-
-                /*if(userVehicleList == null) {
-                    tripSettingsActivity.isOnline();
-                }*/
-
-                // Set<String> vehicleSetModel = new HashSet<>();
-                Set<String> vehicleAliasSet = new HashSet<>();
-                String[] vehicleAlias;
-
-
-                for(int i=0; i< userVehicleList.length; i++) {
-                    vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
-                    // vehicleSetModel.add(vehiclesList[i].getModel());
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
-                vehicleAlias = vehicleAliasSet.toArray(new String[0]);
-                //vehiclesModel = vehicleSetModel.toArray(new String[0]);
-
-                spinnerInit(vehicleAlias);
-
-                //modelSpinnerInit(vehiclesModel);
             }
-        };
-
-        Handler h = new Handler();
-        h.postDelayed(r, 500);
+        });
     }
-
-
 }

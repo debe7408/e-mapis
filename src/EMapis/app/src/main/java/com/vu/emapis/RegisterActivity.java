@@ -1,16 +1,16 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -38,64 +38,92 @@ public class RegisterActivity extends AppCompatActivity {
     private String url ="http://193.219.91.103:4558/rpc/new_user";
     public boolean userNameTaken = false;
 
+    ProgressBar progressBar;
+    EditText txtEmail;
+
+
+
+
+    public interface VolleyCallback{
+        void onSuccess(String result);
+        void onError(String error);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        progressBar = findViewById(R.id.loadingBar);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        isOnline();
-
     }
 
-    public void isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+    public void onClickRegister(View view) throws InterruptedException {
 
-        if(networkInfo != null && networkInfo.isConnected()) {
-
-        }
-        else {
-            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        }
-    }
-
-    public void onClick(View view) throws InterruptedException {
-
-        isOnline();
+        progressBar.setVisibility(View.VISIBLE);
 
         EditText txtUserName = findViewById(R.id.registerUsernameText);
         EditText txtPassword = findViewById(R.id.registerPasswordText);
-        EditText txtEmail = findViewById(R.id.registerEmailText);
+        txtEmail = findViewById(R.id.registerEmailText);
 
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
         String email = txtEmail.getText().toString();
+        //String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
+        //emailValidation(email, emailPattern);
+
+
 
         checkIfUserNameNotTaken(username, password, email);
 
     }
 
-    public void actions(String username, String password, String email, boolean userNameValid) {
+    /*public void emailValidation(String email, String emailPattern) {
 
+        txtEmail.addTextChangedListener( new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+
+                if (email.matches(emailPattern) && s.length() > 0)
+                {
+                    Toast.makeText(getApplicationContext(),"valid email address",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Invalid email address",Toast.LENGTH_SHORT).show();
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // other stuffs
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // other stuffs
+            } );
+        }
+    }*/
+
+
+    public void onClickGoBack(View view) {
+        finish();
+    }
+
+    public void actions(String username, String password, String email, boolean userNameValid) {
 
         if (username.matches("") || password.matches("") || email.matches("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else if (!userNameValid) {
-            Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain special characters", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Username must be between 4 and 20 characters in length and cannot contain any special characters", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("taken1", String.valueOf(userNameTaken));
             if (userNameTaken) {
-                Toast.makeText(this, "Username taken, srry", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "The username is already taken :(", Toast.LENGTH_SHORT).show();
             }
             else {
                 String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
@@ -111,6 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void checkIfUserNameNotTaken(String username, String password, String email){
+
         String getUrl = "http://193.219.91.103:4558/users?select=username&username=eq." + username;
         sendGetRequest(getUrl, username, new VolleyCallback() {
 
@@ -126,6 +155,11 @@ public class RegisterActivity extends AppCompatActivity {
                 boolean userNameValid = checkUsername(username);
 
                 actions(username, password, email, userNameValid);
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(RegisterActivity.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -178,10 +212,15 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
-    }
 
-    public interface VolleyCallback{
-        void onSuccess(String result);
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private void sendGetRequest(String url, String username, final VolleyCallback callback) {
@@ -197,6 +236,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                callback.onError(error.toString());
+                error.printStackTrace();
             }
         }){
             @Override
@@ -209,5 +250,15 @@ public class RegisterActivity extends AppCompatActivity {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
     }
 }

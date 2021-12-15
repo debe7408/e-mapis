@@ -1,11 +1,11 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -19,6 +19,8 @@ public class SettingsActivity extends AppCompatActivity {
         Button addNewVehicleButton = findViewById(R.id.vehicleAddButton);
 
         Button removeVehicleButton = findViewById(R.id.vehicleRemoveButton);
+
+        Button returnToMainButton = findViewById(R.id.returnToMainButton);
 
 
         signOutButton.setOnClickListener(new View.OnClickListener() {
@@ -47,6 +49,13 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingsActivity.this, UserRemoveVehicleActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        returnToMainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 

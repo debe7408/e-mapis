@@ -1,20 +1,16 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -22,13 +18,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,19 +37,69 @@ public class UserVehicleActivity extends AppCompatActivity {
     private String vehicle_id;
     private String userVehicleId;
 
+    public ProgressBar progressBar;
+
+    // VolleyCallback interface
+    public interface VolleyCallbackGet {
+        void onSuccess(String result);
+        void onError(String error);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_vehicle);
+
+        // Declare widgets
         Button saveVehicleButton = findViewById(R.id.saveVehicleButton);
         TextView enterVehicleAlias = findViewById(R.id.enterVehicleAlias);
+        progressBar = findViewById(R.id.loadingBar);
+
+
+        // Retrieve all data about vehicles
+
+        String url = "http://193.219.91.103:4558/vehicles?";
+        sendGetRequest(url, new VolleyCallbackGet() {
+
+            @Override
+            public void onSuccess(String result) {
+
+                Toast.makeText(UserVehicleActivity.this, "Data retrieved", Toast.LENGTH_SHORT).show();
+
+
+                Set<String> vehicleSetMake = new HashSet<>();
+
+                String[] vehiclesMake;
+
+                if(vehiclesList == null) {
+                    Toast.makeText(UserVehicleActivity.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
+                }
+
+
+                for(int i=0; i< vehiclesList.length; i++) {
+                    vehicleSetMake.add(vehiclesList[i].getMake());
+                }
+                vehiclesMake = vehicleSetMake.toArray(new String[0]);
+
+                spinnerInit(vehiclesMake);
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+                Toast.makeText(UserVehicleActivity.this, "Something went wrong :( Check your internet connection", Toast.LENGTH_LONG).show();
+
+                finish();
+
+            }
+        });
 
         saveVehicleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                isOnline();
+                progressBar.setVisibility(View.VISIBLE);
 
                 if(enterVehicleAlias.getText().toString().isEmpty()) {
                     Toast.makeText(UserVehicleActivity.this, "Please your enter vehicle's alias", Toast.LENGTH_SHORT).show();
@@ -68,63 +112,12 @@ public class UserVehicleActivity extends AppCompatActivity {
             }
         });
 
-
-        sendGetRequest();
-
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-
-                // Set<String> vehicleSetModel = new HashSet<>();
-                Set<String> vehicleSetMake = new HashSet<>();
-                //String[] vehiclesModel;
-                String[] vehiclesMake;
-
-                if(vehiclesList == null) {
-                    isOnline();
-                }
-
-
-                for(int i=0; i< vehiclesList.length; i++) {
-                    vehicleSetMake.add(vehiclesList[i].getMake());
-                    // vehicleSetModel.add(vehiclesList[i].getModel());
-                }
-                vehiclesMake = vehicleSetMake.toArray(new String[0]);
-                //vehiclesModel = vehicleSetModel.toArray(new String[0]);
-
-                spinnerInit(vehiclesMake);
-                //modelSpinnerInit(vehiclesModel);
-            }
-        };
-
-        Handler h = new Handler();
-        h.postDelayed(r, 1500);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        isOnline();
     }
-
-    public void isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected()) {
-
-        }
-        else {
-            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        }
-    }
-
 
     private void sendPostRequest(String VehicleAlias) {
 
@@ -161,14 +154,18 @@ public class UserVehicleActivity extends AppCompatActivity {
         };
 
         requestQueue.add(stringRequest);
+        requestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+            @Override
+            public void onRequestFinished(Request<String> request) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
-    private void sendGetRequest() {
+    private void sendGetRequest(String url, final VolleyCallbackGet callback) {
         RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url = "http://193.219.91.103:4558/vehicles?select=*";
-
-// Request a string response from the provided URL.
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -177,11 +174,15 @@ public class UserVehicleActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 vehiclesList = gson.fromJson(String.valueOf(response), VehicleObject[].class);
 
+                callback.onSuccess(response.toString());
+
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                callback.onError(error.toString());
                 error.printStackTrace();
             }
         }) {
@@ -222,7 +223,6 @@ public class UserVehicleActivity extends AppCompatActivity {
                 modelSpinnerInit(vehiclesModel);
 
             }
-
             // Gets called when nothing has been selected (not being used, but has to be implemented)
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -246,7 +246,6 @@ public class UserVehicleActivity extends AppCompatActivity {
                         vehicle_id = vehiclesList[i].getVehicle_id();
                     }
                 }
-
             }
 
             @Override
