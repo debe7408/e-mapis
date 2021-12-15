@@ -37,6 +37,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public ProgressBar progressBar;
 
+    public void onClickQuitApp(View view) {
+        onBackPressed();
+    }
+
     // VolleyCallback interface
     public interface VolleyCallbackGet {
         void onSuccess(String result);

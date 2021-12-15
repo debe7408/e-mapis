@@ -22,7 +22,7 @@ public class MainScreenActivity extends AppCompatActivity {
         // Expected: user's name. If there's nothing, return a default value
         Intent intent = getIntent();
         if(intent.hasExtra(LoginActivity.EXTRA_MESSAGE)) {
-            String message = "Hey there, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!\n" + "Your user ID: " + LoginActivity.userId;
+            String message = "Hey there, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!";
             textView.setText(message);
         } else {
             textView.setText("Hey there!");
