@@ -17,18 +17,29 @@ public class DeveloperSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_developer_settings);
 
         // Declare widgets
-        Button button = findViewById(R.id.volleyCallBackButton);
+        Button volleyButton = findViewById(R.id.volleyCallBackButton);
+        Button weatherButton = findViewById(R.id.weatherAPIButton);
         TextView textView = findViewById(R.id.userIDText);
 
+
+        // Display User ID
         if(LoginActivity.userId != null) {
             textView.setText("User ID: " + LoginActivity.userId);
         } else {
             textView.setText("Something went wrong.");
         }
 
+        weatherButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DeveloperSettingsActivity.this, openWeatherAPITest.class);
+                startActivity(intent);
+            }
+        });
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+
+        volleyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DeveloperSettingsActivity.this, VolleyCallBackTest.class);
