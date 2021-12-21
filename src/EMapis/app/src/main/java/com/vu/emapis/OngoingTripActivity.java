@@ -597,16 +597,12 @@ public class OngoingTripActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 callbackPost2.onSuccess(response);
-
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 callbackPost2.onError(error.toString());
-
-
             }
         }) {
             protected Map<String, String> getParams() {

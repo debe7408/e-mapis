@@ -83,7 +83,7 @@ public class TripEndActivity extends AppCompatActivity {
         });
     }
 
-    public void showStatistics(View view) {
+    public void finalizeTrip(View view) {
 
         if (seekBarValue >= seekBar.getProgress()){
 
@@ -100,7 +100,9 @@ public class TripEndActivity extends AppCompatActivity {
                 }
             });
 
-            Intent intent = new Intent(TripEndActivity.this, VolleyActivity.class);
+
+
+            Intent intent = new Intent(TripEndActivity.this, MainScreenActivity.class);
             startActivity(intent);
         }
         else {
@@ -148,4 +150,6 @@ public class TripEndActivity extends AppCompatActivity {
         queue.add(stringRequest);
 
     }
+
+
 }
