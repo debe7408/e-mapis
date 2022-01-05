@@ -8,13 +8,30 @@
     tools:context=".MainScreenActivity">
 
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="144dp"
+        android:layout_marginEnd="100dp"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="45sp"
+        app:layout_constraintBottom_toTopOf="@+id/statButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/statText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text=""
-        android:textSize="40sp"
+        android:textSize="35sp"
         android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -63,7 +80,7 @@
         android:layout_marginTop="100dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="260dp"
-        android:text="GET CURRENT LOCATION"
+        android:text="SETTINGS"
         android:textColor="@color/textColor"
         android:backgroundTint="@color/buttonColor"
         android:onClick="LocationActivity"
@@ -71,5 +88,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tripButton" />
+
+    <Button
+        android:id="@+id/developerSettingsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="84dp"
+        android:backgroundTint="@color/buttonColor"
+        android:visibility="invisible"
+        android:onClick="DeveloperSettingsAcitivity"
+        android:text="Developer Settings"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

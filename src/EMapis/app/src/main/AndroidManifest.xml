@@ -1,38 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vu.emapis" >
+    package="com.vu.emapis">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EMapis" >
+        android:theme="@style/Theme.EMapis">
         <activity
-            android:name=".LocationActivity"
-            android:exported="true" />
+            android:name=".VolleyCallBackTest"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            />
+
+        <activity
+            android:name=".DeveloperSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".PopUpActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.CustomTheme"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".UserRemoveVehicleActivity"
+            android:exported="false"
+            android:label="@string/title_activity_user_remove_vehicle"
+            android:theme="@style/Theme.EMapis.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".UserVehicleActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".TripEndActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".RechargingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".VolleyActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RegisterActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".TripSettingsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".StatisticsActivity"
-            android:exported="true" />
+            android:name=".OngoingTripActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainScreenActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
