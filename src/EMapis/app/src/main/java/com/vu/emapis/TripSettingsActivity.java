@@ -127,7 +127,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
                 for(int i = 0; i<userVehicleList.length; i++) {
                     if(alias.equals(userVehicleList[i].getVehicle_alias())) {
-                        VehicleID = userVehicleList[i].getVehicle_id();
+                        VehicleID = userVehicleList[i].getUser_vehicle_id();
                     }
                 }
 
