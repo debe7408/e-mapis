@@ -30,7 +30,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void showStatistics(View view) {
-        Intent intent = new Intent(MainScreenActivity.this, VolleyActivity.class);
+        Intent intent = new Intent(MainScreenActivity.this, StatisticsActivity.class);
         startActivity(intent);
     }
 
