@@ -83,6 +83,7 @@
         android:textColorHint="@color/hintTextColor"
         android:textColor="@color/textColor"
         android:hint="Name your vehicle!"
+        android:maxLength="20"
         app:layout_constraintBottom_toTopOf="@+id/saveVehicleButton"
         app:layout_constraintEnd_toEndOf="@+id/vehicleMenu2"
         app:layout_constraintStart_toStartOf="@+id/vehicleMenu2"

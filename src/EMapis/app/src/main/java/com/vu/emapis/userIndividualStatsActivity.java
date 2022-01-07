@@ -1,5 +1,6 @@
 package com.vu.emapis;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -99,8 +100,9 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                Object o = listView.getItemAtPosition(position);
                // Open a new activity for that trip
                Intent intent = new Intent(userIndividualStatsActivity.this, SingleTripInfoActivity.class);
+
                intent.putExtra("trip_ID", listView.getItemAtPosition(position).toString().replace("Trip ID = ", ""));
-               startActivity(intent);
+               startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(userIndividualStatsActivity.this).toBundle());
 
            }
        });
@@ -112,7 +114,6 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                Object o = listView.getItemAtPosition(position);
                //TODO Implement functionality when user long presses the item
                Toast.makeText(userIndividualStatsActivity.this, "Testas " + o, Toast.LENGTH_SHORT).show();
-
 
                return false;
            }

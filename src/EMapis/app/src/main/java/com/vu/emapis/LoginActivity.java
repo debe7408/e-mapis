@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -66,6 +67,14 @@ public class LoginActivity extends AppCompatActivity {
 
     /** This method is called when the user clicks "LOGIN" button **/
     public void onClickLoginButton(View view) {
+
+        // Close virtual keyboard after the button is clicked for better User Experience
+        try  {
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+
+        }
 
         EditText txtUserName = findViewById(R.id.usernameTextField);
         EditText txtPassword = findViewById(R.id.passwordTextField);
