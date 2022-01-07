@@ -32,21 +32,21 @@ public class MainScreenActivity extends AppCompatActivity {
 
     public void showStatistics(View view) {
         Intent intent = new Intent(MainScreenActivity.this, StatisticsActivity.class);
-        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
+        startActivity(intent);
     }
 
     public void tripSettings(View view) {
         Intent intent = new Intent(MainScreenActivity.this, TripSettingsActivity.class);
-        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
+        startActivity(intent);
     }
 
     public void LocationActivity(View view) {
         Intent intent = new Intent(MainScreenActivity.this, SettingsActivity.class);
-        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
+        startActivity(intent);
     }
 
     public void DeveloperSettingsAcitivity(View view) {
         Intent intent = new Intent(MainScreenActivity.this, DeveloperSettingsActivity.class);
-        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
+        startActivity(intent);
     }
 }
