@@ -1,14 +1,17 @@
 package com.vu.emapis;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -30,7 +33,6 @@ import java.util.Map;
 
 public class userIndividualStatsActivity extends AppCompatActivity {
 
-
     private ListView listView;
 
     private statisticsObject[] stats;
@@ -42,7 +44,6 @@ public class userIndividualStatsActivity extends AppCompatActivity {
         void onError(String error);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +54,6 @@ public class userIndividualStatsActivity extends AppCompatActivity {
 
         // URL for the get request
         String url = "http://193.219.91.103:4558/trips?user_id=eq."+ LoginActivity.userId;
-
-
         // Call a new get request
         sendGetRequest(url, new VolleyCallbackGet() {
 
@@ -64,7 +63,8 @@ public class userIndividualStatsActivity extends AppCompatActivity {
 
                 // If the user has no trips recorded, the activity will exit
                 if(stats == null || stats.length <= 0) {
-                    Log.d("Success", "Empty");
+                    Log.d("Success", "Empty"); // Logcat test
+
                     Toast.makeText(userIndividualStatsActivity.this, "Seems like you don't have any trips yet", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -85,18 +85,36 @@ public class userIndividualStatsActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 Log.d("error", error);
-                //TODO Implement on error handling
+                Toast.makeText(userIndividualStatsActivity.this, "Something went wrong retrieving data", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
-        // Click listener for the ListView
+        // Click listener for the ListView item
        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
+               // Retrieves data from the item that was clicked
                Object o = listView.getItemAtPosition(position);
-               Toast.makeText(userIndividualStatsActivity.this, "Hello " + o, Toast.LENGTH_SHORT).show();
+               // Open a new activity for that trip
+               Intent intent = new Intent(userIndividualStatsActivity.this, SingleTripInfoActivity.class);
+               intent.putExtra("trip_ID", listView.getItemAtPosition(position).toString().replace("Trip ID = ", ""));
+               startActivity(intent);
 
+           }
+       });
+
+       listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+           @Override
+           public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+               Object o = listView.getItemAtPosition(position);
+               //TODO Implement functionality when user long presses the item
+               Toast.makeText(userIndividualStatsActivity.this, "Testas " + o, Toast.LENGTH_SHORT).show();
+
+
+               return false;
            }
        });
 
