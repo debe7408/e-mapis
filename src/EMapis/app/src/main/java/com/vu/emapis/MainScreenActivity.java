@@ -1,5 +1,6 @@
 package com.vu.emapis;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -31,21 +32,21 @@ public class MainScreenActivity extends AppCompatActivity {
 
     public void showStatistics(View view) {
         Intent intent = new Intent(MainScreenActivity.this, StatisticsActivity.class);
-        startActivity(intent);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
     }
 
     public void tripSettings(View view) {
         Intent intent = new Intent(MainScreenActivity.this, TripSettingsActivity.class);
-        startActivity(intent);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
     }
 
     public void LocationActivity(View view) {
         Intent intent = new Intent(MainScreenActivity.this, SettingsActivity.class);
-        startActivity(intent);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
     }
 
     public void DeveloperSettingsAcitivity(View view) {
         Intent intent = new Intent(MainScreenActivity.this, DeveloperSettingsActivity.class);
-        startActivity(intent);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainScreenActivity.this).toBundle());
     }
 }

@@ -1,5 +1,6 @@
 package com.vu.emapis;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -88,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (result.verified) {
                         Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
                         intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
-                        startActivity(intent); // Starts the new activity
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this).toBundle()); // Starts the new activity
                     } else {
                         Toast.makeText(LoginActivity.this, "Password or username incorrect", Toast.LENGTH_SHORT).show();
                     }
