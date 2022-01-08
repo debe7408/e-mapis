@@ -31,6 +31,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private statisticsObject[] stats;
 
     private Button individualStatsButton;
+    private Button generalStatsButton;
+    private Button byUserVehicleStatsButton;
+
 
 
     public interface VolleyCallbackGet {
@@ -43,12 +46,30 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        individualStatsButton = findViewById(R.id.individualStatsButton); // Button to individual stats
+        individualStatsButton = findViewById(R.id.individualStatsButton);
+        generalStatsButton = findViewById(R.id.generalStatsButton);
+        byUserVehicleStatsButton = findViewById(R.id.generalIndividualStatsButton);
 
         individualStatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(StatisticsActivity.this, userIndividualStatsActivity.class);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
+            }
+        });
+
+        generalStatsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StatisticsActivity.this, GeneralStatsActivity.class);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
+            }
+        });
+
+        byUserVehicleStatsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StatisticsActivity.this, ByUserVehicleActivity.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
             }
         });
@@ -69,11 +90,12 @@ public class StatisticsActivity extends AppCompatActivity {
 
                     if(obj.isStats_ready()) {
                         //display stat box
-                        TextView dynamicTextView = new TextView(StatisticsActivity.this);
+
+                        /*TextView dynamicTextView = new TextView(StatisticsActivity.this);
                         dynamicTextView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
                         dynamicTextView.setText("Trip distance "+obj.getTrip_distance());
 
-                        statsAct.addView(dynamicTextView);
+                        statsAct.addView(dynamicTextView);*/
 
 
                     } else {
