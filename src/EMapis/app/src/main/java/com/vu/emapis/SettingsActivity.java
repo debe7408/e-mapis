@@ -14,18 +14,21 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        // Declaring Widgets
         Button signOutButton = findViewById(R.id.signOutButton);
-
         Button addNewVehicleButton = findViewById(R.id.vehicleAddButton);
-
         Button removeVehicleButton = findViewById(R.id.vehicleRemoveButton);
-
         Button returnToMainButton = findViewById(R.id.returnToMainButton);
 
-
+        // Sign Out button click listener
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // On sign out, make sure that remember me gets cleared
+                LoginActivity.loginPrefEditor.putBoolean("saveLogin", false);
+                LoginActivity.loginPrefEditor.clear();
+                LoginActivity.loginPrefEditor.commit();
 
                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
