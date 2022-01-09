@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ public class SingleTripInfoActivity extends AppCompatActivity {
     private TextView consumedEnergyTextView;
     private TextView avgConsumptionTextView;
     private TextView titleTextView;
+    private Button backButton;
     private String trip_ID;
     private String getURL;
     private tripStatsObject[] stats;
@@ -50,6 +53,7 @@ public class SingleTripInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_trip_info);
 
         //Declaring Widgets
+        backButton = findViewById(R.id.backButton);
         titleTextView = findViewById(R.id.titleText);
         makeAndModelTextView = findViewById(R.id.makeAndModelTextView);
         dateTextView = findViewById(R.id.dateTextView);
@@ -83,13 +87,13 @@ public class SingleTripInfoActivity extends AppCompatActivity {
                             titleTextView.setText("Trip distance is null");
                         } else {
 
-                            Double tripDistance = BigDecimal.valueOf(stats[0].getTrip_distance())
+                            Double tripDistance = BigDecimal.valueOf(stats[0].getTrip_distance()/1000)
                                     .setScale(2, RoundingMode.HALF_UP)
                                     .doubleValue();
 
                             dateTextView.append(stats[0].getDate());
                             makeAndModelTextView.append(stats[0].getMake().concat(" " + stats[0].getModel()));
-                            distanceTextView.append(String.valueOf(tripDistance));
+                            distanceTextView.append(tripDistance + " km");
                             durationTextView.append(stats[0].getTrip_total_time());
                             consumedEnergyTextView.append(String.valueOf(stats[0].getConsumed_energy()));
                             avgConsumptionTextView.append(String.valueOf(stats[0].getAvg_consumption()));
@@ -110,6 +114,13 @@ public class SingleTripInfoActivity extends AppCompatActivity {
             Toast.makeText(SingleTripInfoActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
     }
 
