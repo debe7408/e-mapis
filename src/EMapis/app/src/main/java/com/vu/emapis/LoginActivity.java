@@ -1,11 +1,13 @@
 package com.vu.emapis;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -66,6 +68,14 @@ public class LoginActivity extends AppCompatActivity {
     /** This method is called when the user clicks "LOGIN" button **/
     public void onClickLoginButton(View view) {
 
+        // Close virtual keyboard after the button is clicked for better User Experience
+        try  {
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+
+        }
+
         EditText txtUserName = findViewById(R.id.usernameTextField);
         EditText txtPassword = findViewById(R.id.passwordTextField);
 
@@ -88,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (result.verified) {
                         Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
                         intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
-                        startActivity(intent); // Starts the new activity
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this).toBundle()); // Starts the new activity
                     } else {
                         Toast.makeText(LoginActivity.this, "Password or username incorrect", Toast.LENGTH_SHORT).show();
                     }

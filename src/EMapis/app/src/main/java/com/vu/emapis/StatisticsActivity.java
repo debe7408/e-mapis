@@ -1,6 +1,10 @@
 package com.vu.emapis;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,24 +27,36 @@ import java.util.Map;
 
 public class StatisticsActivity extends AppCompatActivity {
 
-    static String userId = LoginActivity.userId; //TODO IMPLEMENT INTO THE URL
+    private static String userId = LoginActivity.userId; //TODO IMPLEMENT INTO THE URL
     private statisticsObject[] stats;
+
+    private Button individualStatsButton;
+
 
     public interface VolleyCallbackGet {
         void onSuccess(JSONArray result) throws JSONException;
         void onError(String error);
     }
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
+
+        individualStatsButton = findViewById(R.id.individualStatsButton); // Button to individual stats
+
+        individualStatsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StatisticsActivity.this, userIndividualStatsActivity.class);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
+            }
+        });
+
+
+
+
         String url = "http://193.219.91.103:4558/trips?select=trip_id,average_consumption,trip_distance,stats_ready&user_id=eq.95";
-
-
         sendGetRequest(url, new VolleyCallbackGet() {
 
             @Override
@@ -53,7 +69,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
                     if(obj.isStats_ready()) {
                         //display stat box
-
                         TextView dynamicTextView = new TextView(StatisticsActivity.this);
                         dynamicTextView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
                         dynamicTextView.setText("Trip distance "+obj.getTrip_distance());

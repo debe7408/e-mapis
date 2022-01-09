@@ -33,12 +33,16 @@ public class TripEndActivity extends AppCompatActivity {
 
     public static int seekBarValue = OngoingTripActivity.seekBarValue;
 
-    String postURL = "http://193.219.91.103:8666/rpc/end_trip";
+    String buildRouteURL = "http://193.219.91.103:4558/rpc/_emapis_build_route";
 
     public static String trip_ID;
 
     @BindView(R.id.btn_showStats)
     Button btnShowStats;
+
+    //TODO
+    // Make a pop-up that tells the user that the trip is being built and show the progressBar
+    // Give the user the ability to exit that pop-up or wait for the trip to finish building
 
     private interface VolleyCallbackGet {
         void onSuccess(String result);
@@ -91,7 +95,17 @@ public class TripEndActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(String result) {
+                    buildRoute(buildRouteURL, new VolleyCallbackGet() {
+                        @Override
+                        public void onSuccess(String result) {
 
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Toast.makeText(TripEndActivity.this, "Something went wrong, could not build route", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
                 @Override
@@ -99,6 +113,7 @@ public class TripEndActivity extends AppCompatActivity {
 
                 }
             });
+
 
 
 
@@ -110,6 +125,44 @@ public class TripEndActivity extends AppCompatActivity {
         }
     }
 
+
+    private void buildRoute(String url, final VolleyCallbackGet callbackPost) {
+
+        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                callbackPost.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                callbackPost.onError(error.toString());
+            }
+        }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+
+                MyData.put("trip_id", trip_ID);
+
+                return MyData;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                return headers;
+            }
+        };
+
+        queue.add(stringRequest);
+
+    }
 
     private void sendUserInput(String inputKey, Integer inputValue, final VolleyCallbackGet callbackPost2) {
 
