@@ -30,7 +30,8 @@ public class SingleTripInfoActivity extends AppCompatActivity {
 
     private TextView makeAndModelTextView;
     private TextView dateTextView;
-    private TextView distanceAndDurationTextView;
+    private TextView distanceTextView;
+    private TextView durationTextView;
     private TextView consumedEnergyTextView;
     private TextView avgConsumptionTextView;
     private TextView titleTextView;
@@ -52,7 +53,8 @@ public class SingleTripInfoActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.titleText);
         makeAndModelTextView = findViewById(R.id.makeAndModelTextView);
         dateTextView = findViewById(R.id.dateTextView);
-        distanceAndDurationTextView = findViewById(R.id.distanceAndDurationTextView);
+        distanceTextView = findViewById(R.id.distanceTextView);
+        durationTextView = findViewById(R.id.durationTextView);
         consumedEnergyTextView = findViewById(R.id.consumedEnergyTextView);
         avgConsumptionTextView = findViewById(R.id.avgConsumptionTextView);
 
@@ -87,7 +89,8 @@ public class SingleTripInfoActivity extends AppCompatActivity {
 
                             dateTextView.append(stats[0].getDate());
                             makeAndModelTextView.append(stats[0].getMake().concat(" " + stats[0].getModel()));
-                            distanceAndDurationTextView.append(String.valueOf(tripDistance).concat(" "+ stats[0].getTrip_total_time()));
+                            distanceTextView.append(String.valueOf(tripDistance));
+                            durationTextView.append(stats[0].getTrip_total_time());
                             consumedEnergyTextView.append(String.valueOf(stats[0].getConsumed_energy()));
                             avgConsumptionTextView.append(String.valueOf(stats[0].getAvg_consumption()));
                         }

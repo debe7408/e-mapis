@@ -52,15 +52,26 @@
     <!-- Trip Distance and Duration -->
 
     <TextView
-        android:id="@+id/distanceAndDurationTextView"
+        android:id="@+id/distanceTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:text="Distance : "
         android:textColor="@color/textColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/dateTextView"
-        app:layout_constraintTop_toBottomOf="@+id/dateTextView"
-        android:text="Distance and Duration: " />
+        app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
+
+    <TextView
+        android:id="@+id/durationTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Duration: "
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/distanceTextView"
+        app:layout_constraintTop_toBottomOf="@+id/distanceTextView" />
 
     <!-- Consumed Energy -->
 
@@ -72,8 +83,8 @@
         android:text="Consumed Energy: "
         android:textColor="@color/textColor"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="@+id/distanceAndDurationTextView"
-        app:layout_constraintTop_toBottomOf="@+id/distanceAndDurationTextView">
+        app:layout_constraintStart_toStartOf="@+id/durationTextView"
+        app:layout_constraintTop_toBottomOf="@+id/durationTextView">
     </TextView>
 
     <!-- Average Consumption per 1 km -->
