@@ -4,10 +4,12 @@ import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -34,14 +36,17 @@ public class LoginActivity extends AppCompatActivity {
         return userId;
     }
 
+    private CheckBox saveLoginInformation; // Remember Me? Checkbox
+    private ProgressBar progressBar; // Progress animation when contacting a database
+    private EditText txtUserName; // Username text field
+    private EditText txtPassword; // Password text field
+    private static SharedPreferences loginPref; // Shared Preferences object
+    public static SharedPreferences.Editor loginPrefEditor; // Shared Preferences Object editor
+    private Boolean saveLogin; // simple boolean to check if login information is saved
+
+
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
-    private String url ="http://193.219.91.103:4558/rpc/find_password";
-
-    public ProgressBar progressBar;
-
-    public void onClickQuitApp(View view) {
-        onBackPressed();
-    }
+    private final String url ="http://193.219.91.103:4558/rpc/find_password";
 
     // VolleyCallback interface
     public interface VolleyCallbackGet {
@@ -56,13 +61,31 @@ public class LoginActivity extends AppCompatActivity {
 
         //Define widgets
 
+        txtUserName = findViewById(R.id.usernameTextField);
+        txtPassword = findViewById(R.id.passwordTextField);
+        saveLoginInformation = findViewById(R.id.rememberMeCheckbox);
         progressBar = findViewById(R.id.loadingBar);
+        loginPref = getSharedPreferences("loginPref", MODE_PRIVATE);
+        loginPrefEditor = loginPref.edit();
+
+        saveLogin = loginPref.getBoolean("saveLogin", false);
+        // Check on launch if the login information is saved
+        if(saveLogin) {
+            // If true, sets username and password as username and password
+            txtUserName.setText(loginPref.getString("username", ""));
+            txtPassword.setText(loginPref.getString("password", ""));
+            saveLoginInformation.setChecked(true);
+        }
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    public void onClickQuitApp(View view) {
+        onBackPressed();
     }
 
     /** This method is called when the user clicks "LOGIN" button **/
@@ -72,15 +95,23 @@ public class LoginActivity extends AppCompatActivity {
         try  {
             InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {}
 
-        }
 
-        EditText txtUserName = findViewById(R.id.usernameTextField);
-        EditText txtPassword = findViewById(R.id.passwordTextField);
-
+        // Extract string and username from the TextFields
         String username = txtUserName.getText().toString();
         String password = txtPassword.getText().toString();
+
+        // If Remember Me Checkbox is checked, save info to SharedPreferences, else, clear it
+        if (saveLoginInformation.isChecked()) {
+            loginPrefEditor.putBoolean("saveLogin", true);
+            loginPrefEditor.putString("username", username);
+            loginPrefEditor.putString("password", password);
+        } else {
+            loginPrefEditor.clear();
+        }
+        loginPrefEditor.commit();
+
 
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
@@ -96,9 +127,12 @@ public class LoginActivity extends AppCompatActivity {
                     BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hashedPassword);
                     Log.d("result", result.toString());
                     if (result.verified) {
+
                         Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class); // Start new activity
                         intent.putExtra(EXTRA_MESSAGE, username); // Adds extra data to intent. (nameOfData, data)
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this).toBundle()); // Starts the new activity
+
+
                     } else {
                         Toast.makeText(LoginActivity.this, "Password or username incorrect", Toast.LENGTH_SHORT).show();
                     }
