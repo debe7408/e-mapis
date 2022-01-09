@@ -124,7 +124,7 @@ public class StatisticsActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
 
                         Gson gson = new Gson();
-                         stats = gson.fromJson(String.valueOf(response), statisticsObject[].class);
+                        stats = gson.fromJson(String.valueOf(response), statisticsObject[].class);
 
                         try {
                             callback.onSuccess(response);

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ByUserVehicleActivity">
 
     <TextView
@@ -46,10 +47,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="330dp"
-        android:text="Total trips: "
+        android:text=""
         android:textAlignment="center"
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.176"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,10 +62,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Total distance covered: "
+        android:text=""
         android:textAlignment="center"
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/totalTrips"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/totalTrips"
@@ -75,13 +76,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Average consumption: "
+        android:text=""
         android:textAlignment="center"
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/totalDistance"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/totalDistance"
         app:layout_constraintTop_toBottomOf="@+id/totalDistance" />
+
+    <TextView
+        android:id="@+id/declaredConsumption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avgConsumption"
+        app:layout_constraintVertical_bias="0.191" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

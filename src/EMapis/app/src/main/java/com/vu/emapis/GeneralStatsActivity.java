@@ -22,7 +22,10 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,15 +33,23 @@ import java.util.Set;
 
 public class GeneralStatsActivity extends AppCompatActivity {
 
-    public VehicleObject[] vehiclesList;
+    private VehicleObject[] vehiclesList;
+    private generalStatsObject[] generalStats;
+
+
     private String make;
     private String model;
-    private String vehicle_id;
-    private String userVehicleId;
+    private int vehicle_id;
 
     private TextView totalTrips;
     private TextView totalDistance;
     private TextView avgCons;
+    private TextView declaredCons;
+
+    public interface VolleyCallbackGet {
+        void onSuccess(JSONArray result) throws JSONException;
+        void onError(String error);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,7 @@ public class GeneralStatsActivity extends AppCompatActivity {
         totalTrips = findViewById(R.id.totalTrips);
         totalDistance = findViewById(R.id.totalDistance);
         avgCons = findViewById(R.id.avgConsumption);
+        declaredCons = findViewById(R.id.declaredConsumption);
 
 
         String url = "http://193.219.91.103:4558/vehicles?";
@@ -139,9 +151,7 @@ public class GeneralStatsActivity extends AppCompatActivity {
                     }
                 }
 
-                //TODO LAUNCH REFRESH STATS - refreshstats()
-
-
+                showStats(vehicle_id);
 
             }
 
@@ -150,15 +160,6 @@ public class GeneralStatsActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void refreshStats() {
-
-
-
-        totalDistance.setText(" km");
-        totalTrips.setText("trips");
-        avgCons.setText("kwh/km");
     }
 
     private void getVehicles(String url, final UserVehicleActivity.VolleyCallbackGet callback) {
@@ -192,6 +193,81 @@ public class GeneralStatsActivity extends AppCompatActivity {
         };
 
         queue.add(jsonArrayRequest);
+    }
+
+    private void getVehicle(String url, final ByUserVehicleActivity.VolleyCallbackGet callback) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                Gson gson = new Gson();
+                generalStats = gson.fromJson(String.valueOf(response), generalStatsObject[].class);
+
+                try {
+                    callback.onSuccess(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                callback.onError(error.toString());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                return headers;
+            }
+        };
+
+        queue.add(jsonArrayRequest);
+    }
+
+    private void showStats(int id) {
+        Log.d(String.valueOf(id), "veh_id");
+        String url = "http://193.219.91.103:4558/_emapis_get_vehicle_info?vehicle_id=eq." + id;
+        getVehicle(url, new ByUserVehicleActivity.VolleyCallbackGet() {
+
+            @Override
+            public void onSuccess(JSONArray result) {
+
+                for(generalStatsObject obj : generalStats) {
+
+                    if (obj.getTotal_no_of_trips() == 0) {                  // if value 'null' = no info yet
+                        totalTrips.setText("No records for this vehicle found!");
+                        totalDistance.setText("");
+                        avgCons.setText("");
+                        declaredCons.setText("Declared consumption for this model: " + BigDecimal.valueOf(obj.getDeclared_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
+                    } else {
+                        totalTrips.setText("Total trips: " + obj.getTotal_no_of_trips()  + " trips");
+                        totalDistance.setText("Total distance: " + BigDecimal.valueOf(obj.getTotal_distance()/1000).setScale(2, RoundingMode.HALF_UP).doubleValue() + " km");
+                        avgCons.setText("Average consumption: " + BigDecimal.valueOf(obj.getReal_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
+                        declaredCons.setText("Declared consumption for this model: " + BigDecimal.valueOf(obj.getDeclared_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
+                    }
+
+                }
+
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+                Toast.makeText(GeneralStatsActivity.this, "Something went wrong :( Check your internet connection", Toast.LENGTH_LONG).show();
+
+                finish();
+
+            }
+        });
     }
 
 }
