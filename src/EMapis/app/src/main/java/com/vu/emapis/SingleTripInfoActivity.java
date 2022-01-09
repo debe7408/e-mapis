@@ -70,7 +70,7 @@ public class SingleTripInfoActivity extends AppCompatActivity {
             titleTextView.setText("Trip " + trip_ID + " statistics");
 
             // URL for Get Request for statistics for the exact trip
-            getURL = "http://193.219.91.103:4558/_emapis_get_data_about_trip?trip_id=eq."+trip_ID;
+            getURL = "http://193.219.91.103:4558/_emapis_get_data_about_trip?trip_id=eq." + trip_ID;
             sendGetRequest(getURL, new VolleyCallbackGet() {
 
                 // On Success displays the info
@@ -80,7 +80,7 @@ public class SingleTripInfoActivity extends AppCompatActivity {
                     Log.d("Data", stats[0].toString());
 
                     if(!stats[0].isStats_ready()) {
-                        titleTextView.setText("Stats are not ready yet, please check back later");
+                        titleTextView.setText("Processing statistics...");
                     } else {
 
                         if(stats[0].getTrip_distance() <= 0) {
@@ -90,13 +90,20 @@ public class SingleTripInfoActivity extends AppCompatActivity {
                             Double tripDistance = BigDecimal.valueOf(stats[0].getTrip_distance()/1000)
                                     .setScale(2, RoundingMode.HALF_UP)
                                     .doubleValue();
+                            Double energy_cons = BigDecimal.valueOf(stats[0].getConsumed_energy())
+                                    .setScale(2, RoundingMode.HALF_UP)
+                                    .doubleValue();
+                            Double avg_cons = BigDecimal.valueOf(stats[0].getAvg_consumption())
+                                    .setScale(2, RoundingMode.HALF_UP)
+                                    .doubleValue();
+                            String time = String.valueOf(stats[0].getTrip_total_time());
 
                             dateTextView.append(stats[0].getDate());
                             makeAndModelTextView.append(stats[0].getMake().concat(" " + stats[0].getModel()));
                             distanceTextView.append(tripDistance + " km");
-                            durationTextView.append(stats[0].getTrip_total_time());
-                            consumedEnergyTextView.append(String.valueOf(stats[0].getConsumed_energy()));
-                            avgConsumptionTextView.append(String.valueOf(stats[0].getAvg_consumption()));
+                            durationTextView.append(time.substring(0, time.length() - 6));
+                            consumedEnergyTextView.append(energy_cons + " kWh");
+                            avgConsumptionTextView.append(avg_cons + " kWh/km");
                         }
                     }
                 }

@@ -78,7 +78,7 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                         statsArray.add("Trip ID = " + stats[i].getTrip_id());
                     }
                 }
-                ArrayAdapter arrayAdapter = new ArrayAdapter(userIndividualStatsActivity.this, android.R.layout.simple_list_item_1, statsArray);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(userIndividualStatsActivity.this, R.layout.black_text_listview, statsArray);
                 listView.setAdapter(arrayAdapter);
             }
 

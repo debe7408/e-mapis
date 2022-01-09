@@ -4,25 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
     tools:context=".userIndividualStatsActivity">
+
 
     <TextView
         android:id="@+id/vehicleSelectionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Statistic Menu"
         android:gravity="center"
-        android:textColor="@color/white"
+        android:text="My Trips"
+        android:textColor="@color/textColor"
         android:textSize="40sp">
 
     </TextView>
 
     <ListView
         android:id="@+id/ListView"
-        android:tooltipText="\\hello"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vehicleSelectionText">
+        android:textColor="@color/textColor"
+        android:layout_below="@+id/vehicleSelectionText"
+        android:tooltipText="\\hello">
 
     </ListView>
 

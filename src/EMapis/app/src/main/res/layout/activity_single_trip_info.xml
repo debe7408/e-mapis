@@ -23,12 +23,12 @@
 
     <TextView
         android:id="@+id/makeAndModelTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="116dp"
         android:text="Vehicle: "
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.184"
@@ -45,7 +45,7 @@
         android:layout_marginTop="30dp"
         android:text="Date: "
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/makeAndModelTextView"
         app:layout_constraintTop_toBottomOf="@+id/makeAndModelTextView" />
 
@@ -58,7 +58,7 @@
         android:layout_marginTop="30dp"
         android:text="Distance : "
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/dateTextView"
         app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
 
@@ -69,7 +69,7 @@
         android:layout_marginTop="30dp"
         android:text="Duration: "
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/distanceTextView"
         app:layout_constraintTop_toBottomOf="@+id/distanceTextView" />
 
@@ -82,7 +82,7 @@
         android:layout_marginTop="30dp"
         android:text="Consumed Energy: "
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/durationTextView"
         app:layout_constraintTop_toBottomOf="@+id/durationTextView">
     </TextView>
@@ -93,9 +93,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Avg Consumption: "
+        android:text="Average Consumption: "
         android:textColor="@color/textColor"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/consumedEnergyTextView"
         app:layout_constraintTop_toBottomOf="@id/consumedEnergyTextView">
     </TextView>
