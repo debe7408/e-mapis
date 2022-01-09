@@ -3,12 +3,9 @@ package com.vu.emapis;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -29,7 +26,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,9 +43,6 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -98,8 +91,8 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public static boolean firstPointSent = false;
 
-    private final String insertInputURL = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //TODO FIX URL AFTER EVALUATING WHAT WE WANT TO DO
-    private final String sendingDataURL = "http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert";
+    private final String insertMetaData = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //This URL is used for sending data to meta table ( inaccurate URL name )
+    private final String insertLocationData = "http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert"; //
 
 
     // location related apis
@@ -122,11 +115,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     private Chronometer simpleChronometer;
     private TextView tripLenghtTextView;
 
-
-
-
     // VolleyCallback interface
-    public interface VolleyCallbackGet {
+    public interface VolleyCallback {
         void onSuccess(String result);
         void onError(String error);
     }
@@ -245,7 +235,7 @@ public class OngoingTripActivity extends AppCompatActivity {
                 String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
                 Log.d("Array2: ", dataPost);
 
-                sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+                sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         global_index = 0;
@@ -266,11 +256,11 @@ public class OngoingTripActivity extends AppCompatActivity {
                 String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
                 Log.d("Array2: ", dataPost);
 
-                sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+                sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
                     @Override
                     public void onSuccess(String result) {
                         global_index = 0;
-                        sendUserInput("first_input", TripSettingsActivity.firstInput, new VolleyCallbackGet(){
+                        sendInfoToMeta("first_input", TripSettingsActivity.firstInput, new VolleyCallback(){
 
                             @Override
                             public void onSuccess(String result) {
@@ -363,7 +353,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         startLocationUpdates();
     }
 
-    private void sendArrayPointPost(String url, String dataPost, final VolleyCallbackGet callbackPost2) {
+    private void sendArrayPointPost(String url, String dataPost, final VolleyCallback callbackPost2) {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
@@ -429,7 +419,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
         Log.d("Recharge send data: ", dataPost);
 
-        sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+        sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
             @Override
             public void onSuccess(String result) {
                 global_index=0;
@@ -466,7 +456,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("Pause trip send data: ", dataPost);
 
             // Send data
-            sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+            sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
                 @Override
                 public void onSuccess(String result) {
                     global_index=0;
@@ -492,17 +482,38 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
     public void endTripOnClick(View view) {
+        // Stop updating location
         stopLocationUpdates();
 
+        // Store remaining unsent data and send it one last time
         String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
-        Log.d("End trip send data: ", dataPost);
-        // Send data
-        sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+        sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
+
+
+            // If the data was sent successfully, call this method
             @Override
             public void onSuccess(String result) {
-                global_index=0;
-                Log.d("Final", result);
-                global_index=0;
+                global_index=0; // Reset the global index
+
+                // Send not accurate distance to meta table. In case a route can't be built, this will be used instead.
+                sendInfoToMeta("distance_from_app", (finalSend.multiply(BigDecimal.valueOf(1000))).intValue(), new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.d("finalSend", finalSend.multiply(BigDecimal.valueOf(1000)).toString()); // Trip length in meters
+
+                        // Call TripEndActivity
+                        Intent intent = new Intent(OngoingTripActivity.this, TripEndActivity.class);
+                        intent.putExtra(trip_ID, trip_ID);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e("ERROR", error);
+                    }
+                });
+
             }
 
             @Override
@@ -511,11 +522,6 @@ public class OngoingTripActivity extends AppCompatActivity {
                 global_index=0;
             }
         });
-
-        Intent intent = new Intent(this, TripEndActivity.class);
-        intent.putExtra(trip_ID, trip_ID);
-        startActivity(intent);
-        finish();
     }
 
     public void seekBarInit() {
@@ -553,13 +559,13 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("charge send data: ", dataPost);
 
             // Send data
-            sendArrayPointPost(sendingDataURL, dataPost, new VolleyCallbackGet() {
+            sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
                 @Override
                 public void onSuccess(String result) {
                     global_index=0;
                     Log.d("Final", result);
                     seekBarValue = seekBar.getProgress();
-                    sendUserInput("user_update", seekBar.getProgress(), new VolleyCallbackGet(){
+                    sendInfoToMeta("user_update", seekBar.getProgress(), new VolleyCallback(){
 
                         @Override
                         public void onSuccess(String result) {
@@ -588,11 +594,12 @@ public class OngoingTripActivity extends AppCompatActivity {
         }
     }
 
-    public void sendUserInput(String inputKey, Integer inputValue, final VolleyCallbackGet callbackPost2) {
+    // Provided with a specific input key and value, send data to trip_log_meta table
+    public void sendInfoToMeta(String inputKey, Integer inputValue, final VolleyCallback callbackPost2) {
 
         RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, insertInputURL, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, insertMetaData, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
