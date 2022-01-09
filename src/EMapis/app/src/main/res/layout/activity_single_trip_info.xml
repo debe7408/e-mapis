@@ -7,40 +7,86 @@
     android:background="@color/backgroundColor"
     tools:context=".SingleTripInfoActivity">
 
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text=""
         android:textColor="@color/textColor"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="" />
 
+    <!-- Vehicle make and model -->
 
     <TextView
-        android:id="@+id/TripInfoText"
-        android:layout_width="wrap_content"
+        android:id="@+id/makeAndModelTextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="116dp"
+        android:text="Vehicle: "
         android:textColor="@color/textColor"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.184"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <!-- Trip Date -->
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Date: "
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/makeAndModelTextView"
+        app:layout_constraintTop_toBottomOf="@+id/makeAndModelTextView" />
+
+    <!-- Trip Distance and Duration -->
+
+    <TextView
+        android:id="@+id/distanceAndDurationTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/dateTextView"
+        app:layout_constraintTop_toBottomOf="@+id/dateTextView"
+        android:text="Distance and Duration: " />
+
+    <!-- Consumed Energy -->
+
+    <TextView
+        android:id="@+id/consumedEnergyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Consumed Energy: "
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/distanceAndDurationTextView"
+        app:layout_constraintTop_toBottomOf="@+id/distanceAndDurationTextView">
+    </TextView>
+
+    <!-- Average Consumption per 1 km -->
+    <TextView
+        android:id="@+id/avgConsumptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Avg Consumption: "
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/consumedEnergyTextView"
+        app:layout_constraintTop_toBottomOf="@id/consumedEnergyTextView">
+    </TextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,20 +20,26 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SingleTripInfoActivity extends AppCompatActivity {
 
 
-    private TextView textView;
-    private TextView titleText;
+    private TextView makeAndModelTextView;
+    private TextView dateTextView;
+    private TextView distanceAndDurationTextView;
+    private TextView consumedEnergyTextView;
+    private TextView avgConsumptionTextView;
+    private TextView titleTextView;
     private String trip_ID;
     private String getURL;
-    private statisticsObject[] stats;
+    private tripStatsObject[] stats;
 
     public interface VolleyCallbackGet {
-        void onSuccess(JSONArray result) throws JSONException;
+        void onSuccess();
         void onError(String error);
     }
 
@@ -42,29 +49,48 @@ public class SingleTripInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_trip_info);
 
         //Declaring Widgets
-        textView = findViewById(R.id.TripInfoText);
-        titleText = findViewById(R.id.titleText);
+        titleTextView = findViewById(R.id.titleText);
+        makeAndModelTextView = findViewById(R.id.makeAndModelTextView);
+        dateTextView = findViewById(R.id.dateTextView);
+        distanceAndDurationTextView = findViewById(R.id.distanceAndDurationTextView);
+        consumedEnergyTextView = findViewById(R.id.consumedEnergyTextView);
+        avgConsumptionTextView = findViewById(R.id.avgConsumptionTextView);
 
         // We try to get trip ID from last activity, if we don't get it, we throw an error.
         if(getIntent().hasExtra("trip_ID")) {
 
             trip_ID = (getIntent().getStringExtra("trip_ID"));
 
-            titleText.setText("Trip " + trip_ID + " statistics");
+            titleTextView.setText("Trip " + trip_ID + " statistics");
 
             // URL for Get Request for statistics for the exact trip
-            getURL = "http://193.219.91.103:4558/trips?trip_id=eq."+trip_ID;
+            getURL = "http://193.219.91.103:4558/_emapis_get_data_about_trip?trip_id=eq."+trip_ID;
             sendGetRequest(getURL, new VolleyCallbackGet() {
 
                 // On Success displays the info
                 @Override
-                public void onSuccess(JSONArray result) throws JSONException {
+                public void onSuccess() {
+
+                    Log.d("Data", stats[0].toString());
 
                     if(!stats[0].isStats_ready()) {
-                        textView.setText("Stats are not ready yet, please check back later");
+                        titleTextView.setText("Stats are not ready yet, please check back later");
                     } else {
-                        textView.setText(stats[0].toString());
 
+                        if(stats[0].getTrip_distance() <= 0) {
+                            titleTextView.setText("Trip distance is null");
+                        } else {
+
+                            Double tripDistance = BigDecimal.valueOf(stats[0].getTrip_distance())
+                                    .setScale(2, RoundingMode.HALF_UP)
+                                    .doubleValue();
+
+                            dateTextView.append(stats[0].getDate());
+                            makeAndModelTextView.append(stats[0].getMake().concat(" " + stats[0].getModel()));
+                            distanceAndDurationTextView.append(String.valueOf(tripDistance).concat(" "+ stats[0].getTrip_total_time()));
+                            consumedEnergyTextView.append(String.valueOf(stats[0].getConsumed_energy()));
+                            avgConsumptionTextView.append(String.valueOf(stats[0].getAvg_consumption()));
+                        }
                     }
                 }
 
@@ -78,7 +104,7 @@ public class SingleTripInfoActivity extends AppCompatActivity {
 
 
         } else {
-            Toast.makeText(SingleTripInfoActivity.this, "Somewhing went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SingleTripInfoActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -94,13 +120,9 @@ public class SingleTripInfoActivity extends AppCompatActivity {
 
                         // JSON -> GSON
                         Gson gson = new Gson();
-                        stats = gson.fromJson(String.valueOf(response), statisticsObject[].class);
+                        stats = gson.fromJson(String.valueOf(response), tripStatsObject[].class);
 
-                        try {
-                            callback.onSuccess(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                            callback.onSuccess();
 
                     }
                 }, new Response.ErrorListener() {

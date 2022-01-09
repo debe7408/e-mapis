@@ -12,7 +12,6 @@ public class statisticsObject {
     private boolean stats_ready;
     private double avg_temp;
 
-
     public statisticsObject() {
 
     }
