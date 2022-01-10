@@ -77,6 +77,8 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                         String date = stats[i].getTrip_start_time();
                         if (date != null) {
                             date = date.substring(0, 10);
+                        } else {
+                            date = "data not found";
                         }
 
                         statsArray.add("Trip ID: " + stats[i].getTrip_id() + " (" + date + ")");
@@ -100,14 +102,15 @@ public class userIndividualStatsActivity extends AppCompatActivity {
            @Override
            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-               // Retrieves data from the item that was clicked
-               Object o = listView.getItemAtPosition(position);
-               // Open a new activity for that trip
-               Intent intent = new Intent(userIndividualStatsActivity.this, SingleTripInfoActivity.class);
+               if (listView.getItemAtPosition(position).toString().contains("found")) {
+                   Toast.makeText(userIndividualStatsActivity.this, "Something went wrong, trip data not found", Toast.LENGTH_SHORT).show();
+               } else {
+                   // Open a new activity for that trip
+                   Intent intent = new Intent(userIndividualStatsActivity.this, SingleTripInfoActivity.class);
 
-               intent.putExtra("trip_ID", listView.getItemAtPosition(position).toString().replace("Trip ID: ", ""));
-               startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(userIndividualStatsActivity.this).toBundle());
-
+                   intent.putExtra("trip_ID", listView.getItemAtPosition(position).toString().replace("Trip ID: ", ""));
+                   startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(userIndividualStatsActivity.this).toBundle());
+               }
            }
        });
 
