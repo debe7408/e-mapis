@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar; // Progress animation when contacting a database
     private EditText txtUserName; // Username text field
     private EditText txtPassword; // Password text field
-    private static SharedPreferences loginPref; // Shared Preferences object
+    private static SharedPreferences loginPref; // Shared Preferences object for login prefs
     public static SharedPreferences.Editor loginPrefEditor; // Shared Preferences Object editor
     private Boolean saveLogin; // simple boolean to check if login information is saved
 
@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         loginPrefEditor = loginPref.edit();
 
         saveLogin = loginPref.getBoolean("saveLogin", false);
+
         // Check on launch if the login information is saved
         if(saveLogin) {
             // If true, sets username and password as username and password
