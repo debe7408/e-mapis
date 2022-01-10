@@ -66,7 +66,7 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                 if(stats == null || stats.length <= 0) {
                     Log.d("Success", "Empty"); // Logcat test
 
-                    Toast.makeText(userIndividualStatsActivity.this, "Seems like you don't have any trips yet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(userIndividualStatsActivity.this, "No trips recorded!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
 
@@ -74,8 +74,12 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                 else {
                     for(int i=0; i<stats.length; i++) {
                         Log.d("Success", "trip id = "+ stats[i].getTrip_id());
+                        String date = stats[i].getTrip_start_time();
+                        if (date != null) {
+                            date = date.substring(0, 10);
+                        }
 
-                        statsArray.add("Trip ID = " + stats[i].getTrip_id());
+                        statsArray.add("Trip ID: " + stats[i].getTrip_id() + " (" + date + ")");
                     }
                 }
                 ArrayAdapter arrayAdapter = new ArrayAdapter(userIndividualStatsActivity.this, R.layout.black_text_listview, statsArray);
@@ -101,7 +105,7 @@ public class userIndividualStatsActivity extends AppCompatActivity {
                // Open a new activity for that trip
                Intent intent = new Intent(userIndividualStatsActivity.this, SingleTripInfoActivity.class);
 
-               intent.putExtra("trip_ID", listView.getItemAtPosition(position).toString().replace("Trip ID = ", ""));
+               intent.putExtra("trip_ID", listView.getItemAtPosition(position).toString().replace("Trip ID: ", ""));
                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(userIndividualStatsActivity.this).toBundle());
 
            }

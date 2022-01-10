@@ -66,6 +66,7 @@ public class SingleTripInfoActivity extends AppCompatActivity {
         if(getIntent().hasExtra("trip_ID")) {
 
             trip_ID = (getIntent().getStringExtra("trip_ID"));
+            trip_ID = trip_ID.substring(0, trip_ID.length() - 13);
 
             titleTextView.setText("Trip " + trip_ID + " statistics");
 
