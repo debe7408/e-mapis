@@ -29,6 +29,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ByUserVehicleActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".GeneralStatsActivity"
+            android:exported="false"/>
         <activity
             android:name=".SingleTripInfoActivity"
             android:exported="false" />

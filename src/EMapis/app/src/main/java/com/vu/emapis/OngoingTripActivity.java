@@ -124,13 +124,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
-        //TODO:
-        // Implement Async
-        // Implement an interface that reacts if the user has allowed the app to access permissions
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
 
@@ -144,9 +137,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         seekBarInit();
 
-        simpleChronometer = findViewById(R.id.simpleChronometer);
-        simpleChronometer.start();
-        simpleChronometer.setBase(SystemClock.elapsedRealtime());
+
 
         Intent intent = getIntent();
         trip_ID = intent.getStringExtra(TripSettingsActivity.trip_ID);
@@ -287,6 +278,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     }
 
 
+    // TODO Fix permissions. A user can easily overcome it and break the app
     public void startLocationService() {
 
         // Requesting ACCESS_FINE_LOCATION using Dexter library
@@ -298,13 +290,15 @@ public class OngoingTripActivity extends AppCompatActivity {
                         mRequestingLocationUpdates = true;
                         startLocationUpdates();
 
-                        // TODO before the user accepts permissions, do not count time etc.
+                        simpleChronometer = findViewById(R.id.simpleChronometer);
+                        simpleChronometer.start();
+                        simpleChronometer.setBase(SystemClock.elapsedRealtime());
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         if (response.isPermanentlyDenied()) {
-                            // open device settings when permission denied
+                            Toast.makeText(OngoingTripActivity.this, "Please enable location permission", Toast.LENGTH_SHORT).show();
                             openSettings();
                         }
                     }
