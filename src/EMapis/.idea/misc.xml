@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.24814814814814815" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/app_icon_background.xml" value="0.2518518518518518" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/bg_gradient.xml" value="0.2518518518518518" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/ic_launcher_background.xml" value="0.24814814814814815" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/splash_background.xml" value="0.2755208333333333" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_developer_settings.xml" value="0.264" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_individual_statistics.xml" value="0.2552083333333333" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_location.xml" value="0.4" />
@@ -16,9 +19,11 @@
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_settings.xml" value="0.259375" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_single_trip_info.xml" value="0.2552083333333333" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_single_trip_stat.xml" value="0.2552083333333333" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_splash_screen.xml" value="0.12613981762917933" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_statistics.xml" value="0.264" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_trip_end.xml" value="0.259375" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_trip_settings.xml" value="0.264" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_user_agreement_dialog.xml" value="0.12982456140350876" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_user_individual_stats.xml" value="0.2" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_user_vehicle.xml" value="0.259375" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_volley.xml" value="0.1" />

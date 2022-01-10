@@ -1,6 +1,8 @@
 package com.vu.emapis;
 
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -49,4 +51,32 @@ public class MainScreenActivity extends AppCompatActivity {
         Intent intent = new Intent(MainScreenActivity.this, DeveloperSettingsActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Signing out")
+                .setMessage("Are you sure you want to sign out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // On sign out, make sure that remember me gets cleared
+                        LoginActivity.loginPrefEditor.putBoolean("saveLogin", false);
+                        LoginActivity.loginPrefEditor.clear();
+                        LoginActivity.loginPrefEditor.commit();
+
+                        Intent intent = new Intent(MainScreenActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
 }

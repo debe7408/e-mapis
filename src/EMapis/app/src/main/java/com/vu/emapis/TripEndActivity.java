@@ -87,6 +87,7 @@ public class TripEndActivity extends AppCompatActivity {
         });
     }
 
+    // Triggered when Finalize Trip button is clicked
     public void finalizeTrip(View view) {
 
         if (seekBarValue >= seekBar.getProgress()){
@@ -115,9 +116,8 @@ public class TripEndActivity extends AppCompatActivity {
             });
 
 
-
-
             Intent intent = new Intent(TripEndActivity.this, MainScreenActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
         else {
