@@ -34,7 +34,7 @@ public class UserVehicleActivity extends AppCompatActivity {
     private VehicleObject[] vehiclesList;
     private String make;
     private String model;
-    private String vehicle_id;
+    private int vehicle_id;
     private String userVehicleId;
 
     public ProgressBar progressBar;
@@ -140,7 +140,7 @@ public class UserVehicleActivity extends AppCompatActivity {
                 Map<String, String> MyData = new HashMap<String, String>();
                 MyData.put("user_id", LoginActivity.userId);
                 MyData.put("vehicle_alias", VehicleAlias);
-                MyData.put("vehicle_id", vehicle_id);
+                MyData.put("vehicle_id", String.valueOf(vehicle_id));
                 return MyData;
             }
 

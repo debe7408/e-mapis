@@ -68,7 +68,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
         String getUrl = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
         progressBar.setVisibility(View.VISIBLE);
-        sendGetRequest(getUrl, new VolleyCallbackGet() {
+        getUserVehicles(getUrl, new VolleyCallbackGet() {
 
             @Override
             public void onSuccess(String result) {
@@ -247,7 +247,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
     }
 
-    public void sendGetRequest(String url, VolleyCallbackGet callbackGet) {
+    private void getUserVehicles(String url, VolleyCallbackGet callbackGet) {
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

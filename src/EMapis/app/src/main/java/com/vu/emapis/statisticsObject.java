@@ -11,13 +11,14 @@ public class statisticsObject {
     private double trip_distance;
     private boolean stats_ready;
     private double avg_temp;
-
+    private String trip_start_time;
 
     public statisticsObject() {
 
     }
 
-    public statisticsObject(int trip_id, int user_id, int user_vehicle_id, int battery_at_start, int battery_at_end, double average_consumption, double trip_distance, boolean stats_ready, double avg_temp) {
+    public statisticsObject(int trip_id, int user_id, int user_vehicle_id, int battery_at_start, int battery_at_end, double average_consumption,
+                            double trip_distance, boolean stats_ready, double avg_temp, String trip_start_time) {
         this.trip_id = trip_id;
         this.user_id = user_id;
         this.user_vehicle_id = user_vehicle_id;
@@ -27,6 +28,7 @@ public class statisticsObject {
         this.trip_distance = trip_distance;
         this.stats_ready = stats_ready;
         this.avg_temp = avg_temp;
+        this.trip_start_time = trip_start_time;
     }
 
     @Override
@@ -114,5 +116,13 @@ public class statisticsObject {
 
     public void setAvg_temp(double avg_temp) {
         this.avg_temp = avg_temp;
+    }
+
+    public String getTrip_start_time() {
+        return trip_start_time;
+    }
+
+    public void setTrip_start_time(String trip_start_time) {
+        this.trip_start_time = trip_start_time;
     }
 }

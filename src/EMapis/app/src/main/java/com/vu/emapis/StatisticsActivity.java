@@ -31,6 +31,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private statisticsObject[] stats;
 
     private Button individualStatsButton;
+    private Button generalStatsButton;
+    private Button byUserVehicleStatsButton;
+
 
 
     public interface VolleyCallbackGet {
@@ -43,7 +46,9 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        individualStatsButton = findViewById(R.id.individualStatsButton); // Button to individual stats
+        individualStatsButton = findViewById(R.id.individualStatsButton);
+        generalStatsButton = findViewById(R.id.generalStatsButton);
+        byUserVehicleStatsButton = findViewById(R.id.generalIndividualStatsButton);
 
         individualStatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,83 +58,22 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-        String url = "http://193.219.91.103:4558/trips?select=trip_id,average_consumption,trip_distance,stats_ready&user_id=eq.95";
-        sendGetRequest(url, new VolleyCallbackGet() {
-
+        generalStatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(JSONArray result) {
-
-                //Log.d("avg", stats[0].getAverage_consumption());
-                ConstraintLayout statsAct = (ConstraintLayout) findViewById(R.id.statsAct);
-
-                for(statisticsObject obj : stats) {
-
-                    if(obj.isStats_ready()) {
-                        //display stat box
-                        TextView dynamicTextView = new TextView(StatisticsActivity.this);
-                        dynamicTextView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
-                        dynamicTextView.setText("Trip distance "+obj.getTrip_distance());
-
-                        statsAct.addView(dynamicTextView);
-
-
-                    } else {
-                        //display 'processing' box
-
-                    }
-                }
-
-            }
-            @Override
-            public void onError(String error) {
-
-
+            public void onClick(View view) {
+                Intent intent = new Intent(StatisticsActivity.this, GeneralStatsActivity.class);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
             }
         });
 
-    }
-
-
-    private void sendGetRequest(String url, final VolleyCallbackGet callback) {
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        Gson gson = new Gson();
-                         stats = gson.fromJson(String.valueOf(response), statisticsObject[].class);
-
-                        try {
-                            callback.onSuccess(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        callback.onError(error.toString());
-                        error.printStackTrace();
-
-                    }
-        }){
+        byUserVehicleStatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
+            public void onClick(View view) {
+                Intent intent = new Intent(StatisticsActivity.this, ByUserVehicleActivity.class);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
             }
-        };
+        });
 
-// Add the request to the RequestQueue.
-        queue.add(jsonArrayRequest);
     }
 
 }
