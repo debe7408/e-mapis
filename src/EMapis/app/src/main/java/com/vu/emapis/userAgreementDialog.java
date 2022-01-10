@@ -3,9 +3,10 @@ package com.vu.emapis;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -15,10 +16,7 @@ import android.widget.TextView;
 
 public class userAgreementDialog extends AppCompatActivity {
 
-    private TextView privacyPolicyTextView;
-    private Button acceptButton;
-    private Button declineButton;
-    private SharedPreferences appPolicy; // Shared Preferences object for app policy
+    public static SharedPreferences appPolicy; // Shared Preferences object for app policy
     private SharedPreferences.Editor appPolicyEditor; // Shared Preferences Object editor
 
     @Override
@@ -26,17 +24,15 @@ public class userAgreementDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_agreement_dialog);
 
-        acceptButton = findViewById(R.id.acceptButton);
-        declineButton = findViewById(R.id.refuseButton);
-        privacyPolicyTextView = findViewById(R.id.privacyPolicyTextView);
+        Button acceptButton = findViewById(R.id.acceptButton);
+        Button declineButton = findViewById(R.id.refuseButton);
+        TextView privacyPolicyTextView = findViewById(R.id.privacyPolicyTextView);
 
         appPolicy = getSharedPreferences("appSettings", MODE_PRIVATE);
         appPolicyEditor = appPolicy.edit();
 
-        //TODO
-        // CHANGE TO FALSE
-        // READ THE POLICY
-        if (appPolicy.getBoolean("acceptedPolicy", false)) { // Change to false
+        if (!appPolicy.getBoolean("acceptedPolicy", false)) { // Change to false
+
             privacyPolicyTextView.setText(Html.fromHtml(
                     "<h1>Privacy Policy</h1>\n" +
                             "<p>Last updated: January 10, 2022</p>\n" +
@@ -182,6 +178,8 @@ public class userAgreementDialog extends AppCompatActivity {
                             "<li>By email: emapis@gmail.com</li>\n" +
                             "</ul>"));
         } else {
+
+            Log.d("FirstTime?", "accepted");
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(userAgreementDialog.this).toBundle());
@@ -193,7 +191,8 @@ public class userAgreementDialog extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                appPolicyEditor.putBoolean("acceptedPolicy", true).commit();
+                SplashScreenActivity.appSettingsEditor.putBoolean("appPolicy", true);
+                appPolicyEditor.putBoolean("acceptedPolicy", true).apply();
                 Intent intent = new Intent(userAgreementDialog.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(userAgreementDialog.this).toBundle());
@@ -205,11 +204,36 @@ public class userAgreementDialog extends AppCompatActivity {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SplashScreenActivity.appSettingsEditor.putInt("app_last_time_version", 0);
-                appPolicyEditor.putBoolean("acceptedPolicy", false);
+                SplashScreenActivity.appSettingsEditor.putInt("app_last_time_version", 0).apply();
+                appPolicyEditor.putBoolean("acceptedPolicy", false).apply();
                 finish();
             }
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting")
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // On sign out, make sure that policy get set to false
+                        SplashScreenActivity.appSettingsEditor.putInt("app_last_time_version", 0).apply();
+                        appPolicyEditor.putBoolean("acceptedPolicy", false).apply();
+                        finish();
+
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+
+
 }

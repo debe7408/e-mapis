@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.TextView;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -33,27 +32,36 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         appSettings = getSharedPreferences("appSettings", MODE_PRIVATE);
         appSettingsEditor = appSettings.edit();
+        appSettings.getBoolean("appPolicy", false);
+
 
         int currentBuildVersion = BuildConfig.VERSION_CODE;
         int lastBuildVersion = appSettings.getInt("app_last_time_version", 0);
 
         if(currentBuildVersion == lastBuildVersion) {
-            //TODO Not first time
+            // Not first time
             Log.d("FirstTime?", "not");
 
-            Intent intent = new Intent(this, userAgreementDialog.class); // TODO CHANGE THIS TO LoginActivity.class
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle()); // Starts the new activity
-            finish();
+            if(!appSettings.getBoolean("appPolicy", false)) {
 
-            //startActivity(new Intent(this, LoginActivity.class));
+                Intent intent = new Intent(this, userAgreementDialog.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle()); // Starts the new activity
+                finish();
+
+            } else {
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle()); // Starts the new activity
+                finish();
+            }
 
         } else {
 
             appSettingsEditor.putInt("app_last_time_version", currentBuildVersion).apply();
 
             if(lastBuildVersion == 0) {
-                // TODO First time
+                //  First time
                 Intent intent = new Intent(this, userAgreementDialog.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle()); // Starts the new activity
@@ -62,7 +70,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 Log.d("FirstTime?", "yes");
 
             } else {
-                // TODO first time in this update
+                //  first time in this update
                 // What's new in this version Dialog
                 Log.d("FirstTime?", "first in this update");
             }
