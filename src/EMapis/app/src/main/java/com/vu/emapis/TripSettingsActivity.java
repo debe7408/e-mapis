@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.vu.emapis.request.weatherGetRequest;
 
 import org.json.JSONArray;
 
@@ -53,7 +54,6 @@ public class TripSettingsActivity extends AppCompatActivity {
         void onError(String error);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,53 +65,64 @@ public class TripSettingsActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.loadingBar);
         startButton = findViewById(R.id.button4);
 
-
-        String getUrl = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
         progressBar.setVisibility(View.VISIBLE);
-        getUserVehicles(getUrl, new VolleyCallbackGet() {
+
+        String getUserVehiclesURL = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
+        getUserVehicles(getUserVehiclesURL, new VolleyCallbackGet() {
 
             @Override
             public void onSuccess(String result) {
 
+                // Check if the user has any vehicles
                 if(userVehicleList.length == 0) {
 
+                    // If the user does not have any vehicles, send him to create one
                     Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(TripSettingsActivity.this, SettingsActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
 
+                    // Initialize button to start the trip
                     startButton.setVisibility(View.VISIBLE);
 
-                    Toast.makeText(TripSettingsActivity.this, "Data retrieved!", Toast.LENGTH_SHORT).show();
-
-
-                    Set<String> vehicleAliasSet = new HashSet<>();
-                    String[] vehicleAlias;
-
-
-                    for(int i=0; i< userVehicleList.length; i++) {
-                        vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
-                    }
-                    vehicleAlias = vehicleAliasSet.toArray(new String[0]);
-
-
+                    // Initialize seekBar for energy input
                     seekBarInit();
-                    spinnerInit(vehicleAlias);
+
+                    // Initialize spinner for vehicle selection
+                    spinnerInit();
                 }
             }
 
             @Override
             public void onError(String error) {
 
-                Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading.", Toast.LENGTH_SHORT).show();
                 finish();
 
             }
         });
+
+
+        // Start Trip Button onClickListener
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTheTrip();
+            }
+        });
+
     }
 
-    public void spinnerInit(String[] vehicleAlias) {
+    public void spinnerInit() {
+
+        Set<String> vehicleAliasSet = new HashSet<>();
+        String[] vehicleAlias;
+
+        for(int i=0; i< userVehicleList.length; i++) {
+            vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
+        }
+        vehicleAlias = vehicleAliasSet.toArray(new String[0]);
 
         Spinner selectAlias = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
         selectAlias.setVisibility(View.VISIBLE);
@@ -142,9 +153,10 @@ public class TripSettingsActivity extends AppCompatActivity {
     }
 
     public void seekBarInit() {
-        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
 
+        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
         seekBar.setVisibility(View.VISIBLE);
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             int progressValue = 0;
@@ -167,54 +179,125 @@ public class TripSettingsActivity extends AppCompatActivity {
     }
 
     // Gets called when the button "Start the trip" is pressed
-    public void startTheTrip(View view) {
+    public void startTheTrip() {
 
         if (seekBar.getProgress() == 0) {
-            Toast.makeText(TripSettingsActivity.this, "If the energy level in your vehicle is really 0, please recharge it!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TripSettingsActivity.this, "Can not start a trip with energy levels at " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
         } else {
-            String postURL = "http://193.219.91.103:4558/rpc/_emapis_new_trip";
-            sendPostRequest(postURL, new VolleyCallbackGet() {
-                @Override
-                public void onSuccess(String result) {
-                    trip_ID = result;
-                    seekBarValue = seekBar.getProgress();
-                    firstInput = seekBarValue;
 
-                    Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
-                    intent.putExtra(trip_ID, trip_ID);
-                    startActivity(intent);
-                    finish();
+            String startNewTripURL = "http://193.219.91.103:4558/rpc/_emapis_new_trip";
+            startNewTripPostRequest(startNewTripURL, new VolleyCallbackGet() {
+                @Override
+                public void onSuccess(String tripoIDas) {
+
+                    // If a new TripID has been created in the database, start new activity
+                    trip_ID = tripoIDas;
+                    firstInput = seekBar.getProgress();
+
+
+                    // Retrieve weather info
+                    weatherGetRequest weatherData = new weatherGetRequest();
+                    weatherData.getWeatherRequest(TripSettingsActivity.this, new VolleyCallBackInterface() {
+                        @Override
+                        public void onSuccess(String temperature) {
+
+                            // Send weather data to meta table
+                            String sendWeatherDataURL = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level";
+                            sendWeatherData(tripoIDas, temperature, sendWeatherDataURL, new VolleyCallbackGet() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    Toast.makeText(TripSettingsActivity.this, "Successfully sent weather information", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    Toast.makeText(TripSettingsActivity.this, "Failed to send weather information", Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+                            Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+                            intent.putExtra(trip_ID, trip_ID);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                            Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting the trip", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
 
                 }
 
                 @Override
                 public void onError(String error) {
-
-                    Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting trip", Toast.LENGTH_SHORT).show();
+                    Log.e("Error", "Failed to retrieve weather data in TripSettingsActivity");
 
                 }
             });
         }
+
     }
 
-    // TODO CREATE sendUserInput METHOD FOR THE FIRST ENERGY LEVEL INPUT
+    private void sendWeatherData(String tripID, String temperature, String url, VolleyCallbackGet callback) {
 
-    private void sendPostRequest(String postURL, VolleyCallbackGet callbackPost) {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                callback.onSuccess("Success");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                callback.onError("Error");
+                error.printStackTrace();
+
+            }
+        }){
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("trip_id", tripID);
+                MyData.put("input_key", "temperature_input");
+                MyData.put("input_value", temperature);
+
+                return MyData;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                return headers;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+
+    }
+
+    private void startNewTripPostRequest(String postURL, VolleyCallbackGet callbackPost) {
 
         int userID = Integer.parseInt(LoginActivity.userId);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
-
-                // trip_ID = response;
                 callbackPost.onSuccess(response);
             }
         }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 callbackPost.onError(error.toString());
                 error.printStackTrace();
             }
@@ -244,7 +327,6 @@ public class TripSettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void getUserVehicles(String url, VolleyCallbackGet callbackGet) {
@@ -288,4 +370,6 @@ public class TripSettingsActivity extends AppCompatActivity {
             }
         });
     }
+
+    //TODO Implement progressBars
 }
