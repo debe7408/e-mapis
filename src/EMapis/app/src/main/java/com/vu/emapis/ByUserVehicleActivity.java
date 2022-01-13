@@ -1,4 +1,6 @@
 package com.vu.emapis;
+import com.vu.emapis.objects.byUserVehicleObject;
+import com.vu.emapis.objects.userVehicle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,7 +35,7 @@ import java.util.Set;
 
 public class ByUserVehicleActivity extends AppCompatActivity {
 
-    private userVehicleObject[] userVehicleList;
+    private userVehicle[] userVehicleList;
     private byUserVehicleObject[] byUserVehicleStats;
 
     private String alias;
@@ -113,7 +115,7 @@ public class ByUserVehicleActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
 
                 Gson gson = new Gson();
-                userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
+                userVehicleList = gson.fromJson(String.valueOf(response), userVehicle[].class);
                 Log.d("list-trip-settings", String.valueOf(response));
 
                 callbackGet.onSuccess("");

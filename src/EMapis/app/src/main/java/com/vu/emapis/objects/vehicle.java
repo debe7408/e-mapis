@@ -1,6 +1,6 @@
-package com.vu.emapis;
+package com.vu.emapis.objects;
 
-public class VehicleObject {
+public class vehicle {
 
     int vehicle_id;
     String make;
@@ -9,11 +9,11 @@ public class VehicleObject {
     String battery_size;
     String declared_consumption;
 
-    public VehicleObject() {
+    public vehicle() {
 
     }
 
-    public VehicleObject(int vehicle_id, String make, String model, String year, String battery_size, String declared_consumption) {
+    public vehicle(int vehicle_id, String make, String model, String year, String battery_size, String declared_consumption) {
         this.vehicle_id = vehicle_id;
         this.make = make;
         this.model = model;

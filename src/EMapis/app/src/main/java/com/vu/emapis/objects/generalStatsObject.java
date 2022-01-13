@@ -1,4 +1,4 @@
-package com.vu.emapis;
+package com.vu.emapis.objects;
 
 public class generalStatsObject {
 

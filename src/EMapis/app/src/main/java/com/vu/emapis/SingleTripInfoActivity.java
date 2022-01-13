@@ -2,7 +2,6 @@ package com.vu.emapis;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,9 +17,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.vu.emapis.objects.tripStatsObject;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

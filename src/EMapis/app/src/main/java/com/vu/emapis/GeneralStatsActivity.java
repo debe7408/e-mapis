@@ -1,8 +1,9 @@
 package com.vu.emapis;
+import com.vu.emapis.objects.generalStatsObject;
+import com.vu.emapis.objects.vehicle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,7 @@ import java.util.Set;
 
 public class GeneralStatsActivity extends AppCompatActivity {
 
-    private VehicleObject[] vehiclesList;
+    private vehicle[] vehiclesList;
     private generalStatsObject[] generalStats;
 
 
@@ -170,7 +171,7 @@ public class GeneralStatsActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
 
                 Gson gson = new Gson();
-                vehiclesList = gson.fromJson(String.valueOf(response), VehicleObject[].class);
+                vehiclesList = gson.fromJson(String.valueOf(response), vehicle[].class);
 
                 callback.onSuccess(response.toString());
 

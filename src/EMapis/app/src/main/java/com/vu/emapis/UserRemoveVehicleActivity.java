@@ -1,4 +1,5 @@
 package com.vu.emapis;
+import com.vu.emapis.objects.userVehicle;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +34,7 @@ import java.util.Set;
 
 public class UserRemoveVehicleActivity extends AppCompatActivity {
 
-    private userVehicleObject[] userVehicleList;
+    private userVehicle[] userVehicleList;
     private String alias;
     private int UserVehicleID;
 
@@ -161,7 +162,7 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
 
                 Gson gson = new Gson();
-                userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
+                userVehicleList = gson.fromJson(String.valueOf(response), userVehicle[].class);
                 Log.d("list", String.valueOf(userVehicleList));
 
                 callback.onSuccess(response.toString());
