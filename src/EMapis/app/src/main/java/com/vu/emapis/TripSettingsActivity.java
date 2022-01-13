@@ -24,7 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
+import com.vu.emapis.request.getUserVehiclesRequest;
 import com.vu.emapis.request.weatherGetRequest;
 
 import org.json.JSONArray;
@@ -41,8 +41,6 @@ public class TripSettingsActivity extends AppCompatActivity {
     public ProgressBar progressBar;
     public Button startButton;
 
-
-    private userVehicle[] userVehicleList;
     private String alias;
     private int VehicleID;
     public static String trip_ID;
@@ -68,14 +66,18 @@ public class TripSettingsActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        String getUserVehiclesURL = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
-        getUserVehicles(getUserVehiclesURL, new VolleyCallbackGet() {
 
+        getUserVehiclesRequest userVehicles = new getUserVehiclesRequest();
+        userVehicles.getUserVehicles(TripSettingsActivity.this, new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
 
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+
                 // Check if the user has any vehicles
-                if(userVehicleList.length == 0) {
+                if(userVehicles.userVehicleList.length == 0) {
 
                     // If the user does not have any vehicles, send him to create one
                     Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip", Toast.LENGTH_SHORT).show();
@@ -91,16 +93,15 @@ public class TripSettingsActivity extends AppCompatActivity {
                     seekBarInit();
 
                     // Initialize spinner for vehicle selection
-                    spinnerInit();
+                    spinnerInit(userVehicles.userVehicleList);
                 }
+
             }
 
             @Override
             public void onError(String error) {
-
                 Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading.", Toast.LENGTH_SHORT).show();
                 finish();
-
             }
         });
 
@@ -115,7 +116,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
     }
 
-    public void spinnerInit() {
+    public void spinnerInit(userVehicle[] userVehicleList) {
 
         Set<String> vehicleAliasSet = new HashSet<>();
         String[] vehicleAlias;
@@ -330,47 +331,6 @@ public class TripSettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void getUserVehicles(String url, VolleyCallbackGet callbackGet) {
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                Gson gson = new Gson();
-                userVehicleList = gson.fromJson(String.valueOf(response), userVehicle[].class);
-                Log.d("list-trip-settings", String.valueOf(response));
-
-                callbackGet.onSuccess("");
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                callbackGet.onError(error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        queue.add(jsonArrayRequest);
-        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
-            @Override
-            public void onRequestFinished(Request<String> request) {
-                if (progressBar != null && progressBar.isShown()) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-    }
 
     //TODO Implement progressBars
 }
