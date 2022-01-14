@@ -182,6 +182,8 @@ public class TripSettingsActivity extends AppCompatActivity {
             Toast.makeText(TripSettingsActivity.this, "Can not start a trip with energy levels at " + seekBar.getProgress() +"%.", Toast.LENGTH_SHORT).show();
         } else {
 
+            seekBarValue = seekBar.getProgress();
+
 
             // Create a new tripManage object
             TripManage tripManage = new TripManage(TripSettingsActivity.this);

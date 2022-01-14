@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 public class weatherRequest {
 
-    //
     private String city;
     private final String appID = "984a2f5b726e95045b31716e5539ff10"; //TODO change this bearer to safe location
     private String units;

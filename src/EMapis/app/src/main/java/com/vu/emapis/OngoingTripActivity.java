@@ -43,6 +43,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.vu.emapis.request.MetaDataPostRequest;
+import com.vu.emapis.request.SendArrayPointPost;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -52,30 +54,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class OngoingTripActivity extends AppCompatActivity {
 
 
-    boolean clicked = false;
     private long lastPause;
 
-    @BindView(R.id.tripStatus)
-    TextView tripStatus;
 
-    @BindView(R.id.btn_pause_trip)
-    Button btnPauseTrip;
-
-    @BindView(R.id.btn_stop_trip)
-    Button btnStopTrip;
-
-    @BindView(R.id.btn_recharge)
-    Button btnRecharge;
 
     // location last updated time
     private String mLastUpdateTime;
-
 
     // location updates interval - 5 sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
@@ -92,8 +79,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     public static boolean firstPointSent = false;
 
     private final String insertMetaData = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //This URL is used for sending data to meta table ( inaccurate URL name )
-    private final String insertLocationData = "http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert"; //
-
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -105,15 +90,27 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
-    private View view;
 
-    public static String trip_ID;
-    public BigDecimal finalSend = BigDecimal.valueOf(0);
 
+    // Widgets
     private SeekBar seekBar;
-    private TextView textView;
+    private TextView energyLevelTextView;
     private Chronometer simpleChronometer;
-    private TextView tripLenghtTextView;
+    public TextView tripLengthTextView;
+    public TextView tripStatusTextView;
+    public Button btnPauseTrip;
+    public Button btnStopTrip;
+    public Button btnRecharge;
+
+    // Vars
+
+    public BigDecimal finalSend = BigDecimal.valueOf(0);
+    public static String trip_ID; // TODO REMOVE STATIC
+    private SendArrayPointPost sendArrayPointPost;
+    private MetaDataPostRequest metaDataPostRequest;
+    private String sendPointArrayURL;
+    private boolean clicked = false;
+
 
     // VolleyCallback interface
     public interface VolleyCallback {
@@ -127,23 +124,39 @@ public class OngoingTripActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
 
-        // Define widgets
-
-        seekBar = findViewById(R.id.rechargedEnergyLevels);
-        textView = findViewById(R.id.energyLevelText);
-        tripLenghtTextView = findViewById(R.id.textView4);
-
-        ButterKnife.bind(this);
-
-        seekBarInit();
 
 
 
+        // Retrieve trip_ID from extras
         Intent intent = getIntent();
         trip_ID = intent.getStringExtra("tripID");
         Log.d("Testas =", trip_ID);
 
+        // Define widgets
+        tripStatusTextView = findViewById(R.id.tripStatus);
+        btnPauseTrip = findViewById(R.id.btn_pause_trip);
+        btnStopTrip = findViewById(R.id.btn_stop_trip);
+        btnRecharge = findViewById(R.id.btn_recharge);
+        seekBar = findViewById(R.id.rechargedEnergyLevels);
+        energyLevelTextView = findViewById(R.id.energyLevelText);
+        tripLengthTextView = findViewById(R.id.textView4);
+
+        // Defines vars
+
+        sendPointArrayURL = getString(R.string.postLocationPointsURL);
+
+        //Create SendArrayPointPost object to send location data
+        sendArrayPointPost = new SendArrayPointPost(OngoingTripActivity.this);
+
+        // Create MetaDataPostRequest object to send data to meta table like energy etc.
+        metaDataPostRequest = new MetaDataPostRequest(OngoingTripActivity.this);
+
+        // TODO send firstInput
+
+        seekBarInit(); // TODO OK
+
         initLib();
+
         startLocationService();
 
     }
@@ -159,40 +172,33 @@ public class OngoingTripActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Exiting")
-                .setMessage("Are you sure you want to go back? The trip will be ended.")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        stopLocationUpdates();
-                        finish();
-                    }
 
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
 
     private void initLib() {  //initialize all the location related clients
+
+        // Initialize FusedLocationClient API for location data tracking
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mSettingsClient = LocationServices.getSettingsClient(this); //this API makes it easy for an app to ensure that the device's system settings are properly configured for the app's location needs.
+
+        //this API makes it easy for an app to ensure that the device's system settings are properly configured for the app's location needs.
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
 
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                // location is received
+
+                // Retrieve last location
                 mCurrentLocation = locationResult.getLastLocation();
+
+                // Retrieve last update time
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
+                // Update the location
                 updateLocation();
             }
         };
+
 
         mRequestingLocationUpdates = false;
 
@@ -209,9 +215,10 @@ public class OngoingTripActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void updateLocation() {
 
-
+        // If the current location is not null
         if (mCurrentLocation != null) {
 
+            // Retrieve all coordinates separately
             pointArray[global_index] = mCurrentLocation.getLatitude();
             global_index++;
             pointArray[global_index] = mCurrentLocation.getLongitude();
@@ -219,64 +226,70 @@ public class OngoingTripActivity extends AppCompatActivity {
             pointArray[global_index] = mCurrentLocation.getAltitude();
             global_index++;
 
+            // Logcat testing
             Log.d("global_index", Integer.toString(global_index));
 
+            // When the global index reaches 60, manipulate and send data
             if (global_index == 60) {
 
+                //
                 String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
+                // Logcat testing
                 Log.d("Array2: ", dataPost);
 
-                sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
+
+                sendArrayPointPost.sendArrayPointPostRequest(trip_ID, sendPointArrayURL, dataPost, new VolleyCallBackInterface() {
                     @Override
-                    public void onSuccess(String result) {
+                    public void onSuccess(String response) {
+
+                        // Do length transformations
+                        updateLength(response);
+
+                        // Set the distance TextView to the current distance and reset the array
+                        Arrays.fill(pointArray, 0.0);
                         global_index = 0;
-                        Log.d("Final", result);
-                        global_index = 0;
+
+                        // Logcat testing
+                        Log.d("Final Distance:", response);
                     }
 
                     @Override
                     public void onError(String error) {
-                        Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(OngoingTripActivity.this, "Something went wrong. Data was not sent", Toast.LENGTH_LONG).show();
                         global_index = 0;
                     }
                 });
-
-            }
-
-            if(!firstPointSent){
-                String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
-                Log.d("Array2: ", dataPost);
-
-                sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
-                    @Override
-                    public void onSuccess(String result) {
-                        global_index = 0;
-                        sendInfoToMeta("first_input", TripSettingsActivity.firstInput, new VolleyCallback(){
-
-                            @Override
-                            public void onSuccess(String result) {
-                                resumeLocationUpdates();
-                            }
-
-                            @Override
-                            public void onError(String error) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
-                        global_index = 0;
-                    }
-                });
-
-                firstPointSent = true;
             }
         }
     }
 
+    public void updateLength(String response) {
+        // Response transformation
+        // ---------------------------------------------------------------------------------
+        // Remove " from the response
+        String distance = response.replace("\"", "");
+
+        // Convert the response String to BigDecimal
+        BigDecimal bigDecimal = BigDecimal.valueOf(Double.parseDouble(distance));
+
+        // Define the divisor for rounding up the answer
+        BigDecimal divisor = new BigDecimal(1000);
+
+        // Round the response
+        bigDecimal = bigDecimal.divide(divisor).setScale(2, RoundingMode.HALF_UP);
+
+        // Declare the final answer after all the transformation as finalSend
+
+        finalSend = finalSend.add(bigDecimal);
+
+        // ---------------------------------------------------------------------------------
+
+        // Convert the final distance from BigDecimal to String
+        distance = finalSend.toString();
+
+        tripLengthTextView.setText(distance.concat(" km"));
+
+    }
 
     // TODO Fix permissions. A user can easily overcome it and break the app
     public void startLocationService() {
@@ -287,6 +300,7 @@ public class OngoingTripActivity extends AppCompatActivity {
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
+
                         mRequestingLocationUpdates = true;
                         startLocationUpdates();
 
@@ -327,7 +341,7 @@ public class OngoingTripActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
 
-                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Location updates enabled", Toast.LENGTH_SHORT).show();
 
                         //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
@@ -340,71 +354,14 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Location updates disabled", Toast.LENGTH_SHORT).show();
     }
 
     public void resumeLocationUpdates() {
         startLocationUpdates();
     }
 
-    private void sendArrayPointPost(String url, String dataPost, final VolleyCallback callbackPost2) {
-
-        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-
-                String distance = response.replace("\"", "");
-                BigDecimal bigDecimal = new BigDecimal(Double.valueOf(distance));
-                BigDecimal divisor = new BigDecimal(1000);
-
-                bigDecimal = bigDecimal.divide(divisor);
-                bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_UP);
-
-                finalSend = finalSend.add(bigDecimal);
-
-                distance = finalSend.toString();
-
-                tripLenghtTextView.setText(distance.concat(" km"));
-
-                Arrays.fill(pointArray, 0.0);
-                callbackPost2.onSuccess(distance);
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                callbackPost2.onError(error.toString());
-
-
-            }
-        }) {
-            protected Map<String, String> getParams() {
-
-                Map<String, String> MyData = new HashMap<String, String>();
-
-                MyData.put("trip_id", trip_ID);
-                MyData.put("points", dataPost);
-
-                return MyData;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        queue.add(stringRequest);
-
-    }
-
+    // Triggers when the recharge button is clicked
     public void rechargeOnClick(View view) {
 
         stopLocationUpdates();
@@ -413,25 +370,36 @@ public class OngoingTripActivity extends AppCompatActivity {
         String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
         Log.d("Recharge send data: ", dataPost);
 
-        sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
+        // Send ArrayPoint data to the database
+        sendArrayPointPost.sendArrayPointPostRequest(trip_ID, sendPointArrayURL, dataPost, new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
-                global_index=0;
-                Log.d("Final", result);
-                global_index=0;
+
+                // Do length transformations
+                updateLength(result);
+
+                // Set the distance TextView to the current distance and reset the array
+                Arrays.fill(pointArray, 0.0);
+                global_index = 0;
+
+                // Logcat testing
+                Log.d("Final Distance:", result);
+
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                Toast.makeText(OngoingTripActivity.this, "Something went wrong. Could not send data", Toast.LENGTH_LONG).show();
                 global_index=0;
             }
         });
 
+        // Pause the chronometer
         lastPause = SystemClock.elapsedRealtime();
         simpleChronometer.stop();
         clicked = true;
 
+        // Show a popup to update energy levels
         Intent intent = new Intent(this, PopUpActivity.class);
         startActivity(intent);
     }
@@ -442,34 +410,41 @@ public class OngoingTripActivity extends AppCompatActivity {
             stopLocationUpdates();
             lastPause = SystemClock.elapsedRealtime();
             simpleChronometer.stop();
-            tripStatus.setText("Trip is paused");
+            tripStatusTextView.setText("Trip is paused");
             btnPauseTrip.setText("Resume the trip");
             clicked = true;
 
             String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
             Log.d("Pause trip send data: ", dataPost);
 
-            // Send data
-            sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
+            // Send ArrayPoint data to the database
+            sendArrayPointPost.sendArrayPointPostRequest(trip_ID, sendPointArrayURL, dataPost, new VolleyCallBackInterface() {
                 @Override
                 public void onSuccess(String result) {
-                    global_index=0;
-                    Log.d("Final", result);
-                    global_index=0;
+                    // Do length transformations
+                    updateLength(result);
+
+                    // Set the distance TextView to the current distance and reset the array
+                    Arrays.fill(pointArray, 0.0);
+                    global_index = 0;
+
+                    // Logcat testing
+                    Log.d("Final Distance:", result);
                 }
 
                 @Override
                 public void onError(String error) {
-                    Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(OngoingTripActivity.this, "Something went wrong. Could not send data", Toast.LENGTH_LONG).show();
                     global_index=0;
                 }
             });
+
 
         } else {
             resumeLocationUpdates();
             simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
             simpleChronometer.start();
-            tripStatus.setText("Trip is in progress");
+            tripStatusTextView.setText("Trip is in progress");
             btnPauseTrip.setText("Pause the trip");
             clicked = false;
         }
@@ -481,45 +456,59 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         // Store remaining unsent data and send it one last time
         String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
-        sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
 
-
-            // If the data was sent successfully, call this method
+        sendArrayPointPost.sendArrayPointPostRequest(trip_ID, sendPointArrayURL, dataPost, new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
-                global_index=0; // Reset the global index
 
-                // Send not accurate distance to meta table. In case a route can't be built, this will be used instead.
-                sendInfoToMeta("distance_from_app", (finalSend.multiply(BigDecimal.valueOf(1000))).intValue(), new VolleyCallback() {
+                // Do length transformations
+                updateLength(result);
+
+                // Set the distance TextView to the current distance and reset the array
+                Arrays.fill(pointArray, 0.0);
+                global_index = 0;
+
+                // Logcat testing
+                Log.d("Final Distance:", result);
+
+                // send inaccurate distance to the meta table for reference
+                metaDataPostRequest.sendMetaData(trip_ID, "distance_from_app", (finalSend.multiply(BigDecimal.valueOf(1000))).intValue(), new VolleyCallBackInterface() {
+
                     @Override
                     public void onSuccess(String result) {
                         Log.d("finalSend", finalSend.multiply(BigDecimal.valueOf(1000)).toString()); // Trip length in meters
 
                         // Call TripEndActivity
                         Intent intent = new Intent(OngoingTripActivity.this, TripEndActivity.class);
-                        intent.putExtra(trip_ID, trip_ID);
+                        intent.putExtra("trip_ID", trip_ID);
                         startActivity(intent);
                         finish();
                     }
 
                     @Override
                     public void onError(String error) {
+                        Toast.makeText(OngoingTripActivity.this, "Error: Could not send distance information", Toast.LENGTH_SHORT).show();
                         Log.e("ERROR", error);
+
+                        // Call TripEndActivity
+                        Intent intent = new Intent(OngoingTripActivity.this, TripEndActivity.class);
+                        intent.putExtra("trip_ID", trip_ID);
+                        startActivity(intent);
+                        finish();
                     }
                 });
-
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                Toast.makeText(OngoingTripActivity.this, "Error: Could not end the trip", Toast.LENGTH_LONG).show();
                 global_index=0;
             }
         });
     }
 
     public void seekBarInit() {
-        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
+        energyLevelTextView.setText("Energy levels: "+seekBar.getProgress() + "%");
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -537,7 +526,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                textView.setText("Energy levels: "+progressValue + "%");
+                energyLevelTextView.setText("Energy levels: "+progressValue + "%");
             }
         });
     }
@@ -553,79 +542,76 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("charge send data: ", dataPost);
 
             // Send data
-            sendArrayPointPost(insertLocationData, dataPost, new VolleyCallback() {
+
+            sendArrayPointPost.sendArrayPointPostRequest(trip_ID, sendPointArrayURL, dataPost, new VolleyCallBackInterface() {
                 @Override
                 public void onSuccess(String result) {
-                    global_index=0;
-                    Log.d("Final", result);
-                    seekBarValue = seekBar.getProgress();
-                    sendInfoToMeta("user_update", seekBar.getProgress(), new VolleyCallback(){
 
+                    // Do length transformations
+                    updateLength(result);
+
+                    // Set the distance TextView to the current distance and reset the array
+                    Arrays.fill(pointArray, 0.0);
+                    global_index = 0;
+
+                    // Logcat testing
+                    Log.d("Final Distance:", result);
+
+                    seekBarValue = seekBar.getProgress();
+
+                    metaDataPostRequest.sendMetaData(trip_ID, "user_update", seekBarValue, new VolleyCallBackInterface() {
                         @Override
                         public void onSuccess(String result) {
-                            resumeLocationUpdates();
+
+                            // Resume chronometer
+                            if(clicked) {
+                                resumeLocationUpdates();
+                                tripStatusTextView.setText("Trip is in progress!");
+                                simpleChronometer.setBase(simpleChronometer.getBase() + SystemClock.elapsedRealtime() - lastPause);
+                                simpleChronometer.start();
+                                clicked = false;
+                            } else resumeLocationUpdates();
+
                         }
 
                         @Override
                         public void onError(String error) {
-
+                            Toast.makeText(OngoingTripActivity.this, "Error: Could not manually update energy levels", Toast.LENGTH_SHORT).show();
                         }
                     });
+
                 }
 
                 @Override
                 public void onError(String error) {
-                    Toast.makeText(OngoingTripActivity.this, "Uh oh, something went wrong.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(OngoingTripActivity.this, "Error: Could not manually update energy levels", Toast.LENGTH_SHORT).show();
                     global_index=0;
                 }
             });
-
-
-            global_index=0;
         }
         else {
             Toast.makeText(OngoingTripActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
         }
     }
 
-    // Provided with a specific input key and value, send data to trip_log_meta table
-    public void sendInfoToMeta(String inputKey, Integer inputValue, final VolleyCallback callbackPost2) {
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting")
+                .setMessage("Are you sure you want to go back? The trip will be ended.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        stopLocationUpdates();
+                        finish();
+                    }
 
-        RequestQueue queue = Volley.newRequestQueue(this); // New requestQueue using Volley's default queue.
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, insertMetaData, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                callbackPost2.onSuccess(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                callbackPost2.onError(error.toString());
-            }
-        }) {
-            protected Map<String, String> getParams() {
-
-                Map<String, String> MyData = new HashMap<String, String>();
-
-                MyData.put("trip_id", trip_ID);
-                MyData.put("input_key", inputKey);
-                MyData.put("input_value", String.valueOf(inputValue));
-
-                return MyData;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        queue.add(stringRequest);
-
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
+
+
 }
