@@ -3,7 +3,6 @@ import com.vu.emapis.objects.userVehicle;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,22 +15,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.vu.emapis.request.TripManage;
 import com.vu.emapis.request.getUserVehiclesRequest;
-import com.vu.emapis.request.weatherGetRequest;
 
-import org.json.JSONArray;
-
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class TripSettingsActivity extends AppCompatActivity {
@@ -43,6 +30,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
     private String alias;
     private int VehicleID;
+    private int UserID;
     public static String trip_ID;
     public static int seekBarValue;
     public static int firstInput;
@@ -58,6 +46,8 @@ public class TripSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_settings);
 
+        UserID = Integer.parseInt(LoginActivity.userId);
+
         // Define widgets
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
@@ -66,9 +56,13 @@ public class TripSettingsActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
+        // Create a new userVehicle object
+        getUserVehiclesRequest userVehicles = new getUserVehiclesRequest(TripSettingsActivity.this);
 
-        getUserVehiclesRequest userVehicles = new getUserVehiclesRequest();
-        userVehicles.getUserVehicles(TripSettingsActivity.this, new VolleyCallBackInterface() {
+        // Call a method to obtain all the information about user's vehicles
+        userVehicles.getUserVehicles(UserID, new VolleyCallBackInterface() {
+
+            // On Success returns us the list
             @Override
             public void onSuccess(String result) {
 
@@ -98,6 +92,7 @@ public class TripSettingsActivity extends AppCompatActivity {
 
             }
 
+            // On Failure, inform the user about it and finish the activity
             @Override
             public void onError(String error) {
                 Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading.", Toast.LENGTH_SHORT).show();
@@ -184,153 +179,44 @@ public class TripSettingsActivity extends AppCompatActivity {
     public void startTheTrip() {
 
         if (seekBar.getProgress() == 0) {
-            Toast.makeText(TripSettingsActivity.this, "Can not start a trip with energy levels at " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(TripSettingsActivity.this, "Can not start a trip with energy levels at " + seekBar.getProgress() +"%.", Toast.LENGTH_SHORT).show();
         } else {
 
-            String startNewTripURL = "http://193.219.91.103:4558/rpc/_emapis_new_trip";
-            startNewTripPostRequest(startNewTripURL, new VolleyCallbackGet() {
+
+            // Create a new tripManage object
+            TripManage tripManage = new TripManage(TripSettingsActivity.this);
+
+            // Call start a new trip method that returns us tripID
+            tripManage.startNewTrip(UserID, VehicleID, new VolleyCallBackInterface() {
+
+                // On Success returns tripID and continues code
                 @Override
-                public void onSuccess(String tripoIDas) {
+                public void onSuccess(String result) {
 
-                    // If a new TripID has been created in the database, start new activity
-                    trip_ID = tripoIDas;
-                    firstInput = seekBar.getProgress();
+                    if (progressBar != null && progressBar.isShown()) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
 
+                    trip_ID = result;
 
-                    // Retrieve weather info
-                    weatherGetRequest weatherData = new weatherGetRequest();
-                    weatherData.getWeatherRequest(TripSettingsActivity.this, new VolleyCallBackInterface() {
-                        @Override
-                        public void onSuccess(String temperature) {
-
-                            // Send weather data to meta table
-                            String sendWeatherDataURL = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level";
-                            sendWeatherData(tripoIDas, temperature, sendWeatherDataURL, new VolleyCallbackGet() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    Toast.makeText(TripSettingsActivity.this, "Successfully sent weather information", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onError(String error) {
-                                    Toast.makeText(TripSettingsActivity.this, "Failed to send weather information", Toast.LENGTH_SHORT).show();
-
-                                }
-                            });
-
-                            Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
-                            intent.putExtra(trip_ID, trip_ID);
-                            startActivity(intent);
-                            finish();
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                            Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting the trip", Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-
-
+                    Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
+                    intent.putExtra("tripID", trip_ID);
+                    startActivity(intent);
+                    finish();
                 }
 
+                // On Error informs the user about the failure
                 @Override
                 public void onError(String error) {
-                    Log.e("Error", "Failed to retrieve weather data in TripSettingsActivity");
 
+                    if (progressBar != null && progressBar.isShown()) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+
+                    Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting the trip", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             });
         }
-
     }
-
-    private void sendWeatherData(String tripID, String temperature, String url, VolleyCallbackGet callback) {
-
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                callback.onSuccess("Success");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                callback.onError("Error");
-                error.printStackTrace();
-
-            }
-        }){
-            protected Map<String, String> getParams() {
-
-                Map<String, String> MyData = new HashMap<String, String>();
-                MyData.put("trip_id", tripID);
-                MyData.put("input_key", "temperature_input");
-                MyData.put("input_value", temperature);
-
-                return MyData;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        requestQueue.add(stringRequest);
-
-    }
-
-    private void startNewTripPostRequest(String postURL, VolleyCallbackGet callbackPost) {
-
-        int userID = Integer.parseInt(LoginActivity.userId);
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                callbackPost.onSuccess(response);
-            }
-        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                callbackPost.onError(error.toString());
-                error.printStackTrace();
-            }
-        }) {
-            protected Map<String, String> getParams() {
-
-                Map<String, String> MyData = new HashMap<String, String>();
-                MyData.put("user_id", String.valueOf(userID));
-                MyData.put("user_vehicle_id", String.valueOf(VehicleID));
-                return MyData;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        requestQueue.add(stringRequest);
-        requestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
-            @Override
-            public void onRequestFinished(Request<String> request) {
-                if (progressBar != null && progressBar.isShown()) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-    }
-
-
-    //TODO Implement progressBars
 }

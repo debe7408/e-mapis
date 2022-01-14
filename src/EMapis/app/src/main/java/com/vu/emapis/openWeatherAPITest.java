@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.vu.emapis.request.weatherGetRequest;
+import com.vu.emapis.request.weatherRequest;
 
 public class openWeatherAPITest extends AppCompatActivity {
 
@@ -24,9 +24,9 @@ public class openWeatherAPITest extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                weatherGetRequest weatherData = new weatherGetRequest();
+                weatherRequest weatherData = new weatherRequest("Vilnius", "metric");
 
-                weatherData.getWeatherRequest(openWeatherAPITest.this, new VolleyCallBackInterface() {
+                weatherData.getWeatherData(openWeatherAPITest.this, new VolleyCallBackInterface() {
                     @Override
                     public void onSuccess(String result) {
                         weatherResults.setText(result);

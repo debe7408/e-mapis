@@ -140,7 +140,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        trip_ID = intent.getStringExtra(TripSettingsActivity.trip_ID);
+        trip_ID = intent.getStringExtra("tripID");
         Log.d("Testas =", trip_ID);
 
         initLib();
