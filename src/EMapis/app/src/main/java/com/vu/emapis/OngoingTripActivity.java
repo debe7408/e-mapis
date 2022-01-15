@@ -79,6 +79,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
     public static boolean firstMetaSent = false;
+    public static boolean temperatureSent = false;
 
     private final String insertMetaData = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //This URL is used for sending data to meta table ( inaccurate URL name )
 
@@ -121,6 +122,8 @@ public class OngoingTripActivity extends AppCompatActivity {
         void onError(String error);
     }
 
+    weatherRequest weatherRequest = new weatherRequest(OngoingTripActivity.this, "Vilnius", "metric");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -150,39 +153,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         // Create MetaDataPostRequest object to send data to meta table like energy etc.
         metaDataPostRequest = new MetaDataPostRequest(OngoingTripActivity.this);
-
-        // Create a Weather class object to obtain weather information
-        weatherRequest weatherRequest = new weatherRequest(OngoingTripActivity.this, "Vilnius", "metric");
-
-        weatherRequest.getWeatherData(new VolleyCallBackInterface() {
-            @Override
-            public void onSuccess(String result) {
-                temperature = result;
-                Log.d("Temp", temperature);
-
-                metaDataPostRequest.sendMetaData(trip_ID, "temperature_input", Integer.parseInt(temperature), new VolleyCallBackInterface() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Log.d("Temp", "Success");
-                        System.out.println(Integer.parseInt(temperature));
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Log.d("Temp", "Failure");
-                        System.out.println(Integer.parseInt(temperature));
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.d("Temp", "Mega failure");
-            }
-        });
-
 
         seekBarInit();
 
@@ -281,21 +251,8 @@ public class OngoingTripActivity extends AppCompatActivity {
                         // Logcat testing
                         Log.d("Final Distance:", response);
 
-                        if (firstMetaSent = false) {
-                            metaDataPostRequest.sendMetaData(trip_ID, "first_input", seekBarValue, new VolleyCallBackInterface() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    firstMetaSent = true;
-                                    Log.d("first_point", "SENT");
-                                    // TODO implement methods
-                                }
-
-                                @Override
-                                public void onError(String error) {
-                                    // TODO implement methods
-                                }
-                            });
-                        }
+                        checkFirstInput();
+                        sendTemperature();
                     }
 
                     @Override
@@ -430,6 +387,9 @@ public class OngoingTripActivity extends AppCompatActivity {
                 // Logcat testing
                 Log.d("Final Distance:", result);
 
+                checkFirstInput();
+                sendTemperature();
+
             }
 
             @Override
@@ -475,6 +435,9 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                     // Logcat testing
                     Log.d("Final Distance:", result);
+
+                    checkFirstInput();
+                    sendTemperature();
                 }
 
                 @Override
@@ -515,6 +478,9 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 // Logcat testing
                 Log.d("Final Distance:", result);
+
+                checkFirstInput();
+                sendTemperature();
 
                 // send inaccurate distance to the meta table for reference
                 metaDataPostRequest.sendMetaData(trip_ID, "distance_from_app", (finalSend.multiply(BigDecimal.valueOf(1000))).intValue(), new VolleyCallBackInterface() {
@@ -602,6 +568,9 @@ public class OngoingTripActivity extends AppCompatActivity {
                     // Logcat testing
                     Log.d("Final Distance:", result);
 
+                    checkFirstInput();
+                    sendTemperature();
+
                     seekBarValue = seekBar.getProgress();
 
                     metaDataPostRequest.sendMetaData(trip_ID, "user_update", seekBarValue, new VolleyCallBackInterface() {
@@ -658,5 +627,58 @@ public class OngoingTripActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void checkFirstInput(){
+        if (!firstMetaSent) {
+            metaDataPostRequest.sendMetaData(trip_ID, "first_input", seekBarValue, new VolleyCallBackInterface() {
+                @Override
+                public void onSuccess(String result) {
+                    firstMetaSent = true;
+                    Log.d("first_point", "SENT");
+                    // TODO implement methods
+                }
 
+                @Override
+                public void onError(String error) {
+                    // TODO implement methods
+                    Log.d("first_point", "NOT SENT");
+                }
+            });
+        }
+    }
+
+    // Create a Weather class object to obtain weather information
+
+    public void sendTemperature() {
+        if (!temperatureSent) {
+            weatherRequest.getWeatherData(new VolleyCallBackInterface() {
+                @Override
+                public void onSuccess(String result) {
+                    temperature = result;
+                    Log.d("Temp", temperature);
+
+                    metaDataPostRequest.sendMetaData(trip_ID, "temperature_input", Integer.parseInt(temperature), new VolleyCallBackInterface() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Log.d("Temp", "Success");
+                            temperatureSent = true;
+                            System.out.println(Integer.parseInt(temperature));
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Log.d("Temp", "Failure");
+                            System.out.println(Integer.parseInt(temperature));
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.d("Temp", "Mega failure");
+                }
+            });
+        }
+    }
 }
