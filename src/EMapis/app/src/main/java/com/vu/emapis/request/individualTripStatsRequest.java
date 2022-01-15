@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.vu.emapis.VolleyCallBackInterface;
 import com.vu.emapis.userIndividualTripStatsActivity;
 import com.vu.emapis.objects.tripStatsObject;
 
@@ -27,7 +28,7 @@ public class individualTripStatsRequest {
         this.context = context;
     }
 
-    public void getIndividualTripStats(String trip_ID, userIndividualTripStatsActivity.VolleyCallbackGet callback) {
+    public void getIndividualTripStats(String trip_ID, VolleyCallBackInterface callback) {
 
         String url = "http://193.219.91.103:4558/_emapis_get_data_about_trip?trip_id=eq." + trip_ID;
 
@@ -41,7 +42,7 @@ public class individualTripStatsRequest {
                         Gson gson = new Gson();
                         stats = gson.fromJson(String.valueOf(response), tripStatsObject[].class);
 
-                        callback.onSuccess();
+                        callback.onSuccess("");
 
                     }
                 }, new Response.ErrorListener() {

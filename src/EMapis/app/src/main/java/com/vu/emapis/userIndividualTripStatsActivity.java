@@ -27,11 +27,6 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
     private Button backButton;
     private String trip_ID;
 
-    public interface VolleyCallbackGet {
-        void onSuccess();
-        void onError(String error);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +51,9 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
             titleTextView.setText("Trip " + trip_ID + " statistics");
 
             individualTripStatsRequest individualTripStats = new individualTripStatsRequest(userIndividualTripStatsActivity.this);
-            individualTripStats.getIndividualTripStats(trip_ID, new VolleyCallbackGet() {
+            individualTripStats.getIndividualTripStats(trip_ID, new VolleyCallBackInterface() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(String result) {
                     Log.d("Data", individualTripStats.stats[0].toString());
 
                     if(!individualTripStats.stats[0].isStats_ready()) {
