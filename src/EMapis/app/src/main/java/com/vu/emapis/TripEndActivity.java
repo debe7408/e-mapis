@@ -104,7 +104,7 @@ public class TripEndActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(String error) {
-                            Toast.makeText(TripEndActivity.this, "Something went wrong, could not build route", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TripEndActivity.this, "Processing", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

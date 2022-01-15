@@ -3,6 +3,7 @@ package com.vu.emapis;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.WallpaperColors;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -45,6 +46,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.vu.emapis.request.MetaDataPostRequest;
 import com.vu.emapis.request.SendArrayPointPost;
+import com.vu.emapis.request.weatherRequest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -110,6 +112,7 @@ public class OngoingTripActivity extends AppCompatActivity {
     private MetaDataPostRequest metaDataPostRequest;
     private String sendPointArrayURL;
     private boolean clicked = false;
+    private String temperature;
 
 
     // VolleyCallback interface
@@ -123,9 +126,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
-
-
-
 
         // Retrieve trip_ID from extras
         Intent intent = getIntent();
@@ -142,8 +142,8 @@ public class OngoingTripActivity extends AppCompatActivity {
         tripLengthTextView = findViewById(R.id.textView4);
 
         // Defines vars
-
         sendPointArrayURL = getString(R.string.postLocationPointsURL);
+        int seekBarValue = TripSettingsActivity.seekBarValue;
 
         //Create SendArrayPointPost object to send location data
         sendArrayPointPost = new SendArrayPointPost(OngoingTripActivity.this);
@@ -151,9 +151,51 @@ public class OngoingTripActivity extends AppCompatActivity {
         // Create MetaDataPostRequest object to send data to meta table like energy etc.
         metaDataPostRequest = new MetaDataPostRequest(OngoingTripActivity.this);
 
-        // TODO send firstInput
+        // Create a Weather class object to obtain weather information
+        weatherRequest weatherRequest = new weatherRequest(OngoingTripActivity.this, "Vilnius", "metric");
 
-        seekBarInit(); // TODO OK
+        weatherRequest.getWeatherData(new VolleyCallBackInterface() {
+            @Override
+            public void onSuccess(String result) {
+                temperature = result;
+                Log.d("Temp", temperature);
+
+                metaDataPostRequest.sendMetaData(trip_ID, "temperature", Integer.parseInt(temperature), new VolleyCallBackInterface() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.d("Temp", "Success");
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.d("Temp", "Failure");
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.d("Temp", "Mega failure");
+            }
+        });
+
+        metaDataPostRequest.sendMetaData(trip_ID, "first_input", seekBarValue, new VolleyCallBackInterface() {
+            @Override
+            public void onSuccess(String result) {
+                // TODO implement methods
+            }
+
+            @Override
+            public void onError(String error) {
+                // TODO implement methods
+            }
+        });
+
+
+
+
+        seekBarInit();
 
         initLib();
 
@@ -172,9 +214,8 @@ public class OngoingTripActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private void initLib() {  //initialize all the location related clients
+    private void initLib() {
+        //initialize all the location related clients
 
         // Initialize FusedLocationClient API for location data tracking
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -212,7 +253,6 @@ public class OngoingTripActivity extends AppCompatActivity {
         mLocationSettingsRequest = builder.build();
     }
 
-    @SuppressLint("SetTextI18n")
     private void updateLocation() {
 
         // If the current location is not null

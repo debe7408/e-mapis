@@ -19,11 +19,13 @@ public class weatherRequest {
     private String city;
     private final String appID = "984a2f5b726e95045b31716e5539ff10"; //TODO change this bearer to safe location
     private String units;
+    private Context context;
 
-    public weatherRequest(String city, String units) {
+    public weatherRequest(Context context, String city, String units) {
 
         this.city = city;
         this.units = units;
+        this.context = context;
 
     }
     /**
@@ -31,7 +33,7 @@ public class weatherRequest {
      * @param context The context that the method is being executed in
      * @param callback Interface for onSuccess and onError handling
      */
-    public void getWeatherData(Context context, VolleyCallBackInterface callback) {
+    public void getWeatherData(VolleyCallBackInterface callback) {
 
         // Request URL with changeable city and units in the initialization
         String url = "https://api.openweathermap.org/data/2.5/weather?" + "q=" + this.city + "&appid=" + this.appID + "&units=" + this.units;
