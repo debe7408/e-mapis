@@ -37,10 +37,10 @@
             android:name=".GeneralStatsActivity"
             android:exported="false"/>
         <activity
-            android:name=".SingleTripInfoActivity"
+            android:name=".userIndividualTripStatsActivity"
             android:exported="false" />
         <activity
-            android:name=".userIndividualStatsActivity"
+            android:name=".userIndividualTripsActivity"
             android:exported="false" />
         <activity
             android:name=".openWeatherAPITest"

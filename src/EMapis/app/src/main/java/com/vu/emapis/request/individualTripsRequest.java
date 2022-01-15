@@ -10,26 +10,27 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.vu.emapis.userIndividualTripStatsActivity;
-import com.vu.emapis.objects.tripStatsObject;
+import com.vu.emapis.objects.statisticsObject;
+import com.vu.emapis.userIndividualTripsActivity;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class individualTripStatsRequest {
+public class individualTripsRequest {
 
-    public tripStatsObject[] stats;
+    public statisticsObject[] stats;
     public Context context;
 
-    public individualTripStatsRequest(Context context) {
+    public individualTripsRequest(Context context) {
         this.context = context;
     }
 
-    public void getIndividualTripStats(String trip_ID, userIndividualTripStatsActivity.VolleyCallbackGet callback) {
+    public void getIndividualTrips(int UserID, userIndividualTripsActivity.VolleyCallbackGet callback) {
 
-        String url = "http://193.219.91.103:4558/_emapis_get_data_about_trip?trip_id=eq." + trip_ID;
+        String url = "http://193.219.91.103:4558/trips?user_id=eq."+ UserID;
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -39,9 +40,13 @@ public class individualTripStatsRequest {
 
                         // JSON -> GSON
                         Gson gson = new Gson();
-                        stats = gson.fromJson(String.valueOf(response), tripStatsObject[].class);
+                        stats = gson.fromJson(String.valueOf(response), statisticsObject[].class);
 
-                        callback.onSuccess();
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 }, new Response.ErrorListener() {

@@ -41,7 +41,7 @@ public class StatisticsActivity extends AppCompatActivity {
         individualStatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(StatisticsActivity.this, userIndividualStatsActivity.class);
+                Intent intent = new Intent(StatisticsActivity.this, userIndividualTripsActivity.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
             }
         });

@@ -44,13 +44,6 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
 
     public ProgressBar progressBar;
 
-
-    // VolleyCallback interface
-    public interface VolleyCallbackGet {
-        void onSuccess(String result);
-        void onError(String error);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

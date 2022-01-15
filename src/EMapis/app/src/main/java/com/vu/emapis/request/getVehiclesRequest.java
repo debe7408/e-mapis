@@ -10,49 +10,50 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.vu.emapis.userIndividualTripStatsActivity;
-import com.vu.emapis.objects.tripStatsObject;
+import com.vu.emapis.UserVehicleActivity;
+import com.vu.emapis.VolleyCallBackInterface;
+import com.vu.emapis.objects.vehicle;
 
 import org.json.JSONArray;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class individualTripStatsRequest {
+public class getVehiclesRequest {
 
-    public tripStatsObject[] stats;
     public Context context;
+    public vehicle[] vehiclesList;
 
-    public individualTripStatsRequest(Context context) {
+    public getVehiclesRequest(Context context) {
         this.context = context;
     }
 
-    public void getIndividualTripStats(String trip_ID, userIndividualTripStatsActivity.VolleyCallbackGet callback) {
 
-        String url = "http://193.219.91.103:4558/_emapis_get_data_about_trip?trip_id=eq." + trip_ID;
+    public void getVehicles(VolleyCallBackInterface callback) {
+
+        String url = "http://193.219.91.103:4558/vehicles?";
 
         RequestQueue queue = Volley.newRequestQueue(context);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
 
-                        // JSON -> GSON
-                        Gson gson = new Gson();
-                        stats = gson.fromJson(String.valueOf(response), tripStatsObject[].class);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
 
-                        callback.onSuccess();
+                Gson gson = new Gson();
+                vehiclesList = gson.fromJson(String.valueOf(response), vehicle[].class);
 
-                    }
-                }, new Response.ErrorListener() {
+                callback.onSuccess(response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
 
                 callback.onError(error.toString());
                 error.printStackTrace();
-
             }
-        }){
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -61,7 +62,6 @@ public class individualTripStatsRequest {
             }
         };
 
-// Add the request to the RequestQueue.
         queue.add(jsonArrayRequest);
     }
 }

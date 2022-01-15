@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.vu.emapis.request.getVehiclesRequest;
 
 import org.json.JSONArray;
 
@@ -32,7 +33,6 @@ import java.util.Set;
 
 public class UserVehicleActivity extends AppCompatActivity {
 
-    private vehicle[] vehiclesList;
     private String make;
     private String model;
     private int vehicle_id;
@@ -45,6 +45,8 @@ public class UserVehicleActivity extends AppCompatActivity {
         void onSuccess(String result);
         void onError(String error);
     }
+
+    getVehiclesRequest getVehicles = new getVehiclesRequest(UserVehicleActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +61,9 @@ public class UserVehicleActivity extends AppCompatActivity {
 
         // Retrieve all data about vehicles
 
-        String url = "http://193.219.91.103:4558/vehicles?";
-        sendGetRequest(url, new VolleyCallbackGet() {
-
+        getVehicles.getVehicles(new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
-
                 Toast.makeText(UserVehicleActivity.this, "Data retrieved", Toast.LENGTH_SHORT).show();
 
 
@@ -72,27 +71,23 @@ public class UserVehicleActivity extends AppCompatActivity {
 
                 String[] vehiclesMake;
 
-                if(vehiclesList == null) {
+                if(getVehicles.vehiclesList == null) {
                     Toast.makeText(UserVehicleActivity.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
                 }
 
 
-                for(int i=0; i< vehiclesList.length; i++) {
-                    vehicleSetMake.add(vehiclesList[i].getMake());
+                for(int i=0; i< getVehicles.vehiclesList.length; i++) {
+                    vehicleSetMake.add(getVehicles.vehiclesList[i].getMake());
                 }
                 vehiclesMake = vehicleSetMake.toArray(new String[0]);
 
-                spinnerInit(vehiclesMake);
-
+                spinnerInit(vehiclesMake, getVehicles.vehiclesList);
             }
 
             @Override
             public void onError(String error) {
-
                 Toast.makeText(UserVehicleActivity.this, "Something went wrong :( Check your internet connection", Toast.LENGTH_LONG).show();
-
                 finish();
-
             }
         });
 
@@ -164,40 +159,7 @@ public class UserVehicleActivity extends AppCompatActivity {
         });
     }
 
-    private void sendGetRequest(String url, final VolleyCallbackGet callback) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                Gson gson = new Gson();
-                vehiclesList = gson.fromJson(String.valueOf(response), vehicle[].class);
-
-                callback.onSuccess(response.toString());
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                callback.onError(error.toString());
-                error.printStackTrace();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        queue.add(jsonArrayRequest);
-    }
-
-    public void spinnerInit(String[] vehicles) {
+    public void spinnerInit(String[] vehicles, vehicle[] vehiclesList) {
 
         Spinner selectMake = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehicles);
@@ -220,7 +182,7 @@ public class UserVehicleActivity extends AppCompatActivity {
                 }
                 vehiclesModel = vehicleSetModel.toArray(new String[0]);
 
-                modelSpinnerInit(vehiclesModel);
+                modelSpinnerInit(vehiclesModel, getVehicles.vehiclesList);
 
             }
             // Gets called when nothing has been selected (not being used, but has to be implemented)
@@ -231,7 +193,7 @@ public class UserVehicleActivity extends AppCompatActivity {
         });
     }
 
-    public void modelSpinnerInit(String[] vehiclesModel) {
+    public void modelSpinnerInit(String[] vehiclesModel, vehicle[] vehiclesList) {
 
         Spinner selectModel = findViewById(R.id.vehicleMenu2);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, vehiclesModel);
