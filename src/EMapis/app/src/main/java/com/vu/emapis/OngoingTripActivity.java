@@ -78,7 +78,7 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
-    public static boolean firstPointSent = false;
+    public static boolean firstMetaSent = false;
 
     private final String insertMetaData = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //This URL is used for sending data to meta table ( inaccurate URL name )
 
@@ -183,18 +183,6 @@ public class OngoingTripActivity extends AppCompatActivity {
             }
         });
 
-        metaDataPostRequest.sendMetaData(trip_ID, "first_input", seekBarValue, new VolleyCallBackInterface() {
-            @Override
-            public void onSuccess(String result) {
-                // TODO implement methods
-            }
-
-            @Override
-            public void onError(String error) {
-                // TODO implement methods
-            }
-        });
-
 
         seekBarInit();
 
@@ -292,6 +280,22 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                         // Logcat testing
                         Log.d("Final Distance:", response);
+
+                        if (firstMetaSent = false) {
+                            metaDataPostRequest.sendMetaData(trip_ID, "first_input", seekBarValue, new VolleyCallBackInterface() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    firstMetaSent = true;
+                                    Log.d("first_point", "SENT");
+                                    // TODO implement methods
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    // TODO implement methods
+                                }
+                            });
+                        }
                     }
 
                     @Override
