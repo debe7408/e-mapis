@@ -218,7 +218,7 @@ public class OngoingTripActivity extends AppCompatActivity {
             Log.d("global_index", Integer.toString(global_index));
 
             // When the global index reaches 60, manipulate and send data
-            if (global_index == 60) {
+            if (global_index == 60 || (global_index == 3 && !firstMetaSent && !temperatureSent)) {
 
                 //
                 String dataPost = (Arrays.toString(pointArray).replace("[", "{")).replace("]", "}");
@@ -375,10 +375,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 // Logcat testing
                 Log.d("Final Distance:", result);
-
-                checkFirstInput();
-                sendTemperature();
-
             }
 
             @Override
@@ -424,9 +420,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                     // Logcat testing
                     Log.d("Final Distance:", result);
-
-                    checkFirstInput();
-                    sendTemperature();
                 }
 
                 @Override
@@ -467,9 +460,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                 // Logcat testing
                 Log.d("Final Distance:", result);
-
-                checkFirstInput();
-                sendTemperature();
 
                 // send inaccurate distance to the meta table for reference
                 metaDataPostRequest.sendMetaData(trip_ID, "distance_from_app", (finalSend.multiply(BigDecimal.valueOf(1000))).intValue(), new VolleyCallBackInterface() {
@@ -556,9 +546,6 @@ public class OngoingTripActivity extends AppCompatActivity {
 
                     // Logcat testing
                     Log.d("Final Distance:", result);
-
-                    checkFirstInput();
-                    sendTemperature();
 
                     seekBarValue = seekBar.getProgress();
 
