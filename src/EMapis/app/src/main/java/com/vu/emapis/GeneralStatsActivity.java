@@ -1,11 +1,6 @@
 package com.vu.emapis;
-import com.vu.emapis.objects.generalStatsObject;
-import com.vu.emapis.objects.vehicle;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,14 +8,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.vu.emapis.objects.generalStatsObject;
+import com.vu.emapis.objects.vehicle;
 import com.vu.emapis.request.getVehiclesRequest;
 import com.vu.emapis.request.vehicleStatsRequest;
 
@@ -29,9 +20,7 @@ import org.json.JSONException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class GeneralStatsActivity extends AppCompatActivity {
