@@ -24,9 +24,9 @@ public class openWeatherAPITest extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                weatherRequest weatherData = new weatherRequest("Vilnius", "metric");
+                weatherRequest weatherData = new weatherRequest(openWeatherAPITest.this,"Vilnius", "metric");
 
-                weatherData.getWeatherData(openWeatherAPITest.this, new VolleyCallBackInterface() {
+                weatherData.getWeatherData( new VolleyCallBackInterface() {
                     @Override
                     public void onSuccess(String result) {
                         weatherResults.setText(result);

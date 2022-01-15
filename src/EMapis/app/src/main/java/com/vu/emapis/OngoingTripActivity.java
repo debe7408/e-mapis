@@ -160,15 +160,18 @@ public class OngoingTripActivity extends AppCompatActivity {
                 temperature = result;
                 Log.d("Temp", temperature);
 
-                metaDataPostRequest.sendMetaData(trip_ID, "temperature", Integer.parseInt(temperature), new VolleyCallBackInterface() {
+                metaDataPostRequest.sendMetaData(trip_ID, "temperature_input", Integer.parseInt(temperature), new VolleyCallBackInterface() {
                     @Override
                     public void onSuccess(String result) {
                         Log.d("Temp", "Success");
+                        System.out.println(Integer.parseInt(temperature));
                     }
 
                     @Override
                     public void onError(String error) {
                         Log.d("Temp", "Failure");
+                        System.out.println(Integer.parseInt(temperature));
+
                     }
                 });
 
@@ -191,8 +194,6 @@ public class OngoingTripActivity extends AppCompatActivity {
                 // TODO implement methods
             }
         });
-
-
 
 
         seekBarInit();
