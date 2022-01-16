@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vu.emapis.objects.userVehicle;
-import com.vu.emapis.request.getUserVehiclesRequest;
+import com.vu.emapis.request.VehicleManage;
 import com.vu.emapis.request.removeUserVehicleRequest;
 
 import java.util.HashSet;
@@ -40,10 +40,10 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         ProgressBar progressBar = findViewById(R.id.loadingBar);
 
         // Create a new userVehicle object
-        getUserVehiclesRequest userVehicles = new getUserVehiclesRequest(UserRemoveVehicleActivity.this);
+        VehicleManage vehicleManage = new VehicleManage(UserRemoveVehicleActivity.this);
 
         // Call a method to obtain all the information about user's vehicles
-        userVehicles.getUserVehicles(UserID, new VolleyCallBackInterface() {
+        vehicleManage.getUserVehicles(UserID, new VolleyCallBackInterface() {
 
             // On Success returns us the list
             @Override
@@ -54,12 +54,12 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                 Set<String> vehicleAliasSet = new HashSet<>();
                 String[] vehicleAlias;
 
-                for(int i=0; i< userVehicles.userVehicleList.length; i++) {
-                    vehicleAliasSet.add(userVehicles.userVehicleList[i].getVehicle_alias());
+                for(int i=0; i< vehicleManage.userVehicleList.length; i++) {
+                    vehicleAliasSet.add(vehicleManage.userVehicleList[i].getVehicle_alias());
                 }
                 vehicleAlias = vehicleAliasSet.toArray(new String[0]);
 
-                spinnerInit(vehicleAlias, userVehicles.userVehicleList);
+                spinnerInit(vehicleAlias, vehicleManage.userVehicleList);
 
             }
 

@@ -15,6 +15,8 @@
     <string name="sendDataToMetaURL">http://193.219.91.103:4558/rpc/_emapis_update_battery_level</string>
     <string name="getUserVehicesURL">http://193.219.91.103:4558/user_vehicles?user_id=eq.</string>
     <string name="postLocationPointsURL">http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert</string>
+    <string name="getAllVehiclesURL">http://193.219.91.103:4558/vehicles?</string>
+    <string name="buildRouteURL">http://193.219.91.103:4558/rpc/_emapis_build_route</string>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 

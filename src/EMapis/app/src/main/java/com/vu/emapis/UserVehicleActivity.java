@@ -20,7 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.vu.emapis.objects.vehicle;
-import com.vu.emapis.request.getVehiclesRequest;
+import com.vu.emapis.request.VehicleManage;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +42,8 @@ public class UserVehicleActivity extends AppCompatActivity {
         void onError(String error);
     }
 
-    getVehiclesRequest getVehicles = new getVehiclesRequest(UserVehicleActivity.this);
+    VehicleManage vehicleManage = new VehicleManage(UserVehicleActivity.this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class UserVehicleActivity extends AppCompatActivity {
 
         // Retrieve all data about vehicles
 
-        getVehicles.getVehicles(new VolleyCallBackInterface() {
+        vehicleManage.getAllVehicles(new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
                 Toast.makeText(UserVehicleActivity.this, "Data retrieved", Toast.LENGTH_SHORT).show();
@@ -67,17 +68,17 @@ public class UserVehicleActivity extends AppCompatActivity {
 
                 String[] vehiclesMake;
 
-                if(getVehicles.vehiclesList == null) {
+                if(vehicleManage.vehiclesList == null) {
                     Toast.makeText(UserVehicleActivity.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
                 }
 
 
-                for(int i=0; i< getVehicles.vehiclesList.length; i++) {
-                    vehicleSetMake.add(getVehicles.vehiclesList[i].getMake());
+                for(int i = 0; i< vehicleManage.vehiclesList.length; i++) {
+                    vehicleSetMake.add(vehicleManage.vehiclesList[i].getMake());
                 }
                 vehiclesMake = vehicleSetMake.toArray(new String[0]);
 
-                spinnerInit(vehiclesMake, getVehicles.vehiclesList);
+                spinnerInit(vehiclesMake, vehicleManage.vehiclesList);
             }
 
             @Override
@@ -178,7 +179,7 @@ public class UserVehicleActivity extends AppCompatActivity {
                 }
                 vehiclesModel = vehicleSetModel.toArray(new String[0]);
 
-                modelSpinnerInit(vehiclesModel, getVehicles.vehiclesList);
+                modelSpinnerInit(vehiclesModel, vehicleManage.vehiclesList);
 
             }
             // Gets called when nothing has been selected (not being used, but has to be implemented)

@@ -79,8 +79,8 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
                             makeAndModelTextView.append(individualTripStats.stats[0].getMake().concat(" " + individualTripStats.stats[0].getModel()));
                             distanceTextView.append(tripDistance + " km");
                             durationTextView.append(time.substring(0, time.length() - 6));
-                            consumedEnergyTextView.append(energy_cons + " kWh");
-                            avgConsumptionTextView.append(avg_cons + " kWh/km");
+                            consumedEnergyTextView.append(energy_cons/1000 + " kWh");
+                            avgConsumptionTextView.append(avg_cons/1000 + " kWh/km");
                         }
                     }
                 }

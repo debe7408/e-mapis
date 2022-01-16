@@ -67,8 +67,8 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
-    public static boolean firstMetaSent = false;
-    public static boolean temperatureSent = false;
+    public static boolean firstMetaSent;
+    public static boolean temperatureSent;
 
     private final String insertMetaData = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //This URL is used for sending data to meta table ( inaccurate URL name )
 
@@ -104,13 +104,6 @@ public class OngoingTripActivity extends AppCompatActivity {
     private boolean clicked = false;
     private String temperature;
 
-
-    // VolleyCallback interface
-    public interface VolleyCallback {
-        void onSuccess(String result);
-        void onError(String error);
-    }
-
     weatherRequest weatherRequest = new weatherRequest(OngoingTripActivity.this, "Vilnius", "metric");
 
     @Override
@@ -118,6 +111,9 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
+
+        firstMetaSent = false;
+        temperatureSent = false;
 
         // Retrieve trip_ID from extras
         Intent intent = getIntent();

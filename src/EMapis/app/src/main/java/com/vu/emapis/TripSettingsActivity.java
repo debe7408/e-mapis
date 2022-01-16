@@ -16,7 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vu.emapis.request.TripManage;
-import com.vu.emapis.request.getUserVehiclesRequest;
+import com.vu.emapis.request.VehicleManage;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,10 +57,11 @@ public class TripSettingsActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         // Create a new userVehicle object
-        getUserVehiclesRequest userVehicles = new getUserVehiclesRequest(TripSettingsActivity.this);
+        VehicleManage vehicleManage = new VehicleManage(TripSettingsActivity.this);
+
 
         // Call a method to obtain all the information about user's vehicles
-        userVehicles.getUserVehicles(UserID, new VolleyCallBackInterface() {
+        vehicleManage.getUserVehicles(UserID, new VolleyCallBackInterface() {
 
             // On Success returns us the list
             @Override
@@ -71,7 +72,7 @@ public class TripSettingsActivity extends AppCompatActivity {
                 }
 
                 // Check if the user has any vehicles
-                if(userVehicles.userVehicleList.length == 0) {
+                if(vehicleManage.userVehicleList.length == 0) {
 
                     // If the user does not have any vehicles, send him to create one
                     Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip", Toast.LENGTH_SHORT).show();
@@ -87,7 +88,7 @@ public class TripSettingsActivity extends AppCompatActivity {
                     seekBarInit();
 
                     // Initialize spinner for vehicle selection
-                    spinnerInit(userVehicles.userVehicleList);
+                    spinnerInit(vehicleManage.userVehicleList);
                 }
 
             }

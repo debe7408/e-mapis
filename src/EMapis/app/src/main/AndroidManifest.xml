@@ -43,17 +43,6 @@
             android:name=".userIndividualTripsActivity"
             android:exported="false" />
         <activity
-            android:name=".openWeatherAPITest"
-            android:exported="false" />
-        <activity
-            android:name=".VolleyCallBackTest"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".DeveloperSettingsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".PopUpActivity"
             android:exported="false"
             android:screenOrientation="portrait"

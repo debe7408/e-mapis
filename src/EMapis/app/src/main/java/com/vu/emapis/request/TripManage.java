@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.vu.emapis.R;
+import com.vu.emapis.TripEndActivity;
 import com.vu.emapis.VolleyCallBackInterface;
 
 import java.util.HashMap;
@@ -68,4 +69,50 @@ public class TripManage {
 
         requestQueue.add(stringRequest);
     }
+
+    /**
+     * Returns a built route
+     * @param trip_ID Trip ID to specify which trip to build
+     * @param callback Interface to handle error/success
+     */
+    public void buildRoute(String trip_ID, VolleyCallBackInterface callback) {
+
+        String url = context.getString(R.string.buildRouteURL);
+
+        RequestQueue queue = Volley.newRequestQueue(context); // New requestQueue using Volley's default queue.
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                callback.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                callback.onError(error.toString());
+            }
+        }) {
+            protected Map<String, String> getParams() {
+
+                Map<String, String> MyData = new HashMap<String, String>();
+
+                MyData.put("trip_id", trip_ID);
+
+                return MyData;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                return headers;
+            }
+        };
+
+        queue.add(stringRequest);
+
+    }
+
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,11 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.vu.emapis.objects.generalStatsObject;
 import com.vu.emapis.objects.vehicle;
-import com.vu.emapis.request.getVehiclesRequest;
-import com.vu.emapis.request.vehicleStatsRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.vu.emapis.request.StatsManage;
+import com.vu.emapis.request.VehicleManage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,15 +31,10 @@ public class GeneralStatsActivity extends AppCompatActivity {
     private TextView totalDistance;
     private TextView avgCons;
     private TextView declaredCons;
+    private Button backButton;
 
-    getVehiclesRequest getVehicles = new getVehiclesRequest(GeneralStatsActivity.this);
-    vehicleStatsRequest getVehicleStats = new vehicleStatsRequest(GeneralStatsActivity.this);
-
-
-    public interface VolleyCallbackGet {
-        void onSuccess(JSONArray result) throws JSONException;
-        void onError(String error);
-    }
+    VehicleManage vehicleManage;
+    StatsManage statsManage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,28 +45,30 @@ public class GeneralStatsActivity extends AppCompatActivity {
         totalDistance = findViewById(R.id.totalDistance);
         avgCons = findViewById(R.id.avgConsumption);
         declaredCons = findViewById(R.id.declaredConsumption);
+        backButton = findViewById(R.id.backButton);
 
-        getVehicles.getVehicles(new VolleyCallBackInterface() {
+        vehicleManage = new VehicleManage(GeneralStatsActivity.this);
+        statsManage = new StatsManage(GeneralStatsActivity.this);
+
+        vehicleManage.getAllVehicles(new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
                 Toast.makeText(GeneralStatsActivity.this, "Data retrieved", Toast.LENGTH_SHORT).show();
-
 
                 Set<String> vehicleSetMake = new HashSet<>();
 
                 String[] vehiclesMake;
 
-                if(getVehicles.vehiclesList == null) {
-                    Toast.makeText(GeneralStatsActivity.this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
+                if(vehicleManage.vehiclesList == null) {
+                    Toast.makeText(GeneralStatsActivity.this, "Something went wrong: No vehicles found.", Toast.LENGTH_SHORT).show();
                 }
 
-
-                for(int i=0; i< getVehicles.vehiclesList.length; i++) {
-                    vehicleSetMake.add(getVehicles.vehiclesList[i].getMake());
+                for(int i = 0; i< vehicleManage.vehiclesList.length; i++) {
+                    vehicleSetMake.add(vehicleManage.vehiclesList[i].getMake());
                 }
                 vehiclesMake = vehicleSetMake.toArray(new String[0]);
 
-                spinnerInit(vehiclesMake, getVehicles.vehiclesList);
+                spinnerInit(vehiclesMake, vehicleManage.vehiclesList);
             }
 
             @Override
@@ -83,6 +78,14 @@ public class GeneralStatsActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
 
     }
 
@@ -109,7 +112,7 @@ public class GeneralStatsActivity extends AppCompatActivity {
                 }
                 vehiclesModel = vehicleSetModel.toArray(new String[0]);
 
-                modelSpinnerInit(vehiclesModel, getVehicles.vehiclesList);
+                modelSpinnerInit(vehiclesModel, vehicleManage.vehiclesList);
 
             }
             // Gets called when nothing has been selected (not being used, but has to be implemented)
@@ -147,12 +150,12 @@ public class GeneralStatsActivity extends AppCompatActivity {
         });
     }
 
-    private void showStats(int id) {
+    private void showStats(int vehicleID) {
 
-        getVehicleStats.getVehicle(id, new VolleyCallBackInterface() {
+        statsManage.getVehicleStats(vehicleID, new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
-                for(generalStatsObject obj : getVehicleStats.generalStats) {
+                for(generalStatsObject obj : statsManage.generalStats) {
 
                     if (obj.getTotal_no_of_trips() == 0) {                  // if value 'null' = no info yet
                         totalTrips.setText("No records for this vehicle found!");
@@ -161,9 +164,9 @@ public class GeneralStatsActivity extends AppCompatActivity {
                     } else {
                         totalTrips.setText("Total trips: " + obj.getTotal_no_of_trips()  + " trips");
                         totalDistance.setText("Total distance: " + BigDecimal.valueOf(obj.getTotal_distance()/1000).setScale(2, RoundingMode.HALF_UP).doubleValue() + " km");
-                        avgCons.setText("Average consumption: " + BigDecimal.valueOf(obj.getReal_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
+                        avgCons.setText("Average consumption: " + BigDecimal.valueOf(obj.getReal_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " Wh/km");
                     }
-                    declaredCons.setText("Declared consumption for this model: " + BigDecimal.valueOf(obj.getDeclared_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
+                    declaredCons.setText("Declared consumption for this model: " + BigDecimal.valueOf(obj.getDeclared_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " Wh/km");
 
                 }
             }
