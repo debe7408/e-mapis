@@ -24,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 appFirstTimeRun();
             }
-        }, 1000);   //5 seconds
+        }, 1000);   //1 second
     }
 
     // Methods checks if the app was run in this version and was it the first time the app was launched

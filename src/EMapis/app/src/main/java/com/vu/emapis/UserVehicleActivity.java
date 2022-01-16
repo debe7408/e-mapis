@@ -29,21 +29,15 @@ import java.util.Set;
 
 public class UserVehicleActivity extends AppCompatActivity {
 
+    // Vars
     private String make;
     private String model;
     private int vehicle_id;
     private String userVehicleId;
-
-    public ProgressBar progressBar;
-
-    // VolleyCallback interface
-    public interface VolleyCallbackGet {
-        void onSuccess(String result);
-        void onError(String error);
-    }
-
     VehicleManage vehicleManage = new VehicleManage(UserVehicleActivity.this);
 
+    // Widgets
+    public ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +48,6 @@ public class UserVehicleActivity extends AppCompatActivity {
         Button saveVehicleButton = findViewById(R.id.saveVehicleButton);
         TextView enterVehicleAlias = findViewById(R.id.enterVehicleAlias);
         progressBar = findViewById(R.id.loadingBar);
-
 
         // Retrieve all data about vehicles
 
@@ -103,7 +96,6 @@ public class UserVehicleActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @Override

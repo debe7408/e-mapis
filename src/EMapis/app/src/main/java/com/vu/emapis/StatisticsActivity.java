@@ -15,28 +15,14 @@ import org.json.JSONException;
 
 public class StatisticsActivity extends AppCompatActivity {
 
-    private static String userId = LoginActivity.userId; //TODO IMPLEMENT INTO THE URL
-    private statisticsObject[] stats;
-
-    private Button individualStatsButton;
-    private Button generalStatsButton;
-    private Button byUserVehicleStatsButton;
-
-
-
-    public interface VolleyCallbackGet {
-        void onSuccess(JSONArray result) throws JSONException;
-        void onError(String error);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        individualStatsButton = findViewById(R.id.individualStatsButton);
-        generalStatsButton = findViewById(R.id.generalStatsButton);
-        byUserVehicleStatsButton = findViewById(R.id.generalIndividualStatsButton);
+        Button individualStatsButton = findViewById(R.id.individualStatsButton);
+        Button generalStatsButton = findViewById(R.id.generalStatsButton);
+        Button byUserVehicleStatsButton = findViewById(R.id.generalIndividualStatsButton);
 
         individualStatsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +47,5 @@ public class StatisticsActivity extends AppCompatActivity {
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(StatisticsActivity.this).toBundle());
             }
         });
-
     }
-
 }

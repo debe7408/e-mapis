@@ -23,23 +23,17 @@ import java.util.Set;
 
 public class TripSettingsActivity extends AppCompatActivity {
 
+    // Widgets
     private SeekBar seekBar;
     private TextView textView;
-    public ProgressBar progressBar;
-    public Button startButton;
+    private ProgressBar progressBar;
+    private Button startButton;
 
     private String alias;
     private int VehicleID;
     private int UserID;
-    public static String trip_ID;
+    private String trip_ID;
     public static int seekBarValue;
-    public static int firstInput;
-
-    // VolleyCallback interface
-    public interface VolleyCallbackGet {
-        void onSuccess(String result);
-        void onError(String error);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +41,15 @@ public class TripSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_settings);
 
         UserID = Integer.parseInt(LoginActivity.userId);
-
         // Define widgets
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
-        progressBar = findViewById(R.id.loadingBar);
         startButton = findViewById(R.id.button4);
-
+        progressBar = findViewById(R.id.loadingBar);
         progressBar.setVisibility(View.VISIBLE);
 
         // Create a new userVehicle object
         VehicleManage vehicleManage = new VehicleManage(TripSettingsActivity.this);
-
 
         // Call a method to obtain all the information about user's vehicles
         vehicleManage.getUserVehicles(UserID, new VolleyCallBackInterface() {
@@ -90,9 +81,7 @@ public class TripSettingsActivity extends AppCompatActivity {
                     // Initialize spinner for vehicle selection
                     spinnerInit(vehicleManage.userVehicleList);
                 }
-
             }
-
             // On Failure, inform the user about it and finish the activity
             @Override
             public void onError(String error) {
@@ -101,7 +90,6 @@ public class TripSettingsActivity extends AppCompatActivity {
             }
         });
 
-
         // Start Trip Button onClickListener
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +97,6 @@ public class TripSettingsActivity extends AppCompatActivity {
                 startTheTrip();
             }
         });
-
     }
 
     public void spinnerInit(userVehicle[] userVehicleList) {
@@ -139,9 +126,7 @@ public class TripSettingsActivity extends AppCompatActivity {
                         VehicleID = userVehicleList[i].getUser_vehicle_id();
                     }
                 }
-
             }
-
             // Gets called when nothing has been selected (not being used, but has to be implemented)
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

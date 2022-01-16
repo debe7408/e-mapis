@@ -24,8 +24,6 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
     private TextView consumedEnergyTextView;
     private TextView avgConsumptionTextView;
     private TextView titleTextView;
-    private Button backButton;
-    private String trip_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +31,7 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_trip_info);
 
         //Declaring Widgets
-        backButton = findViewById(R.id.backButton);
+        Button backButton = findViewById(R.id.backButton);
         titleTextView = findViewById(R.id.titleText);
         makeAndModelTextView = findViewById(R.id.makeAndModelTextView);
         dateTextView = findViewById(R.id.dateTextView);
@@ -45,12 +43,10 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
         // We try to get trip ID from last activity, if we don't get it, we throw an error.
         if(getIntent().hasExtra("trip_ID")) {
 
-            trip_ID = (getIntent().getStringExtra("trip_ID"));
+            String trip_ID = (getIntent().getStringExtra("trip_ID"));
             trip_ID = trip_ID.substring(0, trip_ID.length() - 13);
 
             titleTextView.setText("Trip " + trip_ID + " statistics");
-
-
 
             StatsManage statsManage = new StatsManage(userIndividualTripStatsActivity.this);
             statsManage.getIndividualTripStats(trip_ID, new VolleyCallBackInterface() {
@@ -105,6 +101,5 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 }

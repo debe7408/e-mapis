@@ -17,13 +17,15 @@ import butterknife.BindView;
 
 public class TripEndActivity extends AppCompatActivity {
 
+    // Widgets
     private SeekBar seekBar;
     private TextView textView;
 
-    public static int seekBarValue = OngoingTripActivity.seekBarValue;
+    // Vars
+    private int seekBarValue = OngoingTripActivity.seekBarValue;
     private TripManage tripManage;
     private MetaDataPostRequest metaDataPostRequest;
-    public static String trip_ID;
+    private String trip_ID;
 
     @BindView(R.id.btn_showStats)
     Button btnShowStats;
@@ -92,9 +94,14 @@ public class TripEndActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(String error) {
-                            Toast.makeText(TripEndActivity.this, "Processing", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TripEndActivity.this, "Processing latest trip. This can take up to 5 min", Toast.LENGTH_SHORT).show();
                         }
                     });
+
+                    Intent intent = new Intent(TripEndActivity.this, MainScreenActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+
                 }
 
                 @Override
@@ -102,11 +109,6 @@ public class TripEndActivity extends AppCompatActivity {
 
                 }
             });
-
-
-            Intent intent = new Intent(TripEndActivity.this, MainScreenActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
         }
         else {
             Toast.makeText(TripEndActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();

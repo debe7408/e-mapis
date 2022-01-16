@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class userAgreementDialog extends AppCompatActivity {
 
-    public static SharedPreferences appPolicy; // Shared Preferences object for app policy
+    private SharedPreferences appPolicy; // Shared Preferences object for app policy
     private SharedPreferences.Editor appPolicyEditor; // Shared Preferences Object editor
 
     @Override
@@ -233,7 +233,4 @@ public class userAgreementDialog extends AppCompatActivity {
                 .setNegativeButton("No", null)
                 .show();
     }
-
-
-
 }

@@ -22,31 +22,25 @@ import java.util.ArrayList;
 
 public class userIndividualTripsActivity extends AppCompatActivity {
 
+    // Widgets
     private ListView listView;
 
+    // Vars
     private ArrayList<String> statsArray = new ArrayList<String>();
-
-    private int UserID;
-
-    public interface VolleyCallbackGet {
-        void onSuccess(JSONArray result) throws JSONException;
-        void onError(String error);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_individual_stats);
 
-        UserID = Integer.parseInt(LoginActivity.userId);
+        int userID = Integer.parseInt(LoginActivity.userId);
 
         // Declare widgets
         listView = findViewById(R.id.ListView);
 
-
         StatsManage statsManage = new StatsManage(userIndividualTripsActivity.this);
         //send request to retrieve stats for individual trips
-        statsManage.getIndividualTrips(UserID, new VolleyCallBackInterfaceJSON() {
+        statsManage.getIndividualTrips(userID, new VolleyCallBackInterfaceJSON() {
             @Override
             public void onSuccess(JSONArray result) {
                 // If the user has no trips recorded, the activity will exit
@@ -83,7 +77,6 @@ public class userIndividualTripsActivity extends AppCompatActivity {
             }
         });
 
-
         // Click listener for the ListView item
        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
@@ -112,6 +105,5 @@ public class userIndividualTripsActivity extends AppCompatActivity {
                return false;
            }
        });
-
     }
 }

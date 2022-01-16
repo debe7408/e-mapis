@@ -20,12 +20,12 @@ import java.util.Set;
 
 public class UserRemoveVehicleActivity extends AppCompatActivity {
 
+    // Vars
     private String alias;
     private int UserVehicleID;
-
-    private int UserID;
     VehicleManage vehicleManage;
 
+    // Widgets
     public ProgressBar progressBar;
 
     @Override
@@ -33,7 +33,7 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_remove_vehicle);
 
-        UserID = Integer.parseInt(LoginActivity.userId);
+        int userID = Integer.parseInt(LoginActivity.userId);
 
         // Declare widgets
         Button removeVehicle = findViewById(R.id.vehicleDeleteButton);
@@ -43,7 +43,7 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         vehicleManage = new VehicleManage(UserRemoveVehicleActivity.this);
 
         // Call a method to obtain all the information about user's vehicles
-        vehicleManage.getUserVehicles(UserID, new VolleyCallBackInterface() {
+        vehicleManage.getUserVehicles(userID, new VolleyCallBackInterface() {
 
             // On Success returns us the list
             @Override
@@ -70,7 +70,6 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                 finish();
             }
         });
-
 
         // Remove vehicle button listener
         removeVehicle.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +98,6 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                         Toast.makeText(UserRemoveVehicleActivity.this, "Something went wrong:(", Toast.LENGTH_SHORT).show();
                     }
                 });
-
             }
         });
     }
@@ -121,7 +119,6 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                         UserVehicleID = userVehicleList[i].getUser_vehicle_id();
                     }
                 }
-
             }
 
             // Gets called when nothing has been selected (not being used, but has to be implemented)
