@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
-    private final String url =getString(R.string.findPasswordURL);
+    private final String url = "http://193.219.91.103:4558/rpc/find_password";
 
     // VolleyCallback interface
     public interface VolleyCallbackGet {

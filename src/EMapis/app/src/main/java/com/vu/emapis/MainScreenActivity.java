@@ -11,11 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainScreenActivity extends AppCompatActivity {
 
+    private static String userName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
-
 
         // Delcare widgets
         TextView textView = findViewById(R.id.statText);
@@ -24,10 +25,11 @@ public class MainScreenActivity extends AppCompatActivity {
         // Expected: user's name. If there's nothing, return a default value
         Intent intent = getIntent();
         if(intent.hasExtra(LoginActivity.EXTRA_MESSAGE)) {
-            String message = "Hey there, " + intent.getStringExtra(LoginActivity.EXTRA_MESSAGE) + "!";
+            userName = intent.getStringExtra(LoginActivity.EXTRA_MESSAGE);
+            String message = "Hey there, " + userName + "!";
             textView.setText(message);
         } else {
-            textView.setText("Hey there!");
+            textView.setText("Hey there," + userName + "!");
         }
     }
 
@@ -65,9 +67,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-
                     }
-
                 })
                 .setNegativeButton("No", null)
                 .show();
