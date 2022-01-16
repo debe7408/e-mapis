@@ -31,5 +31,3 @@
 .externalNativeBuild
 .cxx
 local.properties
-/gradle.properties
-gradle.properties
