@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.vu.emapis.request.individualTripsRequest;
+import com.vu.emapis.request.StatsManage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,13 +44,13 @@ public class userIndividualTripsActivity extends AppCompatActivity {
         listView = findViewById(R.id.ListView);
 
 
-        individualTripsRequest individualTripStats = new individualTripsRequest(userIndividualTripsActivity.this);
+        StatsManage statsManage = new StatsManage(userIndividualTripsActivity.this);
         //send request to retrieve stats for individual trips
-        individualTripStats.getIndividualTrips(UserID, new VolleyCallbackGet() {
+        statsManage.getIndividualTrips(UserID, new VolleyCallBackInterfaceJSON() {
             @Override
-            public void onSuccess(JSONArray result) throws JSONException {
+            public void onSuccess(JSONArray result) {
                 // If the user has no trips recorded, the activity will exit
-                if(individualTripStats.stats == null || individualTripStats.stats.length <= 0) {
+                if(statsManage.stats == null || statsManage.stats.length <= 0) {
                     Log.d("Success", "Empty"); // Logcat test
 
                     Toast.makeText(userIndividualTripsActivity.this, "No trips recorded!", Toast.LENGTH_SHORT).show();
@@ -59,16 +59,16 @@ public class userIndividualTripsActivity extends AppCompatActivity {
 
                 // Otherwise, store data to an ArrayList and display it in the ListView
                 else {
-                    for(int i=0; i<individualTripStats.stats.length; i++) {
-                        Log.d("Success", "trip id = "+ individualTripStats.stats[i].getTrip_id());
-                        String date = individualTripStats.stats[i].getTrip_start_time();
+                    for(int i=0; i<statsManage.stats.length; i++) {
+                        Log.d("Success", "trip id = "+ statsManage.stats[i].getTrip_id());
+                        String date = statsManage.stats[i].getTrip_start_time();
                         if (date != null) {
                             date = date.substring(0, 10);
                         } else {
                             date = "data not found";
                         }
 
-                        statsArray.add("Trip ID: " + individualTripStats.stats[i].getTrip_id() + " (" + date + ")");
+                        statsArray.add("Trip ID: " + statsManage.stats[i].getTrip_id() + " (" + date + ")");
                     }
                 }
                 ArrayAdapter arrayAdapter = new ArrayAdapter(userIndividualTripsActivity.this, R.layout.black_text_listview, statsArray);

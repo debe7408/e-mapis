@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.vu.emapis.objects.userVehicle;
 import com.vu.emapis.request.VehicleManage;
-import com.vu.emapis.request.removeUserVehicleRequest;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +24,7 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
     private int UserVehicleID;
 
     private int UserID;
+    VehicleManage vehicleManage;
 
     public ProgressBar progressBar;
 
@@ -39,8 +39,8 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
         Button removeVehicle = findViewById(R.id.vehicleDeleteButton);
         ProgressBar progressBar = findViewById(R.id.loadingBar);
 
-        // Create a new userVehicle object
-        VehicleManage vehicleManage = new VehicleManage(UserRemoveVehicleActivity.this);
+        // Create a new class userVehicle object
+        vehicleManage = new VehicleManage(UserRemoveVehicleActivity.this);
 
         // Call a method to obtain all the information about user's vehicles
         vehicleManage.getUserVehicles(UserID, new VolleyCallBackInterface() {
@@ -80,8 +80,7 @@ public class UserRemoveVehicleActivity extends AppCompatActivity {
                 // Enable progressBar while loading
                 progressBar.setVisibility(View.VISIBLE);
 
-                removeUserVehicleRequest removeUserVehicle = new removeUserVehicleRequest(UserRemoveVehicleActivity.this);
-                removeUserVehicle.sendRemoveRequest(UserVehicleID, new VolleyCallBackInterface() {
+                vehicleManage.sendRemoveRequest(UserVehicleID, new VolleyCallBackInterface() {
                     @Override
                     public void onSuccess(String result) {
                         if (progressBar != null && progressBar.isShown()) { progressBar.setVisibility(View.INVISIBLE); }

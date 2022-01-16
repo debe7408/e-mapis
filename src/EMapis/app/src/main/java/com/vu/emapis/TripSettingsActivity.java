@@ -1,5 +1,4 @@
 package com.vu.emapis;
-import com.vu.emapis.objects.userVehicle;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.vu.emapis.objects.userVehicle;
 import com.vu.emapis.request.TripManage;
 import com.vu.emapis.request.VehicleManage;
 

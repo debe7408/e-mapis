@@ -30,7 +30,6 @@ public class weatherRequest {
     }
     /**
      * Returns temperature in celsius
-     * @param context The context that the method is being executed in
      * @param callback Interface for onSuccess and onError handling
      */
     public void getWeatherData(VolleyCallBackInterface callback) {

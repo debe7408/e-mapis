@@ -27,9 +27,6 @@ import java.util.Set;
 
 public class ByUserVehicleActivity extends AppCompatActivity {
 
-    private userVehicle[] userVehicleList;
-    private byUserVehicleObject[] byUserVehicleStats;
-
     private String alias;
     private int VehicleID;
 
