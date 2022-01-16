@@ -59,7 +59,7 @@ public class userIndividualTripsActivity extends AppCompatActivity {
                         if (date != null) {
                             date = date.substring(0, 10);
                         } else {
-                            date = "data not found";
+                            date = "processing...";
                         }
 
                         statsArray.add("Trip ID: " + statsManage.stats[i].getTrip_id() + " (" + date + ")");
