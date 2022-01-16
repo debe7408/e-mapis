@@ -20,7 +20,7 @@ public class PopUpActivity extends AppCompatActivity {
     private TextView textView;
     // Vars
     public static int seekBarValue;
-    public String trip_ID;
+    private String trip_ID;
     MetaDataPostRequest metaDataPostRequest;
 
     @Override
@@ -35,8 +35,6 @@ public class PopUpActivity extends AppCompatActivity {
         // Define vars
         trip_ID = OngoingTripActivity.trip_ID;
         metaDataPostRequest = new MetaDataPostRequest(PopUpActivity.this);
-
-
 
         seekBarInit();
 
@@ -55,11 +53,11 @@ public class PopUpActivity extends AppCompatActivity {
         //Logcat testing
         Log.d(".getProgress", String.valueOf(seekBar.getProgress()));
 
-        seekBarValue = OngoingTripActivity.seekBarValue;
+
         Log.d("seekbarvalue", String.valueOf(seekBarValue));
 
 
-        if (seekBarValue >= seekBar.getProgress()){
+        if (OngoingTripActivity.seekBarValue >= seekBar.getProgress()){
 
             metaDataPostRequest.sendMetaData(trip_ID, "before_recharge", seekBar.getProgress(), new VolleyCallBackInterface() {
                 @Override

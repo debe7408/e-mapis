@@ -47,30 +47,11 @@ import java.util.Date;
 
 public class OngoingTripActivity extends AppCompatActivity {
 
-
-    private long lastPause;
-
-
-
-    // location last updated time
-    private String mLastUpdateTime;
-
     // location updates interval - 5 sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
     // fastest updates interval - 4 sec
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 4000;
-
-    double[] pointArray = new double[63 ];
-    int global_index = 0;
-    private boolean passed = true;  // TODO Might delete this since we only use 1 function to send data
-
-    public static int seekBarValue = TripSettingsActivity.seekBarValue;
-
-    public static boolean firstMetaSent;
-    public static boolean temperatureSent;
-
-    private final String insertMetaData = "http://193.219.91.103:4558/rpc/_emapis_update_battery_level"; //This URL is used for sending data to meta table ( inaccurate URL name )
 
     // location related apis
     private FusedLocationProviderClient mFusedLocationClient;
@@ -79,10 +60,8 @@ public class OngoingTripActivity extends AppCompatActivity {
     private LocationSettingsRequest mLocationSettingsRequest;
     private LocationCallback mLocationCallback;
     private Location mCurrentLocation;
-
-    // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
-
+    private String mLastUpdateTime;
 
     // Widgets
     private SeekBar seekBar;
@@ -95,16 +74,21 @@ public class OngoingTripActivity extends AppCompatActivity {
     public Button btnRecharge;
 
     // Vars
-
-    public BigDecimal finalSend = BigDecimal.valueOf(0);
-    public static String trip_ID; // TODO REMOVE STATIC
+    private double[] pointArray = new double[63 ];
+    private int global_index = 0;
+    private BigDecimal finalSend = BigDecimal.valueOf(0);
     private SendArrayPointPost sendArrayPointPost;
     private MetaDataPostRequest metaDataPostRequest;
     private String sendPointArrayURL;
     private boolean clicked = false;
     private String temperature;
+    private long lastPause;
+    private boolean firstMetaSent;
+    private boolean temperatureSent;
+    private weatherRequest weatherRequest = new weatherRequest(OngoingTripActivity.this, "Vilnius", "metric");
+    public static String trip_ID;
+    public static int seekBarValue = TripSettingsActivity.seekBarValue;
 
-    weatherRequest weatherRequest = new weatherRequest(OngoingTripActivity.this, "Vilnius", "metric");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +96,7 @@ public class OngoingTripActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing_trip);
 
-        firstMetaSent = false;
-        temperatureSent = false;
+
 
         // Retrieve trip_ID from extras
         Intent intent = getIntent();
@@ -131,7 +114,8 @@ public class OngoingTripActivity extends AppCompatActivity {
 
         // Defines vars
         sendPointArrayURL = getString(R.string.postLocationPointsURL);
-        int seekBarValue = TripSettingsActivity.seekBarValue;
+        firstMetaSent = false;
+        temperatureSent = false;
 
         //Create SendArrayPointPost object to send location data
         sendArrayPointPost = new SendArrayPointPost(OngoingTripActivity.this);
@@ -495,6 +479,9 @@ public class OngoingTripActivity extends AppCompatActivity {
 
     public void seekBarInit() {
         energyLevelTextView.setText("Energy levels: "+seekBar.getProgress() + "%");
+
+        seekBar.setProgress(seekBarValue);
+        energyLevelTextView.setText("Energy levels: "+seekBarValue + "%");
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 

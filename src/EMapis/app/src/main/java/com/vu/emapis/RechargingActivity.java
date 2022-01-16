@@ -35,8 +35,6 @@ public class RechargingActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
 
-
-
         seekBarInit();
     }
 
@@ -89,6 +87,5 @@ public class RechargingActivity extends AppCompatActivity {
         else {
             Toast.makeText(RechargingActivity.this, "Error! Check if you have correctly inputted your energy level", Toast.LENGTH_LONG).show();
         }
-
     }
 }
