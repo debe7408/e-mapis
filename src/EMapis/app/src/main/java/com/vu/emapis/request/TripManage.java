@@ -1,5 +1,7 @@
 package com.vu.emapis.request;
 
+import static com.vu.emapis.Constants.EMAPIS_DATABASE_TOKEN;
+
 import android.content.Context;
 
 import com.android.volley.AuthFailureError;
@@ -61,7 +63,7 @@ public class TripManage {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                headers.put("Authorization", EMAPIS_DATABASE_TOKEN);
                 return headers;
             }
         };
@@ -105,7 +107,7 @@ public class TripManage {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                headers.put("Authorization", EMAPIS_DATABASE_TOKEN);
                 return headers;
             }
         };
