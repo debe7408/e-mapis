@@ -166,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    public boolean checkUsername(String username) {
+    public static boolean checkUsername(String username) {
         boolean passed = true;
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE); //check if username does not contain special characters
         Matcher m = p.matcher(username);

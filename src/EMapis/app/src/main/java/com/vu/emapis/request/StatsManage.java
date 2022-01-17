@@ -3,6 +3,7 @@ package com.vu.emapis.request;
 import static com.vu.emapis.Constants.EMAPIS_DATABASE_TOKEN;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -22,6 +23,7 @@ import com.vu.emapis.objects.tripStatsObject;
 
 import org.json.JSONArray;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +34,6 @@ public class StatsManage {
     public byUserVehicleObject[] byUserVehicleStats;
     public statisticsObject[] stats;
     public tripStatsObject[] tripStats;
-
-
-
 
 
     public StatsManage(Context context) {
@@ -56,8 +55,12 @@ public class StatsManage {
             @Override
             public void onResponse(JSONArray response) {
 
+                Log.d("Response", response.toString());
+
                 Gson gson = new Gson();
                 generalStats = gson.fromJson(String.valueOf(response), generalStatsObject[].class);
+
+                Log.d("Response2", Arrays.toString(generalStats));
 
                 callback.onSuccess("");
 

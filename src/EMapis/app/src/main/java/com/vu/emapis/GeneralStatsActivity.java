@@ -1,6 +1,7 @@
 package com.vu.emapis;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -155,16 +156,18 @@ public class GeneralStatsActivity extends AppCompatActivity {
         statsManage.getVehicleStats(vehicleID, new VolleyCallBackInterface() {
             @Override
             public void onSuccess(String result) {
+
                 for(generalStatsObject obj : statsManage.generalStats) {
 
                     if (obj.getTotal_no_of_trips() == 0) {                  // if value 'null' = no info yet
+                        Log.d("Data retrieved", "null");
                         totalTrips.setText("No records for this vehicle found!");
                         totalDistance.setText("");
                         avgCons.setText("");
                     } else {
                         totalTrips.setText("Total trips: " + obj.getTotal_no_of_trips()  + " trips");
-                        totalDistance.setText("Total distance: " + BigDecimal.valueOf(obj.getTotal_distance()/1000).setScale(2, RoundingMode.HALF_UP).doubleValue() + " km");
-                        avgCons.setText("Average consumption: " + BigDecimal.valueOf(obj.getReal_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
+                        totalDistance.setText("Total distance: " + BigDecimal.valueOf(obj.getTraveled_distance()/1000).setScale(2, RoundingMode.HALF_UP).doubleValue() + " km");
+                        avgCons.setText("Average consumption: " + BigDecimal.valueOf(obj.getAverage_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
                     }
                     declaredCons.setText("Declared consumption for this model: " + BigDecimal.valueOf(obj.getDeclared_consumption()).setScale(2, RoundingMode.HALF_UP).doubleValue() + " kWh/km");
 

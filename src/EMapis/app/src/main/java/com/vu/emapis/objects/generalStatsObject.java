@@ -7,16 +7,16 @@ public class generalStatsObject {
     private String model;
     private int year;
     private double declared_consumption;
-    private double real_consumption;
-    private double total_distance;
+    private double average_consumption;
+    private double traveled_distance;
     private int total_no_of_trips;
 
-    generalStatsObject(int vehicle_id, String make, String model, int year, double declared_consumption, double real_consumption, double total_distance, int total_no_of_trips) {
+    generalStatsObject(int vehicle_id, String make, String model, int year, double declared_consumption, double average_consumption, double traveled_distance, int total_no_of_trips) {
         this.year = year;
-        this.real_consumption = real_consumption;
+        this.average_consumption = average_consumption;
         this.total_no_of_trips = total_no_of_trips;
         this.vehicle_id = vehicle_id;
-        this.total_distance = total_distance;
+        this.traveled_distance = traveled_distance;
         this.make = make;
         this.model = model;
         this.declared_consumption = declared_consumption;
@@ -67,20 +67,20 @@ public class generalStatsObject {
         this.declared_consumption = declared_consumption;
     }
 
-    public double getReal_consumption() {
-        return real_consumption;
+    public double getAverage_consumption() {
+        return average_consumption;
     }
 
-    public void setReal_consumption(double real_consumption) {
-        this.real_consumption = real_consumption;
+    public void setAverage_consumption(double average_consumption) {
+        this.average_consumption = average_consumption;
     }
 
-    public double getTotal_distance() {
-        return total_distance;
+    public double getTraveled_distance() {
+        return traveled_distance;
     }
 
-    public void setTotal_distance(double total_distance) {
-        this.total_distance = total_distance;
+    public void setTraveled_distance(double traveled_distance) {
+        this.traveled_distance = traveled_distance;
     }
 
     public int getTotal_no_of_trips() {
@@ -89,5 +89,19 @@ public class generalStatsObject {
 
     public void setTotal_no_of_trips(int total_no_of_trips) {
         this.total_no_of_trips = total_no_of_trips;
+    }
+
+    @Override
+    public String toString() {
+        return "generalStatsObject{" +
+                "vehicle_id=" + vehicle_id +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", year=" + year +
+                ", declared_consumption=" + declared_consumption +
+                ", real_consumption=" + average_consumption +
+                ", total_distance=" + traveled_distance +
+                ", total_no_of_trips=" + total_no_of_trips +
+                '}';
     }
 }
