@@ -1,13 +1,13 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -24,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 appFirstTimeRun();
             }
-        }, 1000);   //5 seconds
+        }, 1000);   //1 second
     }
 
     // Methods checks if the app was run in this version and was it the first time the app was launched

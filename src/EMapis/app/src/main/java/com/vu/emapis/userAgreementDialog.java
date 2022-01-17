@@ -1,7 +1,5 @@
 package com.vu.emapis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,9 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class userAgreementDialog extends AppCompatActivity {
 
-    public static SharedPreferences appPolicy; // Shared Preferences object for app policy
+    private SharedPreferences appPolicy; // Shared Preferences object for app policy
     private SharedPreferences.Editor appPolicyEditor; // Shared Preferences Object editor
 
     @Override
@@ -233,7 +233,4 @@ public class userAgreementDialog extends AppCompatActivity {
                 .setNegativeButton("No", null)
                 .show();
     }
-
-
-
 }

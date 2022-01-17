@@ -8,7 +8,9 @@
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/bg_gradient.xml" value="0.2518518518518518" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/ic_launcher_background.xml" value="0.24814814814814815" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/drawable/splash_background.xml" value="0.2755208333333333" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_by_user_vehicle.xml" value="0.2" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_developer_settings.xml" value="0.264" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_general_stats.xml" value="0.264" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_individual_statistics.xml" value="0.2552083333333333" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_location.xml" value="0.4" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_login.xml" value="0.264" />
@@ -27,6 +29,8 @@
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_user_individual_stats.xml" value="0.2" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_user_vehicle.xml" value="0.259375" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_volley.xml" value="0.1" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/activity_volley_call_back_test.xml" value="0.10400000000000001" />
+        <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/black_text_listview.xml" value="0.11018518518518519" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/fragment_test.xml" value="0.264" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/layout/simple_item_list_color.xml" value="0.12222222222222222" />
         <entry key="..\:/Git/e-mapis/src/EMapis/app/src/main/res/menu/test1.xml" value="0.264" />

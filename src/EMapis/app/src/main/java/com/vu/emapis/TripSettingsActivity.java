@@ -2,7 +2,6 @@ package com.vu.emapis;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,103 +14,100 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
+import com.vu.emapis.objects.userVehicle;
+import com.vu.emapis.request.TripManage;
+import com.vu.emapis.request.VehicleManage;
 
-import org.json.JSONArray;
-
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class TripSettingsActivity extends AppCompatActivity {
 
+    // Widgets
     private SeekBar seekBar;
     private TextView textView;
-    public ProgressBar progressBar;
-    public Button startButton;
+    private ProgressBar progressBar;
+    private Button startButton;
 
-
-    private userVehicleObject[] userVehicleList;
     private String alias;
     private int VehicleID;
-    public static String trip_ID;
+    private int UserID;
+    private String trip_ID;
     public static int seekBarValue;
-    public static int firstInput;
-
-    // VolleyCallback interface
-    public interface VolleyCallbackGet {
-        void onSuccess(String result);
-        void onError(String error);
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_settings);
 
+        UserID = Integer.parseInt(LoginActivity.userId);
         // Define widgets
         seekBar = findViewById(R.id.rechargedEnergyLevels);
         textView = findViewById(R.id.energyLevelText);
-        progressBar = findViewById(R.id.loadingBar);
         startButton = findViewById(R.id.button4);
-
-
-        String getUrl = "http://193.219.91.103:4558/user_vehicles?user_id=eq." + LoginActivity.userId;
+        progressBar = findViewById(R.id.loadingBar);
         progressBar.setVisibility(View.VISIBLE);
-        getUserVehicles(getUrl, new VolleyCallbackGet() {
 
+        // Create a new userVehicle object
+        VehicleManage vehicleManage = new VehicleManage(TripSettingsActivity.this);
+
+        // Call a method to obtain all the information about user's vehicles
+        vehicleManage.getUserVehicles(UserID, new VolleyCallBackInterface() {
+
+            // On Success returns us the list
             @Override
             public void onSuccess(String result) {
 
-                if(userVehicleList.length == 0) {
+                if (progressBar != null && progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
 
+                // Check if the user has any vehicles
+                if(vehicleManage.userVehicleList.length == 0) {
+
+                    // If the user does not have any vehicles, send him to create one
                     Toast.makeText(TripSettingsActivity.this, "Create a vehicle before starting a trip", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(TripSettingsActivity.this, SettingsActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
 
+                    // Initialize button to start the trip
                     startButton.setVisibility(View.VISIBLE);
 
-                    Toast.makeText(TripSettingsActivity.this, "Data retrieved!", Toast.LENGTH_SHORT).show();
-
-
-                    Set<String> vehicleAliasSet = new HashSet<>();
-                    String[] vehicleAlias;
-
-
-                    for(int i=0; i< userVehicleList.length; i++) {
-                        vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
-                    }
-                    vehicleAlias = vehicleAliasSet.toArray(new String[0]);
-
-
+                    // Initialize seekBar for energy input
                     seekBarInit();
-                    spinnerInit(vehicleAlias);
+
+                    // Initialize spinner for vehicle selection
+                    spinnerInit(vehicleManage.userVehicleList);
                 }
             }
-
+            // On Failure, inform the user about it and finish the activity
             @Override
             public void onError(String error) {
-
-                Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TripSettingsActivity.this, "Something went wrong while loading.", Toast.LENGTH_SHORT).show();
                 finish();
+            }
+        });
 
+        // Start Trip Button onClickListener
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTheTrip();
             }
         });
     }
 
-    public void spinnerInit(String[] vehicleAlias) {
+    public void spinnerInit(userVehicle[] userVehicleList) {
+
+        Set<String> vehicleAliasSet = new HashSet<>();
+        String[] vehicleAlias;
+
+        for(int i=0; i< userVehicleList.length; i++) {
+            vehicleAliasSet.add(userVehicleList[i].getVehicle_alias());
+        }
+        vehicleAlias = vehicleAliasSet.toArray(new String[0]);
 
         Spinner selectAlias = findViewById(R.id.vehicleMenu); // Here we define that our Spinner object will be reflected by vehicleMenu Spinner in XML file.
         selectAlias.setVisibility(View.VISIBLE);
@@ -130,9 +126,7 @@ public class TripSettingsActivity extends AppCompatActivity {
                         VehicleID = userVehicleList[i].getUser_vehicle_id();
                     }
                 }
-
             }
-
             // Gets called when nothing has been selected (not being used, but has to be implemented)
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -142,9 +136,10 @@ public class TripSettingsActivity extends AppCompatActivity {
     }
 
     public void seekBarInit() {
-        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
 
+        textView.setText("Energy levels: "+seekBar.getProgress() + "%");
         seekBar.setVisibility(View.VISIBLE);
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             int progressValue = 0;
@@ -167,125 +162,49 @@ public class TripSettingsActivity extends AppCompatActivity {
     }
 
     // Gets called when the button "Start the trip" is pressed
-    public void startTheTrip(View view) {
+    public void startTheTrip() {
 
         if (seekBar.getProgress() == 0) {
-            Toast.makeText(TripSettingsActivity.this, "If the energy level in your vehicle is really 0, please recharge it!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TripSettingsActivity.this, "Can not start a trip with energy levels at " + seekBar.getProgress() +"%.", Toast.LENGTH_SHORT).show();
         } else {
-            String postURL = "http://193.219.91.103:4558/rpc/_emapis_new_trip";
-            sendPostRequest(postURL, new VolleyCallbackGet() {
+
+            seekBarValue = seekBar.getProgress();
+
+
+            // Create a new tripManage object
+            TripManage tripManage = new TripManage(TripSettingsActivity.this);
+
+            // Call start a new trip method that returns us tripID
+            tripManage.startNewTrip(UserID, VehicleID, new VolleyCallBackInterface() {
+
+                // On Success returns tripID and continues code
                 @Override
                 public void onSuccess(String result) {
+
+                    if (progressBar != null && progressBar.isShown()) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+
                     trip_ID = result;
-                    seekBarValue = seekBar.getProgress();
-                    firstInput = seekBarValue;
 
                     Intent intent = new Intent(TripSettingsActivity.this, OngoingTripActivity.class);
-                    intent.putExtra(trip_ID, trip_ID);
+                    intent.putExtra("tripID", trip_ID);
                     startActivity(intent);
                     finish();
-
                 }
 
+                // On Error informs the user about the failure
                 @Override
                 public void onError(String error) {
 
-                    Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting trip", Toast.LENGTH_SHORT).show();
+                    if (progressBar != null && progressBar.isShown()) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
 
+                    Toast.makeText(TripSettingsActivity.this, "Something went wrong while starting the trip", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             });
         }
-    }
-
-    // TODO CREATE sendUserInput METHOD FOR THE FIRST ENERGY LEVEL INPUT
-
-    private void sendPostRequest(String postURL, VolleyCallbackGet callbackPost) {
-
-        int userID = Integer.parseInt(LoginActivity.userId);
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                // trip_ID = response;
-                callbackPost.onSuccess(response);
-            }
-        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                callbackPost.onError(error.toString());
-                error.printStackTrace();
-            }
-        }) {
-            protected Map<String, String> getParams() {
-
-                Map<String, String> MyData = new HashMap<String, String>();
-                MyData.put("user_id", String.valueOf(userID));
-                MyData.put("user_vehicle_id", String.valueOf(VehicleID));
-                return MyData;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        requestQueue.add(stringRequest);
-        requestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
-            @Override
-            public void onRequestFinished(Request<String> request) {
-                if (progressBar != null && progressBar.isShown()) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-    }
-
-    private void getUserVehicles(String url, VolleyCallbackGet callbackGet) {
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                Gson gson = new Gson();
-                userVehicleList = gson.fromJson(String.valueOf(response), userVehicleObject[].class);
-                Log.d("list-trip-settings", String.valueOf(response));
-
-                callbackGet.onSuccess("");
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                callbackGet.onError(error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
-                return headers;
-            }
-        };
-
-        queue.add(jsonArrayRequest);
-        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
-            @Override
-            public void onRequestFinished(Request<String> request) {
-                if (progressBar != null && progressBar.isShown()) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
     }
 }

@@ -1,5 +1,7 @@
 package com.vu.emapis;
 
+import static com.vu.emapis.Constants.EMAPIS_DATABASE_TOKEN;
+
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -46,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public static final String EXTRA_MESSAGE = "com.vu.emapis.MESSAGE";
-    private final String url ="http://193.219.91.103:4558/rpc/find_password";
+    private final String url = "http://193.219.91.103:4558/rpc/find_password";
 
     // VolleyCallback interface
     public interface VolleyCallbackGet {
@@ -148,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-        String getUrl = "http://193.219.91.103:4558/users?select=user_id&username=eq." + username;
+        String getUrl = getString(R.string.infoAboutUsersURL) + username;
         sendGetRequest(getUrl);
 
 
@@ -182,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                headers.put("Authorization", EMAPIS_DATABASE_TOKEN);
                 return headers;
             }
         };
@@ -218,7 +220,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                headers.put("Authorization", EMAPIS_DATABASE_TOKEN);
                 return headers;
             }
         };
