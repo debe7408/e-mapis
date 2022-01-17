@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.vu.emapis.request.StatsManage;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 

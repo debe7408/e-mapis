@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vu.emapis.objects.byUserVehicleObject;
-import com.vu.emapis.objects.userVehicle;
 import com.vu.emapis.request.StatsManage;
 import com.vu.emapis.request.VehicleManage;
 

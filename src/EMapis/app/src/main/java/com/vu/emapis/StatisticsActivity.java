@@ -8,11 +8,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.vu.emapis.objects.statisticsObject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 public class StatisticsActivity extends AppCompatActivity {
 
     @Override
