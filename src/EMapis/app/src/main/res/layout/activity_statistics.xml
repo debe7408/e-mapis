@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/statsAct"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    tools:context=".StatisticsActivity">
+
+    <TextView
+        android:id="@+id/vehicleSelectionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Statistic Menu"
+        android:textColor="@color/textColor"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/individualStatsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:backgroundTint="@color/buttonColor"
+        android:text="My trips"
+        android:textColor="@color/textColor"
+        android:tooltipText="Displays statistics about individual trips done by you"
+        app:layout_constraintEnd_toEndOf="@+id/vehicleSelectionText"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="@+id/vehicleSelectionText"
+        app:layout_constraintTop_toBottomOf="@+id/vehicleSelectionText" />
+
+    <Button
+        android:id="@+id/generalIndividualStatsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/buttonColor"
+        android:text="My vehicles"
+        android:textColor="@color/textColor"
+        android:tooltipText="Displays your statistics in a generalized way"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/individualStatsButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/individualStatsButton"
+        app:layout_constraintTop_toBottomOf="@+id/individualStatsButton"
+        app:layout_constraintVertical_bias="0.059" />
+
+    <Button
+        android:id="@+id/generalStatsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/buttonColor"
+        android:text="E-MAPIS database"
+        android:textColor="@color/textColor"
+        android:tooltipText="Displays global trip statistics by different vehicles"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/generalIndividualStatsButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/generalIndividualStatsButton"
+        app:layout_constraintTop_toBottomOf="@+id/generalIndividualStatsButton"
+        app:layout_constraintVertical_bias="0.074" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

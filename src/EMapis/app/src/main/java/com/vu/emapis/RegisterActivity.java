@@ -1,9 +1,9 @@
 package com.vu.emapis;
 
+import static com.vu.emapis.Constants.EMAPIS_DATABASE_TOKEN;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -166,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    public boolean checkUsername(String username) {
+    public static boolean checkUsername(String username) {
         boolean passed = true;
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE); //check if username does not contain special characters
         Matcher m = p.matcher(username);
@@ -206,7 +206,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                headers.put("Authorization", EMAPIS_DATABASE_TOKEN);
                 return headers;
             }
         };
@@ -243,7 +243,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZW1hcGlzX2RldmljZSJ9.xDyrK7WodZgZFaa2JjoBVmZG42Wqtx-vGj_ZyYO3vxQ");
+                headers.put("Authorization", EMAPIS_DATABASE_TOKEN);
                 return headers;
             }
         };

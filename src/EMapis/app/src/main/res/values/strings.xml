@@ -8,16 +8,19 @@
     <string name="button_new_trip">Start a new trip!</string>
     <string name="title_activity_trip_settings">TripSettingsActivity</string>
     <string name="title_activity_google_location">GoogleLocation</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_user_remove_vehicle">UserRemoveVehicleActivity</string>
 
+    <!-- URLs for post/get requests-->
+    <string name="startNewTripURL">http://193.219.91.103:4558/rpc/_emapis_new_trip</string>
+    <string name="sendDataToMetaURL">http://193.219.91.103:4558/rpc/_emapis_update_battery_level</string>
+    <string name="getUserVehicesURL">http://193.219.91.103:4558/user_vehicles?user_id=eq.</string>
+    <string name="postLocationPointsURL">http://193.219.91.103:4558/rpc/_emapis_gps_trace_insert</string>
+    <string name="getAllVehiclesURL">http://193.219.91.103:4558/vehicles?</string>
+    <string name="buildRouteURL">http://193.219.91.103:4558/rpc/_emapis_build_route</string>
+    <string name="getIndividualTripsURL">http://193.219.91.103:4558/trips?user_id=eq.</string>
+    <string name="removeUserVehiclesURL">http://193.219.91.103:4558/rpc/remove_user_vehicle</string>
+    <string name="infoAboutUsersURL"><![CDATA[http://193.219.91.103:4558/users?select=user_id&username=eq.]]></string>
+    <string name="findPasswordURL">http://193.219.91.103:4558/rpc/find_password</string>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
