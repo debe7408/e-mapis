@@ -1,72 +1,78 @@
-[2020-09-06 19:30-21:30] via Discord
+[2021-09-06 19:30-21:30] via Discord
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Group contract, project vision, questions for the supervisor.
 Decided on/done: The group contract and project vision were written and fully finished. Written down some questions for the supervisor.
 
-[2020-09-07 21:45 - 24:00] via Discord
+[2021-09-07 21:45 - 24:00] via Discord
 Attendants: Julius, Emilis, Deividas.
 Topic(s): PostGIS, JIRA, group contract and vision submission.
 Decided on/done: We have decided to use PostGIS as our gis extension for PostgreSQL, set-up JIRA as our project tracking software,
 submitted our group contract and project vision.
 
-[2020-09-09 14:00-15:10] IRL
+[2021-09-09 14:00-15:10] IRL
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Setting up our GitLab repository, individual study/work.
 Decided on/done: Successfully set-up our project repository and added the lecturers to it. Agreed to go through a SQL and Databases course on udemy.com.
 
-[2020-09-14 20:00-21:30] via Discord
+[2021-09-14 20:00-21:30] via Discord
 Attendants: Julius, Emilis, Deividas. 
 Topic(s): Discussing our progress in database learning, sharing knowledge.
 Decided on/done: Each member of the group should finish at least 60% of the course by the 23rd of September.
 
-[2020-09-16 12:00-13:45] IRL
+[2021-09-16 12:00-13:45] IRL
 Attendants: Julius, Emilis, Deividas. 
 Topic(s): Setting up our database server, looking for an open-source map of Vilnius.
 Decided on/done: We have set-up a VM and installed PostgreSQL and PostGIS to it. We have looked into some open-source maps and for now, settled with openstreetmap.org.
 
-[2020-09-20 19:30-21:00] via Discord
+[2021-09-20 19:30-21:00] via Discord
 Attendants: Julius, Emilis, Deividas. 
 Topic(s): Writing documentation for PSI and discussing our expectations for the project, arranging a meeting with our supervisor.
 Decided on/done: We have written the documentation where we stated our purpose of the system, funcional and non-functional requirements,
 given a high-level overview of the system. After discussing our expectations for the project, we noticed that we still face some confusion,
 because of that we have sent an email to our supervisor to organize a meeting.
 
-[2020-09-24 17:30-18:00] IRL
+[2021-09-24 17:30-18:00] IRL
 Attendants: Julius, Emilis, Deividas, Agnė.
 Topic(s): Meeting with our supervisor Agnė Brilingaitė. Agnė provided us with guidance for our project.
 Decided on/done: We have decided on what information our Android app will collect and present to the user, what steps to take to start realising
 our project.
 
-[2020-09-24 18:00-19:00] IRL
+[2021-09-24 18:00-19:00] IRL
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Setting up a 'task sprint' for the week, setting a more long-term goal and discussing technologies we will use to communicate with our datebase server.
 Decided on/done: We have looked into http requests (using POSTMAN), agreed to create a zero-feature app for our project in the next few days, 
 decided what to look into/learn individually. The main task for the week will be to create connections to our database and upload some stock data to work/learn with.
 
-[2020-09-27 20:00-21:30] via Discord
+[2021-09-27 20:00-21:30] via Discord
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Documentation, presentation and database connection.
 Decided on/done: Updated documentation for PSI, started working on PBL presentation and created a connection between our local PgAdmins
 and the database server.
 
-[2020-09-29 14:00-15:30] IRL
+[2021-09-29 14:00-15:30] IRL
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Setting up sprint for the week, sharing knowledge, discussing what needs to be done in the short term.
 Decided on/done: We have shared our knowledge on the database server connection set-up so that we would all be on the same page, discussed what is the next goal of our project.
 
-[2020-10-04 19:30-21:00] IRL
+[2021-10-04 19:30-21:00] IRL
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Sharing knowledge, writing documentation.
 Decided on/done: We have shared our knowledge about Android studio and the progress of our app so that we would all be on the same page,
 started working on documentation.
 
-[2020-10-11 20:00-21:50] IRL
+[2021-10-11 20:00-21:50] IRL
 Attendants: Julius, Emilis, Deividas.
 Topic(s): Sharing knowledge, presentation, ER diagram of tables and relations.
 Decided on/done: We have shared our knowledge about the new features implemented into our app (non-working gps code), discussed on the system's architecture, 
 worked on the slides of our presentation on the 14th, discussed and create a rough draft of our ER diagram of tables and relations.
 
-[2020-10-21 14:10-15:00] IRL
+[2021-10-21 14:10-15:00] IRL
 Attendants: Juius, Emilis, Deividas
 Topic(s): Code review, next week's planning, documentation discussion.
 Decided on/done: We have decided on how we will split work among us for the next week, as we have a presentation and PSI documentation to do. We will be trying to send coordinates of ongoing trips to our database automatically, without additional user input. After that, we will prepare for the PSI assignment and by the end of the week, finalize our presentation.
+
+[2021-11-10 19:00-20:30] IRL
+Attendants: Juius, Emilis, Deividas
+Topic(s): Code review, database review, new problems and blockers, and solutions, work planning.
+Decided on/done: We have reviewed the code for user inputs and authentication methods, Julius preseneted his progress on geom connection to osm_id.
+We also have found some blockers that we need to solve, like putting the app into the background so it can run while using the phone, or connecting the correct location point with osm_id road.
