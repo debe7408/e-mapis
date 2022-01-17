@@ -24,6 +24,7 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
     private TextView consumedEnergyTextView;
     private TextView avgConsumptionTextView;
     private TextView titleTextView;
+    private TextView tempTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
         durationTextView = findViewById(R.id.durationTextView);
         consumedEnergyTextView = findViewById(R.id.consumedEnergyTextView);
         avgConsumptionTextView = findViewById(R.id.avgConsumptionTextView);
+        tempTextView = findViewById(R.id.tempTextView);
 
         // We try to get trip ID from last activity, if we don't get it, we throw an error.
         if(getIntent().hasExtra("trip_ID")) {
@@ -72,6 +74,7 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
                                     .setScale(2, RoundingMode.HALF_UP)
                                     .doubleValue();
                             String time = String.valueOf(statsManage.tripStats[0].getTrip_total_time());
+                            String temp = String.valueOf(statsManage.tripStats[0].getTrip_temp());
 
                             dateTextView.append(statsManage.tripStats[0].getDate());
                             makeAndModelTextView.append(statsManage.tripStats[0].getMake().concat(" " + statsManage.tripStats[0].getModel()));
@@ -79,6 +82,8 @@ public class userIndividualTripStatsActivity extends AppCompatActivity {
                             durationTextView.append(time.substring(0, time.length() - 6));
                             consumedEnergyTextView.append(energy_cons + " kWh");
                             avgConsumptionTextView.append(avg_cons + " kWh/km");
+                            tempTextView.append(temp + "°C");
+
                         }
                     }
                 }
